@@ -45,6 +45,10 @@ body {
   cursor: pointer;
 }
 
+.join-btn-link {
+  text-decoration: none;
+}
+
 .join-btn {
   background-color: #007bff;
   border: none;

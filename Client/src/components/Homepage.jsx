@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Homepage.css";
 
 function Homepage() {
@@ -47,7 +48,9 @@ function Homepage() {
           <li>About</li>
           <li>Contact Us</li>
         </ul>
-        <button className="join-btn">Join Now</button>
+        <Link to="/login" className="join-btn-link">
+          <button className="join-btn">Join Now</button>
+        </Link>
       </nav>
 
       <section className="hero">

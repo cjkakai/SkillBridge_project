@@ -1,0 +1,96 @@
+.login-page {
+  background-color: #0a1f44;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Reuse navbar from homepage */
+.navbar {
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 80px;
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo-main {
+  color: #0a1f44;
+}
+
+.logo-accent {
+  color: #ff9b00;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.nav-links li {
+  color: #0a1f44;
+  cursor: pointer;
+}
+
+/* Login Form */
+.login-container {
+  background-color: #f1f5ff;
+  margin-top: 80px;
+  padding: 40px 60px;
+  border-radius: 10px;
+  width: 400px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+.login-container h2 {
+  color: #0a1f44;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.login-container label {
+  display: block;
+  margin-top: 10px;
+  color: #0a1f44;
+}
+
+.login-container input,
+.login-container select {
+  width: 100%;
+  margin-top: 5px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.login-container button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.extra-links {
+  margin-top: 15px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+}
+
+.extra-links a {
+  color: #0a1f44;
+  text-decoration: none;
+}
