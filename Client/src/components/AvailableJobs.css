@@ -1,0 +1,128 @@
+.available-jobs {
+  background-color: var(--light-blue-bg);
+  padding: 4rem 0;
+  position: relative;
+}
+
+.jobs-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.jobs-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+}
+
+.jobs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.job-card {
+  background-color: var(--white);
+  border-radius: 16px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.job-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.job-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.5rem;
+  font-size: 2rem;
+  transition: all 0.3s ease;
+}
+
+.job-card:hover .job-icon {
+  transform: scale(1.1);
+}
+
+.icon-emoji {
+  font-size: 2.5rem;
+}
+
+.job-title {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .available-jobs {
+    padding: 3rem 0;
+  }
+  
+  .jobs-title {
+    font-size: 2rem;
+  }
+  
+  .jobs-grid {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .job-card {
+    padding: 1.5rem 1rem;
+  }
+  
+  .job-icon {
+    width: 60px;
+    height: 60px;
+    margin-bottom: 1rem;
+  }
+  
+  .icon-emoji {
+    font-size: 2rem;
+  }
+  
+  .job-title {
+    font-size: 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .jobs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  .job-card {
+    padding: 1.2rem 0.8rem;
+  }
+  
+  .job-icon {
+    width: 50px;
+    height: 50px;
+  }
+  
+  .icon-emoji {
+    font-size: 1.5rem;
+  }
+  
+  .job-title {
+    font-size: 0.9rem;
+  }
+}

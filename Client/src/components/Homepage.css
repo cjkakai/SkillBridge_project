@@ -1,0 +1,146 @@
+body {
+  margin: 0;
+  font-family: "Poppins", sans-serif;
+  background-color: #f8f9fa;
+}
+
+.homepage {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Navbar */
+.navbar {
+  width: 100%;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 80px;
+  box-shadow: 0px 2px 5px rgba(0,0,0,0.05);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.logo-main {
+  color: #0a1f44;
+}
+
+.logo-accent {
+  color: #ff9b00;
+}
+
+.nav-links {
+  display: flex;
+  gap: 30px;
+  list-style: none;
+}
+
+.nav-links li {
+  color: #0a1f44;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.join-btn {
+  background-color: #007bff;
+  border: none;
+  padding: 8px 20px;
+  border-radius: 5px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+/* Hero Section */
+.hero {
+  background-color: #0a1f44;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 100px 80px;
+  border-bottom-left-radius: 120px;
+}
+
+.hero-text h1 {
+  font-size: 36px;
+  line-height: 1.4;
+}
+
+.accent {
+  color: #ff9b00;
+}
+
+.blue {
+  color: #00a1f4;
+}
+
+.hero-text p {
+  margin-top: 15px;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.get-started-btn {
+  margin-top: 25px;
+  background-color: #007bff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  color: white;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.hero-image img {
+  width: 300px;
+}
+
+/* Available Jobs Section */
+.available-jobs {
+  background-color: #eaf2fa;
+  padding: 50px 0;
+  text-align: center;
+}
+
+.available-jobs h2 {
+  color: #0a1f44;
+  margin-bottom: 40px;
+}
+
+.job-cards {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 25px;
+}
+
+.job-card {
+  background-color: white;
+  padding: 20px 40px;
+  border-radius: 15px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.job-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+}
+
+.icon-emoji {
+  font-size: 24px;
+}
