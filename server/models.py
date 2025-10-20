@@ -1,15 +1,18 @@
 from config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
+from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime, timezone
 
 
 class Client(db.Model, SerializerMixin):
     __tablename__ = 'clients'
+    
+    serialize_rules = ('-_password_hash', '-tasks.client', '-contracts.client')
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.String, nullable=False)
+    _password_hash = db.Column(db.String, nullable=False)
     image = db.Column(db.Text)
     bio = db.Column(db.Text)
     contact = db.Column(db.String(100))
@@ -17,11 +20,17 @@ class Client(db.Model, SerializerMixin):
     tasks = db.relationship('Task', back_populates='client')
     contracts = db.relationship('Contract', back_populates='client')
 
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
     
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8')) 
+        self._password_hash = password_hash.decode('utf-8')
+    
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     def __repr__(self):
         return f'<Client {self.id}: {self.name}>'
@@ -29,11 +38,13 @@ class Client(db.Model, SerializerMixin):
 
 class Freelancer(db.Model, SerializerMixin):
     __tablename__ = 'freelancers'
+    
+    serialize_rules = ('-_password_hash', '-applications.freelancer', '-contracts.freelancer', '-experiences.freelancer')
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.Text, nullable=False)
+    _password_hash = db.Column(db.Text, nullable=False)
     bio = db.Column(db.Text)
     skills = db.Column(db.Text)
     image = db.Column(db.Text)
@@ -45,11 +56,17 @@ class Freelancer(db.Model, SerializerMixin):
     contracts = db.relationship('Contract', back_populates='freelancer')
     experiences = db.relationship('FreelancerExperience', back_populates='freelancer')
 
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
     
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8')) 
+        self._password_hash = password_hash.decode('utf-8')
+    
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     def __repr__(self):
         return f'<Freelancer {self.id}: {self.name}>'
@@ -57,21 +74,29 @@ class Freelancer(db.Model, SerializerMixin):
 
 class Admin(db.Model, SerializerMixin):
     __tablename__ = 'admins'
+    
+    serialize_rules = ('-_password_hash', '-complaints.admin', '-audit_logs.admin')
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
-    password_hash = db.Column(db.Text, nullable=False)
+    _password_hash = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
 
     complaints = db.relationship('Complaint', back_populates='admin')
     audit_logs = db.relationship('AuditLog', back_populates='admin')
 
-    def set_password(self, password):
-        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    @hybrid_property
+    def password_hash(self):
+        return self._password_hash
     
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.password_hash, password)
+    @password_hash.setter
+    def password_hash(self, password):
+        password_hash = bcrypt.generate_password_hash(password.encode('utf-8')) 
+        self._password_hash = password_hash.decode('utf-8')
+    
+    def authenticate(self, password):
+        return bcrypt.check_password_hash(self._password_hash, password.encode('utf-8'))
 
     def __repr__(self):
         return f'<Admin {self.id}: {self.name}>'
@@ -79,6 +104,8 @@ class Admin(db.Model, SerializerMixin):
 
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
+    
+    serialize_rules = ('-client.tasks', '-applications.task', '-contract.task')
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('clients.id'))
@@ -99,8 +126,10 @@ class Task(db.Model, SerializerMixin):
         return f'<Task {self.id}: {self.title}>'
 
 
-class Application(db.Model,SerializerMixin):
+class Application(db.Model, SerializerMixin):
     __tablename__ = 'applications'
+    
+    serialize_rules = ('-task.applications', '-freelancer.applications')
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
@@ -120,6 +149,8 @@ class Application(db.Model,SerializerMixin):
 
 class Contract(db.Model, SerializerMixin):
     __tablename__ = 'contracts'
+    
+    serialize_rules = ('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract')
 
     id = db.Column(db.Integer, primary_key=True)
     contract_code = db.Column(db.String(100))
@@ -146,6 +177,8 @@ class Contract(db.Model, SerializerMixin):
 
 class Milestone(db.Model, SerializerMixin):
     __tablename__ = 'milestones'
+    
+    serialize_rules = ('-contract.milestones',)
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
@@ -164,6 +197,8 @@ class Milestone(db.Model, SerializerMixin):
 
 class Deliverable(db.Model, SerializerMixin):
     __tablename__ = 'deliverables'
+    
+    serialize_rules = ('-contract.deliverables',)
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
@@ -178,8 +213,10 @@ class Deliverable(db.Model, SerializerMixin):
         return f'<Deliverable {self.id}: Contract {self.contract_id}>'
 
 
-class Payment(db.Model,SerializerMixin):
+class Payment(db.Model, SerializerMixin):
     __tablename__ = 'payments'
+    
+    serialize_rules = ('-contract.payments',)
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
@@ -198,6 +235,8 @@ class Payment(db.Model,SerializerMixin):
 
 class Review(db.Model, SerializerMixin):
     __tablename__ = 'reviews'
+    
+    serialize_rules = ('-contract.reviews',)
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
@@ -215,6 +254,8 @@ class Review(db.Model, SerializerMixin):
 
 class Complaint(db.Model, SerializerMixin):
     __tablename__ = 'complaints'
+    
+    serialize_rules = ('-contract.complaints', '-admin.complaints')
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
@@ -237,6 +278,8 @@ class Complaint(db.Model, SerializerMixin):
 
 class AuditLog(db.Model, SerializerMixin):
     __tablename__ = 'audit_logs'
+    
+    serialize_rules = ('-admin.audit_logs',)
 
     id = db.Column(db.Integer, primary_key=True)
     admin_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
@@ -255,6 +298,8 @@ class AuditLog(db.Model, SerializerMixin):
 
 class Skill(db.Model, SerializerMixin):
     __tablename__ = 'skills'
+    
+    serialize_rules = ()
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), unique=True, nullable=False)
@@ -265,6 +310,8 @@ class Skill(db.Model, SerializerMixin):
 
 class FreelancerSkill(db.Model, SerializerMixin):
     __tablename__ = 'freelancer_skills'
+    
+    serialize_rules = ()
 
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skills.id'), primary_key=True)
@@ -278,6 +325,8 @@ class FreelancerSkill(db.Model, SerializerMixin):
 
 class TaskSkill(db.Model, SerializerMixin):
     __tablename__ = 'task_skills'
+    
+    serialize_rules = ()
 
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skills.id'), primary_key=True)
@@ -290,6 +339,8 @@ class TaskSkill(db.Model, SerializerMixin):
 
 class FreelancerExperience(db.Model, SerializerMixin):
     __tablename__ = 'freelancer_experiences'
+    
+    serialize_rules = ('-freelancer.experiences',)
 
     experience_id = db.Column(db.Integer, primary_key=True)
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
