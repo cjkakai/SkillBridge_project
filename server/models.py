@@ -17,6 +17,12 @@ class Client(db.Model, SerializerMixin):
     tasks = db.relationship('Task', back_populates='client')
     contracts = db.relationship('Contract', back_populates='client')
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
     def __repr__(self):
         return f'<Client {self.id}: {self.name}>'
 
@@ -39,6 +45,12 @@ class Freelancer(db.Model, SerializerMixin):
     contracts = db.relationship('Contract', back_populates='freelancer')
     experiences = db.relationship('FreelancerExperience', back_populates='freelancer')
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
     def __repr__(self):
         return f'<Freelancer {self.id}: {self.name}>'
 
@@ -55,8 +67,14 @@ class Admin(db.Model, SerializerMixin):
     complaints = db.relationship('Complaint', back_populates='admin')
     audit_logs = db.relationship('AuditLog', back_populates='admin')
 
+    def set_password(self, password):
+        self.password_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+    
+    def check_password(self, password):
+        return bcrypt.check_password_hash(self.password_hash, password)
+
     def __repr__(self):
-        return f'<Admin {self.id}: {self.full_name}>'
+        return f'<Admin {self.id}: {self.name}>'
 
 
 class Task(db.Model, SerializerMixin):
