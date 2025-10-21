@@ -148,7 +148,7 @@ class Application(db.Model, SerializerMixin):
 class Contract(db.Model, SerializerMixin):
     __tablename__ = 'contracts'
     
-    serialize_rules = ('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract')
+    serialize_rules = ('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract', '-messages.contract')
 
     id = db.Column(db.Integer, primary_key=True)
     contract_code = db.Column(db.String(100))
@@ -168,6 +168,7 @@ class Contract(db.Model, SerializerMixin):
     payments = db.relationship('Payment', back_populates='contract')
     reviews = db.relationship('Review', back_populates='contract')
     complaints = db.relationship('Complaint', back_populates='contract')
+    messages = db.relationship('Message', back_populates='contract')
 
     def __repr__(self):
         return f'<Contract {self.id}: {self.contract_code}>'
@@ -354,3 +355,22 @@ class FreelancerExperience(db.Model, SerializerMixin):
 
     def __repr__(self):
         return f'<FreelancerExperience {self.experience_id}: {self.role_title} at {self.company_name}>'
+
+
+class Message(db.Model, SerializerMixin):
+    __tablename__ = 'messages'
+    
+    serialize_rules = ('-contract.messages',)
+
+    id = db.Column(db.Integer, primary_key=True)
+    contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'), nullable=False)
+    sender_id = db.Column(db.Integer, nullable=False)
+    receiver_id = db.Column(db.Integer, nullable=False)
+    content = db.Column(db.Text, nullable=False)
+    is_read = db.Column(db.Boolean, default=False)
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+
+    contract = db.relationship('Contract', back_populates='messages')
+
+    def __repr__(self):
+        return f'<Message {self.id}: Contract {self.contract_id}>'

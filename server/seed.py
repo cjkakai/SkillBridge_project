@@ -252,6 +252,27 @@ def seed_database():
                 )
                 db.session.add(audit_log)
         
+        # Create messages for contracts
+        for contract in contracts:
+            num_messages = random.randint(3, 10)
+            for _ in range(num_messages):
+                # Randomly choose sender and receiver (client or freelancer)
+                if random.choice([True, False]):
+                    sender_id = contract.client_id
+                    receiver_id = contract.freelancer_id
+                else:
+                    sender_id = contract.freelancer_id
+                    receiver_id = contract.client_id
+                
+                message = Message(
+                    contract_id=contract.id,
+                    sender_id=sender_id,
+                    receiver_id=receiver_id,
+                    content=fake.text(max_nb_chars=200),
+                    is_read=random.choice([True, False])
+                )
+                db.session.add(message)
+        
         db.session.commit()
         
         print("Database seeded successfully!")
@@ -263,6 +284,7 @@ def seed_database():
         print(f"- {len(tasks)} tasks")
         print(f"- {len(applications)} applications")
         print(f"- {len(contracts)} contracts")
+        print(f"- Messages created for contract communication")
 
 if __name__ == '__main__':
     seed_database()
