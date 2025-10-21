@@ -148,7 +148,7 @@ class Application(db.Model, SerializerMixin):
 class Contract(db.Model, SerializerMixin):
     __tablename__ = 'contracts'
     
-    serialize_rules = ('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract', '-messages.contract')
+    serialize_rules = ('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-payments.contract', '-reviews.contract', '-complaints.contract', '-messages.contract')
 
     id = db.Column(db.Integer, primary_key=True)
     contract_code = db.Column(db.String(100))
@@ -164,7 +164,6 @@ class Contract(db.Model, SerializerMixin):
     client = db.relationship('Client', back_populates='contracts')
     freelancer = db.relationship('Freelancer', back_populates='contracts')
     milestones = db.relationship('Milestone', back_populates='contract')
-    deliverables = db.relationship('Deliverable', back_populates='contract')
     payments = db.relationship('Payment', back_populates='contract')
     reviews = db.relationship('Review', back_populates='contract')
     complaints = db.relationship('Complaint', back_populates='contract')
@@ -187,29 +186,12 @@ class Milestone(db.Model, SerializerMixin):
     completed = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
     weight = db.Column(db.Numeric)
+    file_url = db.Column(db.Text)
 
     contract = db.relationship('Contract', back_populates='milestones')
 
     def __repr__(self):
         return f'<Milestone {self.id}: {self.title}>'
-
-
-class Deliverable(db.Model, SerializerMixin):
-    __tablename__ = 'deliverables'
-    
-    serialize_rules = ('-contract.deliverables',)
-
-    id = db.Column(db.Integer, primary_key=True)
-    contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
-    uploader_id = db.Column(db.Integer)
-    file_url = db.Column(db.Text)
-    description = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
-    contract = db.relationship('Contract', back_populates='deliverables')
-
-    def __repr__(self):
-        return f'<Deliverable {self.id}: Contract {self.contract_id}>'
 
 
 class Payment(db.Model, SerializerMixin):

@@ -180,7 +180,8 @@ def seed_database():
                     description=fake.text(max_nb_chars=150),
                     due_date=fake.date_between(start_date='today', end_date='+2m'),
                     completed=random.choice([True, False]),
-                    weight=round(random.uniform(0.1, 0.4), 2)
+                    weight=round(random.uniform(0.1, 0.4), 2),
+                    file_url=fake.url() if random.choice([True, False]) else None
                 )
                 db.session.add(milestone)
         

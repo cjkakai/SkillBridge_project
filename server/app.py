@@ -3,7 +3,7 @@ from flask_restful import Resource
 from config import db, bcrypt, api , app
 from models import (
     Client, Freelancer, Admin, Task, Application, Contract, 
-    Milestone, Deliverable, Payment, Review, Complaint, 
+    Milestone, Payment, Review, Complaint, 
     AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
 )
 
@@ -147,16 +147,16 @@ class ContractResource(Resource):
     def get(self, contract_id=None):
         if contract_id:
             contract = Contract.query.get_or_404(contract_id)
-            return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 200)
+            return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 200)
         contracts = Contract.query.all()
-        return make_response([contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)) for contract in contracts], 200)
+        return make_response([contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)) for contract in contracts], 200)
     
     def post(self):
         data = request.get_json()
         contract = Contract(**data)
         db.session.add(contract)
         db.session.commit()
-        return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 201)
+        return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 201)
     
     def put(self, contract_id):
         contract = Contract.query.get_or_404(contract_id)
@@ -164,7 +164,7 @@ class ContractResource(Resource):
         for key, value in data.items():
             setattr(contract, key, value)
         db.session.commit()
-        return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-deliverables.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 200)
+        return make_response(contract.to_dict(rules=('-task.contract', '-client.contracts', '-freelancer.contracts', '-milestones.contract', '-payments.contract', '-reviews.contract', '-complaints.contract',)), 200)
 
 api.add_resource(ContractResource, '/api/contracts', '/api/contracts/<int:contract_id>')
 
@@ -243,6 +243,60 @@ class SkillResource(Resource):
         return make_response(skill.to_dict(), 201)
 
 api.add_resource(SkillResource, '/api/skills', '/api/skills/<int:skill_id>')
+#FREELANCER SIDE ROUTES
+class FreelancerContractsResource(Resource):
+    def get(self, freelancer_id):
+        contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
+        result = []
+        for contract in contracts:
+            contract_data = contract.to_dict(rules=('-client', '-freelancer', '-task',))
+            client = Client.query.get(contract.client_id)
+            contract_data['client'] = {
+                'id': client.id,
+                'name': client.name,
+                'bio': client.bio,
+                'contact': client.contact,
+                'email': client.email,
+                'image': client.image
+            }
+            result.append(contract_data)
+        return make_response(result, 200)
+#used by a freelancer to fetch all his/her contracts
+api.add_resource(FreelancerContractsResource, '/api/freelancers/<int:freelancer_id>/contracts')
+
+class FreelancerPaymentsResource(Resource):
+    def get(self, freelancer_id):
+        contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
+        contract_ids = [contract.id for contract in contracts]
+        payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
+        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
+#used by a freelancer to fetch all his/her payments
+api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
+
+class FreelancerClientMessagesResource(Resource):
+    def get(self, freelancer_id, client_id):
+        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+        messages = Message.query.filter_by(contract_id=contract.id).order_by(Message.created_at).all()
+        return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
+    
+    def post(self, freelancer_id, client_id):
+        data = request.get_json()
+        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+        message = Message(
+            contract_id=contract.id,
+            sender_id=freelancer_id,
+            receiver_id=client_id,
+            content=data['content']
+        )
+        db.session.add(message)
+        db.session.commit()
+        return make_response(message.to_dict(rules=('-contract',)), 201)
+#used by a freelancer to send and receive message from a client
+api.add_resource(FreelancerClientMessagesResource, '/api/freelancers/<int:freelancer_id>/clients/<int:client_id>/messages')
+
+
+
+
 
 #CLIENT SIDE ROUTES
 class ClientTasksResource(Resource):
@@ -272,6 +326,45 @@ class ClientContractsResource(Resource):
         return make_response(result, 200)
  # used by a client to view all their contracts
 api.add_resource(ClientContractsResource, '/api/clients/<int:client_id>/contracts')
+
+class ClientCreateContractResource(Resource):
+    def post(self, client_id):
+        data = request.get_json()
+        contract = Contract(
+            client_id=client_id,
+            task_id=data['task_id'],
+            freelancer_id=data['freelancer_id'],
+            agreed_amount=data['agreed_amount'],
+            contract_code=f"SK-{data.get('contract_code', '0000')}"
+        )
+        db.session.add(contract)
+        db.session.commit()
+        return make_response(contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',)), 201)
+
+api.add_resource(ClientCreateContractResource, '/api/clients/<int:client_id>/create-contract')
+
+class ContractMilestonesResource(Resource):
+    def post(self, contract_id):
+        from datetime import datetime
+        data = request.get_json()
+        
+        # Convert string date to date object
+        due_date = data.get('due_date')
+        if due_date and isinstance(due_date, str):
+            due_date = datetime.strptime(due_date, '%m-%d-%Y').date()
+        
+        milestone = Milestone(
+            contract_id=contract_id,
+            title=data['title'],
+            description=data.get('description'),
+            due_date=due_date,
+            weight=data.get('weight')
+        )
+        db.session.add(milestone)
+        db.session.commit()
+        return make_response(milestone.to_dict(rules=('-contract',)), 201)
+
+api.add_resource(ContractMilestonesResource, '/api/contracts/<int:contract_id>/milestones')
 
 class TaskApplicationsResource(Resource):
     def get(self, task_id):
