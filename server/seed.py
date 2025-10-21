@@ -52,10 +52,11 @@ def seed_database():
             clients.append(client)
             db.session.add(client)
         
-        # Create 15 freelancers
+        # Create 15 freelancers with IDs starting from 1000
         freelancers = []
         for i in range(15):
             freelancer = Freelancer(
+                id=1000 + i,
                 name=fake.name(),
                 email=fake.email(),
                 bio=fake.text(max_nb_chars=300),
