@@ -26,7 +26,7 @@ class ClientResource(Resource):
         db.session.add(client)
         db.session.commit()
         return make_response(client.to_dict(rules=('-_password_hash', '-tasks.client', '-contracts.client',)), 201)
-    
+    #Used by a client to update their profile
     def put(self, client_id):
         client = Client.query.get_or_404(client_id)
         data = request.get_json()
@@ -36,8 +36,9 @@ class ClientResource(Resource):
         if password:
             client.password_hash = password
         db.session.commit()
-        return make_response(client.to_dict(rules=('-_password_hash', '-tasks.client', '-contracts.client',)), 200)
+        return make_response(client.to_dict(rules=('-_password_hash', '-tasks', '-contracts',)), 200)
     
+    # Used by an admin to remove a particular client
     def delete(self, client_id):
         client = Client.query.get_or_404(client_id)
         db.session.delete(client)
@@ -86,12 +87,25 @@ class TaskResource(Resource):
         tasks = Task.query.all()
         return make_response([task.to_dict(rules=('-client.tasks', '-applications.task', '-contract.task',)) for task in tasks], 200)
     
+    # used by a client to create a new task
     def post(self):
+        from datetime import datetime
         data = request.get_json()
+        
+        # Convert required_skills list to string
+        if 'required_skills' in data and isinstance(data['required_skills'], list):
+            data['required_skills'] = ', '.join(data['required_skills'])
+        
+        # Convert string dates to date objects
+        if 'deadline' in data and isinstance(data['deadline'], str):
+            data['deadline'] = datetime.fromisoformat(data['deadline'].replace('Z', '+00:00')).date()
+        if 'created_at' in data and isinstance(data['created_at'], str):
+            data['created_at'] = datetime.fromisoformat(data['created_at'].replace('Z', '+00:00'))
+        
         task = Task(**data)
         db.session.add(task)
         db.session.commit()
-        return make_response(task.to_dict(rules=('-client.tasks', '-applications.task', '-contract.task',)), 201)
+        return make_response(task.to_dict(rules=('-client', '-applications', '-contract',)), 201)
     
     def put(self, task_id):
         task = Task.query.get_or_404(task_id)
@@ -118,6 +132,7 @@ class ApplicationResource(Resource):
         db.session.commit()
         return make_response(application.to_dict(rules=('-task.applications', '-freelancer.applications',)), 201)
     
+    # can be used by a client to reject a bid(changing status to rejected)
     def put(self, application_id):
         application = Application.query.get_or_404(application_id)
         data = request.get_json()
@@ -192,7 +207,7 @@ class PaymentResource(Resource):
         db.session.add(payment)
         db.session.commit()
         return make_response(payment.to_dict(rules=('-contract.payments',)), 201)
-
+# used by a client to view/access all
 api.add_resource(PaymentResource, '/api/payments', '/api/payments/<int:payment_id>')
 
 class ReviewResource(Resource):
@@ -229,12 +244,85 @@ class SkillResource(Resource):
 
 api.add_resource(SkillResource, '/api/skills', '/api/skills/<int:skill_id>')
 
+#CLIENT SIDE ROUTES
 class ClientTasksResource(Resource):
     def get(self, client_id):
         tasks = Task.query.filter_by(client_id=client_id).all()
-        return make_response([task.to_dict(rules=('-client.tasks', '-applications.task', '-contract.task',)) for task in tasks], 200)
-
+        return make_response([task.to_dict(rules=('-client', '-applications', '-contract',)) for task in tasks], 200)
+# used by a client to view all their jobs/tasks
 api.add_resource(ClientTasksResource, '/api/clients/<int:client_id>/tasks')
+
+class ClientContractsResource(Resource):
+    def get(self, client_id):
+        contracts = Contract.query.filter_by(client_id=client_id).all()
+        result = []
+        for contract in contracts:
+            contract_data = contract.to_dict(rules=('-client', '-freelancer', '-task',))
+            freelancer = Freelancer.query.get(contract.freelancer_id)
+            contract_data['freelancer'] = {
+                'id': freelancer.id,
+                'name': freelancer.name,
+                'bio': freelancer.bio,
+                'contact': freelancer.contact,
+                'email': freelancer.email,
+                'image': freelancer.image,
+                'ratings': freelancer.ratings
+            }
+            result.append(contract_data)
+        return make_response(result, 200)
+ # used by a client to view all their contracts
+api.add_resource(ClientContractsResource, '/api/clients/<int:client_id>/contracts')
+
+class TaskApplicationsResource(Resource):
+    def get(self, task_id):
+        applications = Application.query.filter_by(task_id=task_id).all()
+        result = []
+        for app in applications:
+            freelancer = Freelancer.query.get(app.freelancer_id)
+            app_data = {
+                'id': app.id,
+                'cover_letter': app.cover_letter,
+                'bid_amount': app.bid_amount,
+                'estimated_days': app.estimated_days,
+                'status': app.status,
+                'created_at': app.created_at,
+                'freelancer': {
+                    'id': freelancer.id,
+                    'name': freelancer.name,
+                    'bio': freelancer.bio,
+                    'contact': freelancer.contact,
+                    'email': freelancer.email,
+                    'image': freelancer.image,
+                    'ratings': freelancer.ratings
+                }
+            }
+            result.append(app_data)
+        return make_response(result, 200)
+#used by a client to view all the applicants to a task
+api.add_resource(TaskApplicationsResource, '/api/tasks/<int:task_id>/applications')
+
+class FreelancerExperienceResource(Resource):
+    def get(self, freelancer_id):
+        experiences = FreelancerExperience.query.filter_by(freelancer_id=freelancer_id).all()
+        return make_response([exp.to_dict(rules=('-freelancer',)) for exp in experiences], 200)
+#used by a client to view the experiences of a freelancer
+api.add_resource(FreelancerExperienceResource, '/api/freelancers/<int:freelancer_id>/experience')
+
+class ClientFreelancersResource(Resource):
+    def get(self, client_id):
+        contracts = Contract.query.filter_by(client_id=client_id).all()
+        freelancer_ids = list(set([contract.freelancer_id for contract in contracts]))
+        freelancers = [Freelancer.query.get(fid) for fid in freelancer_ids]
+        return make_response([freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences')) for freelancer in freelancers], 200)
+# used by a client to get all freelancers he/she has a contract with
+api.add_resource(ClientFreelancersResource, '/api/clients/<int:client_id>/freelancers')
+
+class ClientPaymentsResource(Resource):
+    def get(self, client_id):
+        payments = Payment.query.filter_by(payer_id=client_id).all()
+        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
+#used by a client to access all his/her payments
+api.add_resource(ClientPaymentsResource, '/api/clients/<int:client_id>/payments')
 
 # Register API routes
 

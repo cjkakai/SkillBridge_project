@@ -59,7 +59,6 @@ def seed_database():
                 name=fake.name(),
                 email=fake.email(),
                 bio=fake.text(max_nb_chars=300),
-                skills=", ".join(random.sample(skills_data, random.randint(3, 6))),
                 contact=fake.phone_number(),
                 ratings=round(random.uniform(3.5, 5.0), 1),
                 image=fake.image_url()
@@ -109,7 +108,6 @@ def seed_database():
                     client_id=client.id,
                     title=fake.catch_phrase(),
                     description=fake.text(max_nb_chars=500),
-                    required_skills=", ".join(random.sample(skills_data, random.randint(2, 4))),
                     budget_min=random.randint(500, 2000),
                     budget_max=random.randint(2500, 10000),
                     deadline=fake.date_between(start_date='today', end_date='+3m'),
@@ -122,15 +120,13 @@ def seed_database():
         
         # Create task skills relationships
         for task in tasks:
-            task_skills = task.required_skills.split(", ")
-            for skill_name in task_skills:
-                skill = next((s for s in skills if s.name == skill_name), None)
-                if skill:
-                    task_skill = TaskSkill(
-                        task_id=task.id,
-                        skill_id=skill.id
-                    )
-                    db.session.add(task_skill)
+            selected_skills = random.sample(skills, random.randint(2, 4))
+            for skill in selected_skills:
+                task_skill = TaskSkill(
+                    task_id=task.id,
+                    skill_id=skill.id
+                )
+                db.session.add(task_skill)
         
         # Create applications
         applications = []
