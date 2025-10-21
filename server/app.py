@@ -4,7 +4,7 @@ from config import db, bcrypt, api , app
 from models import (
     Client, Freelancer, Admin, Task, Application, Contract, 
     Milestone, Deliverable, Payment, Review, Complaint, 
-    AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience
+    AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
 )
 
 # Authentication Resources
@@ -197,17 +197,17 @@ class PaymentResource(Resource):
     def get(self, payment_id=None):
         if payment_id:
             payment = Payment.query.get_or_404(payment_id)
-            return make_response(payment.to_dict(rules=('-contract.payments',)), 200)
+            return make_response(payment.to_dict(rules=('-contract',)), 200)
         payments = Payment.query.all()
-        return make_response([payment.to_dict(rules=('-contract.payments',)) for payment in payments], 200)
+        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
     
     def post(self):
         data = request.get_json()
         payment = Payment(**data)
         db.session.add(payment)
         db.session.commit()
-        return make_response(payment.to_dict(rules=('-contract.payments',)), 201)
-# used by a client to view/access all
+        return make_response(payment.to_dict(rules=('-contract',)), 201)
+# used by a client to view/access all his payments
 api.add_resource(PaymentResource, '/api/payments', '/api/payments/<int:payment_id>')
 
 class ReviewResource(Resource):
@@ -319,10 +319,33 @@ api.add_resource(ClientFreelancersResource, '/api/clients/<int:client_id>/freela
 
 class ClientPaymentsResource(Resource):
     def get(self, client_id):
-        payments = Payment.query.filter_by(payer_id=client_id).all()
+        contracts = Contract.query.filter_by(client_id=client_id).all()
+        contract_ids = [contract.id for contract in contracts]
+        payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
         return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
 #used by a client to access all his/her payments
 api.add_resource(ClientPaymentsResource, '/api/clients/<int:client_id>/payments')
+
+class ClientFreelancerMessagesResource(Resource):
+    def get(self, client_id, freelancer_id):
+        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+        messages = Message.query.filter_by(contract_id=contract.id).order_by(Message.created_at).all()
+        return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
+    
+    def post(self, client_id, freelancer_id):
+        data = request.get_json()
+        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+        message = Message(
+            contract_id=contract.id,
+            sender_id=client_id,
+            receiver_id=freelancer_id,
+            content=data['content']
+        )
+        db.session.add(message)
+        db.session.commit()
+        return make_response(message.to_dict(rules=('-contract',)), 201)
+#used by a client to access all the messages from a particular freelancer and to post a message to a freelancer
+api.add_resource(ClientFreelancerMessagesResource, '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages')
 
 # Register API routes
 
