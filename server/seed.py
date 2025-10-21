@@ -38,31 +38,47 @@ def seed_database():
             admins.append(admin)
             db.session.add(admin)
         
-        # Create 10 clients
+        # Create 15 clients
+        client_images = [
+            "https://img.freepik.com/free-vector/bird-colorful-logo-gradient-vector_343694-1365.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://static.free-logo-design.net/uploads/2020/06/free-falcon-logo-design.jpg",
+            "https://img.freepik.com/free-vector/abstract-logo-flame-shape_1043-44.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://img.freepik.com/free-vector/bird-colorful-gradient-design-vector_343694-2506.jpg",
+            "https://media.istockphoto.com/id/1399318216/vector/round-icon-spartan-helmet.jpg?s=612x612&w=0&k=20&c=PWKk1b8Xm7THDlgYS_9qyi3ShUxL3VGtaEVJK0wgGF0="
+        ]
+        
         clients = []
-        for i in range(10):
+        for i in range(15):
             client = Client(
                 name=fake.company(),
                 email=fake.email(),
                 bio=fake.text(max_nb_chars=200),
-                contact=fake.phone_number(),
-                image=fake.image_url()
+                contact=f"07{fake.random_int(min=10000000, max=99999999)}",
+                image=random.choice(client_images)
             )
             client.password_hash = "client"
             clients.append(client)
             db.session.add(client)
         
-        # Create 15 freelancers with IDs starting from 1000
+        # Create 30 freelancers with IDs starting from 1000
+        freelancer_images = [
+            "https://www.shutterstock.com/image-photo/portrait-african-man-260nw-156307685.jpg",
+            "https://cdn.pixabay.com/photo/2022/08/20/11/59/african-man-7398921_960_720.jpg",
+            "https://t3.ftcdn.net/jpg/03/91/34/72/360_F_391347204_XaDg0S7PtbzJRoeow3yWO1vK4pnqBVQY.jpg",
+            "https://img.freepik.com/free-photo/african-woman-posing-looking-up_23-2148747978.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://img.freepik.com/free-photo/confident-african-businesswoman-smiling-closeup-portrait-jobs-career-campaign_53876-143280.jpg?semt=ais_hybrid&w=740&q=80"
+        ]
+        
         freelancers = []
-        for i in range(15):
+        for i in range(30):
             freelancer = Freelancer(
                 id=1000 + i,
                 name=fake.name(),
                 email=fake.email(),
                 bio=fake.text(max_nb_chars=300),
-                contact=fake.phone_number(),
+                contact=f"07{fake.random_int(min=10000000, max=99999999)}",
                 ratings=round(random.uniform(3.5, 5.0), 1),
-                image=fake.image_url()
+                image=random.choice(freelancer_images)
             )
             freelancer.password_hash = "freelancer"
             freelancers.append(freelancer)
