@@ -342,7 +342,14 @@ api.add_resource(AdminComplaintResource, '/api/admin/complaints', '/api/admin/co
 class ClientTasksResource(Resource):
     def get(self, client_id):
         tasks = Task.query.filter_by(client_id=client_id).all()
-        return make_response([task.to_dict(rules=('-client', '-applications', '-contract',)) for task in tasks], 200)
+        result = []
+        for task in tasks:
+            task_data = task.to_dict(rules=('-client', '-applications', '-contract','-task_skills',))
+            task_skills = TaskSkill.query.filter_by(task_id=task.id).all()
+            skills = [Skill.query.get(ts.skill_id) for ts in task_skills]
+            task_data['skills'] = [skill.to_dict() for skill in skills if skill]
+            result.append(task_data)
+        return make_response(result, 200)
 # used by a client to view all their jobs/tasks
 api.add_resource(ClientTasksResource, '/api/clients/<int:client_id>/tasks')
 

@@ -128,7 +128,7 @@ def seed_database():
                     budget_min=random.randint(500, 2000),
                     budget_max=random.randint(2500, 10000),
                     deadline=fake.date_between(start_date='today', end_date='+3m'),
-                    status=random.choice(['open', 'in_progress', 'completed', 'cancelled'])
+                    status=random.choice(['open', 'in_progress', 'completed'])
                 )
                 tasks.append(task)
                 db.session.add(task)

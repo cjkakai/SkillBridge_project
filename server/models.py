@@ -38,7 +38,7 @@ class Client(db.Model, SerializerMixin):
 
 class Freelancer(db.Model, SerializerMixin):
     __tablename__ = 'freelancers'
-    
+
     serialize_rules = ('-_password_hash', '-applications.freelancer', '-contracts.freelancer', '-experiences.freelancer')
 
     id = db.Column(db.Integer, primary_key=True)
@@ -103,7 +103,7 @@ class Admin(db.Model, SerializerMixin):
 
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
-    
+
     serialize_rules = ('-client.tasks', '-applications.task', '-contract.task')
 
     id = db.Column(db.Integer, primary_key=True)
@@ -279,7 +279,7 @@ class AuditLog(db.Model, SerializerMixin):
 
 class Skill(db.Model, SerializerMixin):
     __tablename__ = 'skills'
-    
+
     serialize_rules = ()
 
     id = db.Column(db.Integer, primary_key=True)
@@ -291,7 +291,7 @@ class Skill(db.Model, SerializerMixin):
 
 class FreelancerSkill(db.Model, SerializerMixin):
     __tablename__ = 'freelancer_skills'
-    
+
     serialize_rules = ()
 
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'), primary_key=True)
@@ -306,7 +306,7 @@ class FreelancerSkill(db.Model, SerializerMixin):
 
 class TaskSkill(db.Model, SerializerMixin):
     __tablename__ = 'task_skills'
-    
+
     serialize_rules = ()
 
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'), primary_key=True)
