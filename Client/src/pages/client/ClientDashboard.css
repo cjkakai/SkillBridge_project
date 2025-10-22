@@ -186,6 +186,7 @@
 /* Task Card Styles */
 .task-card {
   background-color: white;
+  border: 2px solid #e9ecef;
   border-radius: 8px;
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -273,9 +274,15 @@
   font-weight: 500;
 }
 
-.tasks-section {
+.content-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
   margin-bottom: 20px;
-  width: 50%;
+}
+
+.tasks-section, .notifications-section {
+  height: fit-content;
 }
 
 .tasks-header {
@@ -290,8 +297,120 @@
   display: flex;
   flex-direction: column;
   gap: 20px;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  background: white;
   border: 2px solid #dee2e6;
   border-radius: 12px;
   padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Freelancers Section Styles */
+.freelancers-section {
+  height: fit-content;
+}
+
+.freelancers-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  background: white;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.freelancers-header {
+  margin: 0 0 20px 0;
+  color: #0A1F44;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.freelancers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+.freelancer-card {
+  background-color: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.freelancer-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.freelancer-name {
+  margin: 0 0 16px 0;
+  color: #0A1F44;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.freelancer-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 16px;
+  display: block;
+}
+
+.freelancer-rating {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.rating-text {
+  color: #6B7A99;
+  margin-left: 4px;
+}
+
+.freelancer-contact {
+  color: #6B7A99;
+  margin: 0 0 4px 0;
+  font-size: 14px;
+}
+
+.freelancer-email {
+  color: #6B7A99;
+  margin: 0 0 8px 0;
+  font-size: 14px;
+}
+
+.freelancer-skills {
+  color: #6B7A99;
+  margin: 0 0 16px 0;
+  font-size: 14px;
+}
+
+.view-contract-btn {
+  background-color: #4169E1;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  width: auto;
+  align-self: center;
+}
+
+.view-contract-btn:hover {
+  background-color: #3658C7;
 }

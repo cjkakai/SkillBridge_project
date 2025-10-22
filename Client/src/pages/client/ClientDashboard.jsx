@@ -1,16 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText } from 'lucide-react';
 import TaskCard from './TaskCard';
+import FreelancerCard from './FreelancerCard';
 import './ClientDashboard.css';
 
 const ClientDashboard = () => {
   const [tasks, setTasks] = useState([]);
+  const [freelancers, setFreelancers]= useState([])
   const [loading, setLoading] = useState(true);
+  const[freelancerLoading, setFreelancerLoading]= useState(false)
   const[clientName, setClientName]= useState("")
-  const clientId = 2; // Hardcoded for now, should come from auth context
+  const clientId = 1; // Hardcoded for now, should come from auth context
 
   useEffect(() => {
     fetchTasks();
+    fetchFreelancers();
   }, []);
   
   useEffect(()=>{
@@ -28,7 +32,6 @@ const ClientDashboard = () => {
       const response = await fetch(`/api/clients/${clientId}/tasks`);
       if (response.ok) {
         const data = await response.json();
-        console.log(data);
         setTasks(data);
       }
     } catch (error) {
@@ -37,6 +40,21 @@ const ClientDashboard = () => {
       setLoading(false);
     }
   };
+
+  const fetchFreelancers= async () =>{
+   try{
+    const response= await fetch(`/api/clients/${clientId}/freelancers`);
+    if(response.ok) {
+      const data= await response.json();
+      console.log(data);
+      setFreelancers(data);
+    }
+    } catch(error) {
+     console.error('Error Fetching your freelancers', error);
+    } finally{
+      setFreelancerLoading(false)
+    }
+  }
 
   return (
     <div className="dashboard-container">
@@ -86,50 +104,33 @@ const ClientDashboard = () => {
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-header">
-              <Briefcase size={24} className="stat-icon blue" />
-              <h3>Active Projects</h3>
+              <Users size={24} className="stat-icon blue" />
+              <h3>Freelancers Hired</h3>
             </div>
-            <div className="stat-number">5</div>
+            <div className="stat-number">{freelancers.length}</div>
           </div>
           <div className="stat-card">
             <div className="stat-header">
-              <CheckCircle size={24} className="stat-icon green" />
-              <h3>Completed Tasks</h3>
-            </div>
-            <div className="stat-number">23</div>
-          </div>
-          <div className="stat-card">
-            <div className="stat-header">
-              <DollarSign size={24} className="stat-icon orange" />
+              <DollarSign size={24} className="stat-icon green" />
               <h3>Total Spent</h3>
             </div>
-            <div className="stat-number">$2,450</div>
+            <div className="stat-number">$12,450</div>
           </div>
           <div className="stat-card">
             <div className="stat-header">
-              <Mail size={24} className="stat-icon blue" />
+              <Mail size={24} className="stat-icon orange" />
               <h3>Messages</h3>
             </div>
-            <div className="stat-number">12</div>
+            <div className="stat-number">24</div>
+          </div>
+          <div className="stat-card">
+            <div className="stat-header">
+              <Briefcase size={24} className="stat-icon blue" />
+              <h3>Active Contracts</h3>
+            </div>
+            <div className="stat-number">3</div>
           </div>
         </div>
-
-        {/* My Tasks */}
-        <div className="tasks-section">
-          {loading ? (
-            <p>Loading tasks...</p>
-          ) : tasks.length > 0 ? (
-            <div className="tasks-container">
-              <h2 className="tasks-header">Your Jobs</h2>
-              {tasks.map((task) => (
-                <TaskCard key={task.id} task={task} />
-              ))}
-            </div>
-          ) : (
-            <p>No tasks found. Create your first task!</p>
-          )}
-        </div>
-
 
         {/* Notifications */}
         <div className="notifications-section">
@@ -147,6 +148,43 @@ const ClientDashboard = () => {
               <p>Freelancer submitted final deliverables</p>
               <span>3 days ago</span>
             </div>
+          </div>
+        </div>
+
+        {/* Tasks and Freelancers Side by Side */}
+        <div className="content-grid">
+          {/* My Tasks */}
+          <div className="tasks-section">
+            {loading ? (
+              <p>Loading tasks...</p>
+            ) : tasks.length > 0 ? (
+              <div className="tasks-container">
+                <h2 className="tasks-header">Your Tasks</h2>
+                {tasks.map((task) => (
+                  <TaskCard key={task.id} task={task} />
+                ))}
+              </div>
+            ) : (
+              <p>No tasks found. Create your first task!</p>
+            )}
+          </div>
+
+          {/* Your Freelancers */}
+          <div className="freelancers-section">
+            {freelancerLoading ? (
+              <p>Loading freelancers...</p>
+            ) : freelancers.length > 0 ? (
+              <div className="freelancers-container">
+                <h2 className="freelancers-header">Your Freelancers</h2>
+                <div className="freelancers-grid">
+                  {freelancers.map((freelancer) => (
+                    <FreelancerCard key={freelancer.id} freelancer={freelancer} />
+                  ))}
+                </div>
+              </div>
+            ) : (
+              <p>No freelancers found.</p>
+            )}
           </div>
         </div>
       </div>
