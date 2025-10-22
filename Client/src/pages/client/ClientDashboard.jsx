@@ -1,27 +1,39 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText } from 'lucide-react';
 import TaskCard from './TaskCard';
 import FreelancerCard from './FreelancerCard';
 import './ClientDashboard.css';
 
 const ClientDashboard = () => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [freelancers, setFreelancers]= useState([])
   const [loading, setLoading] = useState(true);
   const[freelancerLoading, setFreelancerLoading]= useState(false)
   const[clientName, setClientName]= useState("")
-  const clientId = 1; // Hardcoded for now, should come from auth context
+  const [clientImage, setClientImage] = useState("");
+  const [totalSpent, setTotalSpent] = useState(0);
+  const[contractNumber, setContractNumber]= useState(0)
+  const [unreadMessages, setUnreadMessages] = useState(0);
+  const clientId = 2; // Hardcoded for now, should come from auth context
 
   useEffect(() => {
     fetchTasks();
     fetchFreelancers();
+    fetchTotalSpent();
+    fetchActiveContracts();
+    fetchUnreadMessages();
+
   }, []);
   
   useEffect(()=>{
     fetch(`/api/clients/${clientId}`).
     then((response)=>response.json()).
     then((data)=>{
+      console.log(data)
       setClientName(data.name)
+      setClientImage(data.image)
     })
   }, [])
   console.log(clientName)
@@ -46,13 +58,68 @@ const ClientDashboard = () => {
     const response= await fetch(`/api/clients/${clientId}/freelancers`);
     if(response.ok) {
       const data= await response.json();
-      console.log(data);
       setFreelancers(data);
     }
     } catch(error) {
      console.error('Error Fetching your freelancers', error);
     } finally{
       setFreelancerLoading(false)
+    }
+  }
+  
+  const fetchActiveContracts = async () =>{
+   try{
+    const response= await fetch(`/api/clients/${clientId}/contracts`);
+    if(response.ok){
+      const contracts= await response.json();
+      console.log(contracts)
+      setContractNumber(contracts.length)
+    }
+   }catch(error){
+    console.error('Error Fetching your freelancers', error);
+   }
+  }
+
+  const fetchTotalSpent = async () => {
+    try {
+      const response = await fetch(`/api/clients/${clientId}/payments`);
+      if (response.ok) {
+        const payments = await response.json();
+        const total = payments.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0);
+        setTotalSpent(total);
+      }
+    } catch (error) {
+      console.error('Error fetching total spent:', error);
+    }
+  }
+
+  const fetchUnreadMessages = async () => {
+    try {
+      // First get all contracts for this client
+      const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`);
+      if (contractsResponse.ok) {
+        const contracts = await contractsResponse.json();
+
+        let unreadCount = 0;
+
+        // For each contract, get messages and filter
+        for (const contract of contracts) {
+          const freelancerId = contract.freelancer.id;
+          const messagesResponse = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
+          if (messagesResponse.ok) {
+            const messages = await messagesResponse.json();
+            // Filter messages where client is receiver (not sender) and is_read is false
+            const unreadReceivedMessages = messages.filter(message =>
+              message.receiver_id === clientId && message.is_read === false
+            );
+            unreadCount += unreadReceivedMessages.length;
+          }
+        }
+
+        setUnreadMessages(unreadCount);
+      }
+    } catch (error) {
+      console.error('Error fetching unread messages:', error);
     }
   }
 
@@ -68,7 +135,7 @@ const ClientDashboard = () => {
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/client-contracts')}>
             <Briefcase size={20} />
             <span>My Contracts</span>
           </div>
@@ -91,8 +158,15 @@ const ClientDashboard = () => {
       <div className="main-content">
         <div className="dashboard-header">
           <div className="welcome-section">
-            <h1>Welcome back,{clientName}</h1>
-            <p>Here's what's happening with your projects today.</p>
+            <img
+              src={clientImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
+              alt="Client profile"
+              className="welcome-profile-image"
+            />
+            <div className="welcome-content">
+              <h1>Welcome back,{clientName}</h1>
+              <p>Here is what is going on today</p>
+            </div>
           </div>
           <button className="post-job-btn">
             <Plus size={20} />
@@ -114,21 +188,21 @@ const ClientDashboard = () => {
               <DollarSign size={24} className="stat-icon green" />
               <h3>Total Spent</h3>
             </div>
-            <div className="stat-number">$12,450</div>
+            <div className="stat-number">ksh {totalSpent.toFixed(2)}</div>
           </div>
           <div className="stat-card">
             <div className="stat-header">
               <Mail size={24} className="stat-icon orange" />
-              <h3>Messages</h3>
+              <h3>New Messages</h3>
             </div>
-            <div className="stat-number">24</div>
+            <div className="stat-number">{unreadMessages}</div>
           </div>
           <div className="stat-card">
             <div className="stat-header">
               <Briefcase size={24} className="stat-icon blue" />
               <h3>Active Contracts</h3>
             </div>
-            <div className="stat-number">3</div>
+            <div className="stat-number">{contractNumber}</div>
           </div>
         </div>
 

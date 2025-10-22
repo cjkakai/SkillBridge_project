@@ -46,6 +46,20 @@
   font-size: 16px;
 }
 
+.sidebar-profile {
+  padding: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.sidebar-profile-image {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(255, 255, 255, 0.2);
+}
+
 .main-content {
   flex: 1;
   background-color: #E6F0FF;
@@ -60,17 +74,29 @@
 }
 .welcome-section{
   background-color: #E6F0FF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
-.welcome-section h1 {
+
+.welcome-content h1 {
   margin: 0 0 10px 0;
   font-size: 25px;
   color: #0A1F44;
 }
 
-.welcome-section p {
+.welcome-content p {
   color: #6B7A99;
   margin: 0;
   font-size: 16px;
+}
+
+.welcome-profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #2F80ED;
 }
 
 .post-job-btn {
@@ -303,6 +329,7 @@
   padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
+
 
 /* Freelancers Section Styles */
 .freelancers-section {

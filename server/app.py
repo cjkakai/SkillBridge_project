@@ -389,14 +389,19 @@ class ClientContractsResource(Resource):
         for contract in contracts:
             contract_data = contract.to_dict(rules=('-client', '-freelancer', '-task',))
             freelancer = Freelancer.query.get(contract.freelancer_id)
+            task = Task.query.get(contract.task_id)
             contract_data['freelancer'] = {
                 'id': freelancer.id,
                 'name': freelancer.name,
-                'bio': freelancer.bio,
                 'contact': freelancer.contact,
                 'email': freelancer.email,
-                'image': freelancer.image,
-                'ratings': freelancer.ratings
+                'image': freelancer.image
+            }
+            contract_data['task'] = {
+                'id': task.id,
+                'title': task.title,
+                'description': task.description,
+                'deadline': task.deadline.isoformat() if task.deadline else None
             }
             result.append(contract_data)
         return make_response(result, 200)

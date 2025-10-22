@@ -1,0 +1,241 @@
+/* Contract Card Styles */
+.contract-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  color: #0A1F44;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.contract-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.contract-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: #28a745;
+  color: white;
+}
+
+.status-badge.completed {
+  background: #007bff;
+  color: white;
+}
+
+.contract-task {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.contract-task h4 {
+  margin: 0 0 12px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.task-info h5 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.task-info p {
+  margin: 0 0 12px 0;
+  color: #6B7A99;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.task-deadline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #FF6B6B;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.contract-freelancer {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.freelancer-avatar {
+  flex-shrink: 0;
+}
+
+.freelancer-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  object-fit: cover;
+}
+
+.freelancer-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.freelancer-info p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.freelancer-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.contract-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.contract-contact {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-label {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.contract-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.view-details-btn, .message-btn {
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.view-details-btn {
+  background: linear-gradient(45deg, #FF6B6B, #FFA500);
+  color: white;
+}
+
+.view-details-btn:hover {
+  background: linear-gradient(45deg, #FF5252, #FF8C00);
+  transform: translateY(-1px);
+}
+
+.message-btn {
+  background: linear-gradient(45deg, #FF6B6B, #FFA500);
+  color: white;
+}
+
+.message-btn:hover {
+  background: linear-gradient(45deg, #FF5252, #FF8C00);
+  transform: translateY(-1px);
+}
+
+.search-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+}
+
+.contracts-section {
+  margin-top: 30px;
+}
+
+.contracts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+}

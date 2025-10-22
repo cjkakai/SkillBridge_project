@@ -23,7 +23,7 @@ const FreelancerCard = ({ freelancer }) => {
     <div className="freelancer-card">
       <h3 className="freelancer-name">{freelancer.name}</h3>
       <img
-        src={freelancer.image || '/default-avatar.png'}
+        src={freelancer.image || 'https://www.shutterstock.com/image-vector/freelancer-avatar-icon-260nw-206186656.jpg'}
         alt={`${freelancer.name} avatar`}
         className="freelancer-image"
       />
@@ -33,7 +33,6 @@ const FreelancerCard = ({ freelancer }) => {
       </div>
       <p className="freelancer-contact">Contact: {freelancer.contact || 'N/A'}</p>
       <p className="freelancer-email">Email: {freelancer.email || 'N/A'}</p>
-      <p className="freelancer-skills">{freelancer.skills ? freelancer.skills.join(', ') : 'No skills listed'}</p>
       <button className="view-contract-btn">View Contract</button>
     </div>
   );
