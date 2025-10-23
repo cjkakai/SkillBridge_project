@@ -13,7 +13,7 @@ const ClientContracts = () => {
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const clientId = 2; // Should come from auth context
+  const clientId = 6; // Should come from auth context
 
   useEffect(() => {
     fetchContracts();
@@ -42,6 +42,7 @@ const ClientContracts = () => {
       const response = await fetch(`/api/clients/${clientId}/contracts`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data);
         setContracts(data);
       }
     } catch (error) {

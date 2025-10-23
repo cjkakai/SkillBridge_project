@@ -71,7 +71,7 @@ const ContractCard = ({ contract }) => {
         </div>
         <div className="detail-item">
           <Calendar size={16} />
-          <span>Created: {formatDate(contract.created_at)}</span>
+          <span>Created: {formatDate(contract.started_at)}</span>
         </div>
       </div>
 

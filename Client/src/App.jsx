@@ -1,3 +1,5 @@
+
+
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ClientRegister from './components/auth/ClientRegister';
@@ -6,6 +8,7 @@ import Login from './components/auth/Login';
 import RoleSelection from './components/auth/RoleSelection';
 import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
+import PostTask from './pages/client/PostTask';   
 import './App.css';
 
 function App() {
@@ -16,13 +19,14 @@ function App() {
           <Route path="/" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/client-register" element={<ClientRegister />} />
           <Route path="/freelancer-register" element={<FreelancerRegister />} />
-          <Route path="*" element={<Login />} />
         </Routes>
       </div>
     </Router>
+
   );
 }
 
