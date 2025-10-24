@@ -202,35 +202,6 @@ class FreelancerPaymentsResource(Resource):
         return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
 #used by a freelancer to fetch all his/her payments
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
-
-socketio.on('send_message')
-def handle_send_message(data):
-    client_id= data['client_id']
-    freelancer_id= data['freelancer_id']
-    content= data['content']
-    contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
-    if not contract:
-        emit('error', {'message': 'No contract found'})
-        return
-    message = Message(
-        contract_id=contract.id,
-        sender_id=client_id,
-        receiver_id=freelancer_id,
-        content=content
-    )
-    db.session.add(message)
-    db.session.commit()
-    room = f"chat_{client_id}_{freelancer_id}"
-    emit('receive_message', message.to_dict(rules=('-contract',)), room=room)
-
-@socketio.on('join_room')
-def on_join(data):
-    """When a client or freelancer joins a chat room."""
-    client_id = data['client_id']
-    freelancer_id = data['freelancer_id']
-    room = f"chat_{client_id}_{freelancer_id}"
-    join_room(room)
-    emit('joined_room', {'room': room})
     
 class FreelancerClientMessagesResource(Resource):
     def get(self, freelancer_id, client_id):
@@ -589,6 +560,36 @@ class ClientPaymentsResource(Resource):
 #used by a client to access all his/her payments
 api.add_resource(ClientPaymentsResource, '/api/clients/<int:client_id>/payments')
 
+#enable real-time sharing of messages between clients and freelancers
+socketio.on('send_message')
+def handle_send_message(data):
+    client_id= data['client_id']
+    freelancer_id= data['freelancer_id']
+    content= data['content']
+    contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+    if not contract:
+        emit('error', {'message': 'No contract found'})
+        return
+    message = Message(
+        contract_id=contract.id,
+        sender_id=client_id,
+        receiver_id=freelancer_id,
+        content=content
+    )
+    db.session.add(message)
+    db.session.commit()
+    room = f"chat_{client_id}_{freelancer_id}"
+    emit('receive_message', message.to_dict(rules=('-contract',)), room=room)
+
+@socketio.on('join_room')
+def on_join(data):
+    """When a client or freelancer joins a chat room."""
+    client_id = data['client_id']
+    freelancer_id = data['freelancer_id']
+    room = f"chat_{client_id}_{freelancer_id}"
+    join_room(room)
+    emit('joined_room', {'room': room})
+    
 class ClientFreelancerMessagesResource(Resource):
     def get(self, client_id, freelancer_id):
         contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()

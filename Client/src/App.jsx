@@ -9,6 +9,7 @@ import RoleSelection from './components/auth/RoleSelection';
 import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
 import EditContract from './pages/client/EditContract'
+import ClientMessages from './pages/client/ClientMessages'
 import PostTask from './pages/client/PostTask';
 import './App.css';
 
@@ -20,6 +21,7 @@ function App() {
           <Route path="/" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
+          <Route path="/client-messages" element={<ClientMessages />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />
