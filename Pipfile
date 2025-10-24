@@ -12,6 +12,7 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 sqlalchemy-serializer = "*"
 faker = "*"
+flask-socketio = "*"
 
 [dev-packages]
 

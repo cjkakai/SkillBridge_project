@@ -14,7 +14,7 @@ function PostTask() {
      title: "",
      description: "",
      requiredSkill: "",
-     skills: ["React", "Node.js"],
+     skills: [],
      minBudget: "500",
      maxBudget: "1000",
      deadline: "",
@@ -97,7 +97,7 @@ function PostTask() {
         }
       }
 
-      // Navigate to dashboard or show success message
+      // Navigate to dashboard
       alert('Task posted successfully!');
       navigate('/');
 

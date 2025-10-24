@@ -1,11 +1,14 @@
 from flask import Flask, request, jsonify, session, make_response
 from flask_restful import Resource
+from flask_socketio import SocketIO, emit, join_room
 from config import db, bcrypt, api , app
 from models import (
     Client, Freelancer, Admin, Task, Application, Contract, 
     Milestone, Payment, Review, Complaint, 
     AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
 )
+
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 #COMMON RESOURCES(SHARED BY DIFFERENT USERS)
 class ClientResource(Resource):
