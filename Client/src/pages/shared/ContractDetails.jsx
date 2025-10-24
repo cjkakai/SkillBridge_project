@@ -29,7 +29,7 @@ const ContractDetails = () => {
 
   const fetchContract = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts/${id}`);
+      const response = await fetch(`/api/contracts/${id}`);
       if (response.ok) {
         const data = await response.json();
         setContract(data);
@@ -203,6 +203,41 @@ const ContractDetails = () => {
                   <span>{contract.freelancer?.contact}</span>
                 </div>
               </div>
+            </div>
+
+            {/* Project Progress */}
+            <div className="contract-card">
+              <h3>Project Progress</h3>
+              <div className="progress-section">
+                <div className="progress-bar">
+                  <div 
+                    className="progress-fill" 
+                    style={{ width: `${contract.progress || 0}%` }}
+                  ></div>
+                </div>
+                <span className="progress-text">{contract.progress || 0}% Complete</span>
+              </div>
+              
+              {contract.milestones && contract.milestones.length > 0 && (
+                <div className="milestones-section">
+                  <h4>Milestones</h4>
+                  {contract.milestones.map((milestone, index) => (
+                    <div key={index} className="milestone-item">
+                      <div className="milestone-header">
+                        <span className="milestone-title">{milestone.title}</span>
+                        <span className={`milestone-status ${milestone.status?.toLowerCase()}`}>
+                          {milestone.status || 'Pending'}
+                        </span>
+                      </div>
+                      <p className="milestone-description">{milestone.description}</p>
+                      <div className="milestone-details">
+                        <span>Weight: {milestone.weight}%</span>
+                        <span>Due: {milestone.deadline ? formatDate(milestone.deadline) : 'Not set'}</span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         )}

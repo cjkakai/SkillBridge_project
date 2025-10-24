@@ -188,32 +188,32 @@
 }
 
 .view-details-btn {
-  background: linear-gradient(45deg, #FF6B6B, #FFA500);
+  background: #2F80ED;
   color: white;
 }
 
 .view-details-btn:hover {
-  background: linear-gradient(45deg, #FF5252, #FF8C00);
+  background: #1a6bd1;
   transform: translateY(-1px);
 }
 
 .message-btn {
-  background: linear-gradient(45deg, #FF6B6B, #FFA500);
+  background: #2F80ED;
   color: white;
 }
 
 .message-btn:hover {
-  background: linear-gradient(45deg, #FF5252, #FF8C00);
+  background: #1a6bd1;
   transform: translateY(-1px);
 }
 
 .edit-btn {
-  background: linear-gradient(45deg, #4169E1, #1E90FF);
+  background: #2F80ED;
   color: white;
 }
 
 .edit-btn:hover {
-  background: linear-gradient(45deg, #3658C7, #0066CC);
+  background: #1a6bd1;
   transform: translateY(-1px);
 }
 
@@ -307,7 +307,7 @@
 }
 
 .save-btn {
-  background: linear-gradient(45deg, #28a745, #20c997);
+  background: #2F80ED;
   color: white;
   padding: 14px 32px;
   border: none;
@@ -320,7 +320,7 @@
 }
 
 .save-btn:hover {
-  background: linear-gradient(45deg, #218838, #1aa085);
+  background: #1a6bd1;
   transform: translateY(-1px);
 }
 
@@ -385,4 +385,100 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
   gap: 24px;
+}
+
+/* Progress Section Styles */
+.progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: #E6F0FF;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #2F80ED;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0A1F44;
+}
+
+/* Milestones Section Styles */
+.milestones-section {
+  margin-top: 24px;
+}
+
+.milestones-section h4 {
+  margin-bottom: 16px;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.milestone-item {
+  background: #F8F9FA;
+  border: 1px solid #E6F0FF;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.milestone-title {
+  font-weight: 600;
+  color: #0A1F44;
+  font-size: 14px;
+}
+
+.milestone-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.milestone-status.completed {
+  background: #28a745;
+  color: white;
+}
+
+.milestone-status.in-progress {
+  background: #2F80ED;
+  color: white;
+}
+
+.milestone-status.pending {
+  background: #FFC107;
+  color: #0A1F44;
+}
+
+.milestone-description {
+  color: #6B7A99;
+  font-size: 14px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.milestone-details {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+  color: #A3B1C6;
 }

@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 
 const FreelancerCard = ({ freelancer }) => {
+  const navigate = useNavigate();
 
   const renderStars = (ratings) => {
     const stars = [];
@@ -33,7 +35,12 @@ const FreelancerCard = ({ freelancer }) => {
       </div>
       <p className="freelancer-contact">Contact: {freelancer.contact || 'N/A'}</p>
       <p className="freelancer-email">Email: {freelancer.email || 'N/A'}</p>
-      <button className="view-contract-btn">View Contract</button>
+      <button 
+        className="view-contract-btn" 
+        onClick={() => navigate(`/contract-details/${freelancer.contract_id}`)}
+      >
+        View Contract
+      </button>
     </div>
   );
 };

@@ -5,28 +5,6 @@ import ContractCard from './ContractCard';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
-const handleEditContract = (contractId) => {
-  navigate(`/edit-contract/${contractId}`);
-};
-
-const handleDeleteContract = async (contractId) => {
-  if (window.confirm('Are you sure you want to delete this contract? This action cannot be undone.')) {
-    try {
-      const response = await fetch(`/api/clients/${clientId}/contracts/${contractId}`, {
-        method: 'DELETE',
-      });
-      if (response.ok) {
-        // Refresh contracts list
-        fetchContracts();
-      } else {
-        console.error('Failed to delete contract');
-      }
-    } catch (error) {
-      console.error('Error deleting contract:', error);
-    }
-  }
-};
-
 const ClientContracts = () => {
   const navigate = useNavigate();
   const [contracts, setContracts] = useState([]);
@@ -36,6 +14,27 @@ const ClientContracts = () => {
   const [clientImage, setClientImage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const clientId = 2; // Should come from auth context
+
+  const handleEditContract = (contractId) => {
+    navigate(`/edit-contract/${contractId}`);
+  };
+
+  const handleDeleteContract = async (contractId) => {
+    if (window.confirm('Are you sure you want to delete this contract? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`/api/clients/${clientId}/contracts/${contractId}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          fetchContracts();
+        } else {
+          console.error('Failed to delete contract');
+        }
+      } catch (error) {
+        console.error('Error deleting contract:', error);
+      }
+    }
+  };
 
   useEffect(() => {
     fetchContracts();

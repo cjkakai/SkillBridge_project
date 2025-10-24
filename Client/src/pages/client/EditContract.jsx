@@ -14,6 +14,7 @@ const EditContract = () => {
   const [formData, setFormData] = useState({
     agreed_amount: '',
     status: '',
+    deadline: '',
     notes: ''
   });
   const clientId = 2; // Should come from auth context
@@ -41,6 +42,7 @@ const EditContract = () => {
         setFormData({
           agreed_amount: data.agreed_amount || '',
           status: data.status || '',
+          deadline: data.task?.deadline ? data.task.deadline.split('T')[0] : '',
           notes: data.notes || ''
         });
       }
@@ -176,8 +178,18 @@ const EditContract = () => {
                 >
                   <option value="active">Active</option>
                   <option value="completed">Completed</option>
-                  <option value="cancelled">Cancelled</option>
                 </select>
+              </div>
+
+              <div className="form-group">
+                <label htmlFor="deadline">Task Deadline</label>
+                <input
+                  type="date"
+                  id="deadline"
+                  name="deadline"
+                  value={formData.deadline}
+                  onChange={handleInputChange}
+                />
               </div>
 
               <div className="form-group">
