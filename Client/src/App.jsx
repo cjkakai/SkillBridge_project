@@ -8,7 +8,8 @@ import Login from './components/auth/Login';
 import RoleSelection from './components/auth/RoleSelection';
 import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
-import PostTask from './pages/client/PostTask';   
+import EditContract from './pages/client/EditContract'
+import PostTask from './pages/client/PostTask';
 import './App.css';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
+          <Route path="/edit-contract/:id" element={<EditContract />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

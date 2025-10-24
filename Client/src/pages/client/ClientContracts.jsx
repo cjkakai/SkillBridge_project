@@ -5,6 +5,10 @@ import ContractCard from './ContractCard';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
+const handleEditContract = (contractId) => {
+  navigate(`/edit-contract/${contractId}`);
+};
+
 const ClientContracts = () => {
   const navigate = useNavigate();
   const [contracts, setContracts] = useState([]);
@@ -119,7 +123,7 @@ const ClientContracts = () => {
           ) : filteredContracts.length > 0 ? (
             <div className="contracts-grid">
               {filteredContracts.map((contract) => (
-                <ContractCard key={contract.id} contract={contract} />
+                <ContractCard key={contract.id} contract={contract} onEdit={handleEditContract} />
               ))}
             </div>
           ) : (

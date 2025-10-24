@@ -1,7 +1,7 @@
 import React from 'react';
-import { Calendar, DollarSign, User, FileText, Clock, Star } from 'lucide-react';
+import { Calendar, DollarSign, User, FileText, Clock, Star, Edit } from 'lucide-react';
 
-const ContractCard = ({ contract }) => {
+const ContractCard = ({ contract, onEdit }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -89,6 +89,10 @@ const ContractCard = ({ contract }) => {
       <div className="contract-actions">
         <button className="view-details-btn">View Details</button>
         <button className="message-btn">Message Freelancer</button>
+        <button className="edit-btn" onClick={() => onEdit(contract.id)}>
+          <Edit size={16} />
+          Edit
+        </button>
       </div>
     </div>
   );
