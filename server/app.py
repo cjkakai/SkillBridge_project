@@ -203,6 +203,35 @@ class FreelancerPaymentsResource(Resource):
 #used by a freelancer to fetch all his/her payments
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
 
+socketio.on('send_message')
+def handle_send_message(data):
+    client_id= data['client_id']
+    freelancer_id= data['freelancer_id']
+    content= data['content']
+    contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+    if not contract:
+        emit('error', {'message': 'No contract found'})
+        return
+    message = Message(
+        contract_id=contract.id,
+        sender_id=client_id,
+        receiver_id=freelancer_id,
+        content=content
+    )
+    db.session.add(message)
+    db.session.commit()
+    room = f"chat_{client_id}_{freelancer_id}"
+    emit('receive_message', message.to_dict(rules=('-contract',)), room=room)
+
+@socketio.on('join_room')
+def on_join(data):
+    """When a client or freelancer joins a chat room."""
+    client_id = data['client_id']
+    freelancer_id = data['freelancer_id']
+    room = f"chat_{client_id}_{freelancer_id}"
+    join_room(room)
+    emit('joined_room', {'room': room})
+    
 class FreelancerClientMessagesResource(Resource):
     def get(self, freelancer_id, client_id):
         contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
@@ -669,3 +698,4 @@ def current_user():
 
 if __name__ == '__main__':
     app.run(port=5555, debug=True)
+    socketio.run(app, debug=True)
