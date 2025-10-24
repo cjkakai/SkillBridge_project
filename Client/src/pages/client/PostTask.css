@@ -1,12 +1,10 @@
 .posttask-container {
-  background-color: #2F80ED; /* Primary blue background color */
-  min-height: 100vh;
-  padding: 30px;
-  font-family: Arial, sans-serif;
-  max-width: 1200px;
-  margin: auto;
-  display: flex;
-  gap: 30px;
+  display: grid;
+  grid-template-columns: 1fr 350px;
+  gap: 70px;
+  width: 100%;
+  padding: 20px;
+  align-items: start;
 }
 
 .page-title {
@@ -27,6 +25,16 @@
   margin-bottom: 20px;
   border: 1px solid #E6F0FF;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+}
+
+.card_preview {
+  background: #FFFFFF;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #E6F0FF;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.05);
+  margin-top: 105px;
 }
 
 h2 {
@@ -59,11 +67,6 @@ textarea:focus {
   box-shadow: 0 0 3px rgba(47, 128, 237, 0.3);
 }
 
-.radio-group {
-  display: flex;
-  gap: 15px;
-  margin-bottom: 10px;
-}
 
 .budget-box {
   display: flex;
@@ -76,48 +79,27 @@ textarea:focus {
   margin-bottom: 10px;
 }
 
-/* Upload Box */
-.upload-box {
-  border: 2px dashed #A3B1C6;
-  padding: 25px;
-  text-align: center;
-  border-radius: 8px;
-  transition: border-color 0.3s;
-  color: #6B7A99;
-}
-
-.upload-box:hover {
-  border-color: #2F80ED;
-}
-
-.upload-box input {
-  margin-top: 10px;
-}
-
-.upload-hint {
-  font-size: 13px;
-  color: #A3B1C6;
-}
-
-.file-name {
-  margin-top: 8px;
-  font-size: 14px;
-  color: #6B7A99;
-}
 
 /* Preview Section */
+.preview-section {
+  position: sticky;
+  top: 20px;
+}
+
 .preview {
-  background-color: #E6F0FF;
-  max-width: 350px;
+  background-color: #FFFFFF;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .skill-badge {
   background-color: #E6F0FF;
   color: #0A1F44;
-  padding: 5px 10px;
-  border-radius: 15px;
-  margin-right: 8px;
-  font-size: 13px;
+  padding: 3px 8px;
+  border-radius: 12px;
+  margin-right: 12px;
+  font-size: 12px;
 }
 
 .post-btn,
@@ -142,15 +124,6 @@ textarea:focus {
   background-color: #2563EB;
 }
 
-.draft-btn {
-  background-color: #FFFFFF;
-  border: 1px solid #A3B1C6;
-  color: #0A1F44;
-}
-
-.draft-btn:hover {
-  background-color: #E6F0FF;
-}
 
 .tip {
   margin-top: 15px;

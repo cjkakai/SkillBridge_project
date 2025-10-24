@@ -16,7 +16,7 @@ const ClientDashboard = () => {
   const [totalSpent, setTotalSpent] = useState(0);
   const[contractNumber, setContractNumber]= useState(0)
   const [unreadMessages, setUnreadMessages] = useState(0);
-  const clientId = 6; // Hardcoded for now, should come from auth context
+  const clientId = 2; // Hardcoded for now, should come from auth context
 
   useEffect(() => {
     fetchTasks();
@@ -143,7 +143,7 @@ const ClientDashboard = () => {
             <MessageSquare size={20} />
             <span>Messages</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={()=> navigate('/post-task')}>
             <Plus size={20} />
             <span>Post a Job</span>
           </div>

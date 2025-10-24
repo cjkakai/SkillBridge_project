@@ -13,7 +13,7 @@ const ClientContracts = () => {
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const clientId = 6; // Should come from auth context
+  const clientId = 2; // Should come from auth context
 
   useEffect(() => {
     fetchContracts();
@@ -72,7 +72,7 @@ const ClientContracts = () => {
             <MessageSquare size={20} />
             <span>Messages</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/post-task')}>
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
