@@ -16,7 +16,7 @@ const ClientMessages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const clientId = 2; // Should come from auth context
+  const clientId = 5; // Should come from auth context
 
   useEffect(() => {
     fetch(`/api/clients/${clientId}`)
@@ -64,16 +64,15 @@ const ClientMessages = () => {
 
   const fetchFreelancersWithMessages = async () => {
     try {
-      // get all contracts of a client
-      const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`);
-      if (contractsResponse.ok) {
-        const contracts = await contractsResponse.json();
+      // Get all freelancers the client has contracts with
+      const freelancersResponse = await fetch(`/api/clients/${clientId}/freelancers`);
+      if (freelancersResponse.ok) {
+        const freelancers = await freelancersResponse.json();
 
         const freelancersData = [];
 
-        // For each contract, get freelancer info and messages
-        for (const contract of contracts) {
-          const freelancer = contract.freelancer;
+        // For each freelancer, get their messages
+        for (const freelancer of freelancers) {
           const freelancerId = freelancer.id;
 
           // Get messages for this freelancer
@@ -149,6 +148,13 @@ const ClientMessages = () => {
         const message = await response.json();
         setMessages(prev => [...prev, message]);
         setNewMessage('');
+
+        // Update the freelancer's latest message in the local state
+        setFreelancersWithMessages(prev => prev.map(freelancer =>
+          freelancer.id === selectedFreelancer.id
+            ? { ...freelancer, latestMessage: message }
+            : freelancer
+        ));
 
         // Emit message via socket
         if (socket) {
@@ -249,35 +255,39 @@ const ClientMessages = () => {
                     <h3 style={{ margin: 0 }}>Chat with {selectedFreelancer.name}</h3>
                   </div>
                   <div className="messages-list" style={{ flex: 1, overflowY: 'auto', marginBottom: '20px' }}>
-                    {messages.map((message) => (
-                      <div
-                        key={message.id}
-                        className="message-item"
-                        style={{
-                          backgroundColor: message.sender_id === clientId ? 'royalblue' : '#f0f0f0',
-                          color: message.sender_id === clientId ? 'white' : 'black',
-                          padding: '10px',
-                          borderRadius: '8px',
-                          marginBottom: '10px',
-                          maxWidth: '70%',
-                          alignSelf: message.sender_id === clientId ? 'flex-end' : 'flex-start',
-                          marginLeft: message.sender_id === clientId ? 'auto' : '0',
-                          marginRight: message.sender_id === clientId ? '0' : 'auto'
-                        }}
-                      >
-                        <p style={{ margin: 0 }}>{message.content}</p>
-                        <small style={{ opacity: 0.7 }}>
-                          {new Date(message.created_at).toLocaleString('en-KE', {
-                            timeZone: 'Africa/Nairobi',
-                            year: 'numeric',
-                            month: 'short',
-                            day: 'numeric',
-                            hour: '2-digit',
-                            minute: '2-digit'
-                          })}
-                        </small>
-                      </div>
-                    ))}
+                    {messages.length > 0 ? (
+                      messages.map((message) => (
+                        <div
+                          key={message.id}
+                          className="message-item"
+                          style={{
+                            backgroundColor: message.sender_id === clientId ? 'royalblue' : '#f0f0f0',
+                            color: message.sender_id === clientId ? 'white' : 'black',
+                            padding: '10px',
+                            borderRadius: '8px',
+                            marginBottom: '10px',
+                            maxWidth: '70%',
+                            alignSelf: message.sender_id === clientId ? 'flex-end' : 'flex-start',
+                            marginLeft: message.sender_id === clientId ? 'auto' : '0',
+                            marginRight: message.sender_id === clientId ? '0' : 'auto'
+                          }}
+                        >
+                          <p style={{ margin: 0 }}>{message.content}</p>
+                          <small style={{ opacity: 0.7 }}>
+                            {new Date(message.created_at).toLocaleString('en-KE', {
+                              timeZone: 'Africa/Nairobi',
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </small>
+                        </div>
+                      ))
+                    ) : (
+                      <p style={{ textAlign: 'center', color: '#666', marginTop: '50px' }}>No messages</p>
+                    )}
                   </div>
                   <div className="message-input" style={{ display: 'flex', gap: '10px' }}>
                     <input
@@ -298,7 +308,7 @@ const ClientMessages = () => {
                 </>
               )}
               {!selectedFreelancer && (
-                <p>Select a freelancer to view messages</p>
+                <p>No messages</p>
               )}
             </div>
           </div>

@@ -13,7 +13,7 @@ const ClientContracts = () => {
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const clientId = 2; // Should come from auth context
+  const clientId = 5; // Should come from auth context
 
   const handleEditContract = (contractId) => {
     navigate(`/edit-contract/${contractId}`);

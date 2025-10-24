@@ -1,7 +1,9 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, User, FileText, Clock, Star, Edit, Trash2 } from 'lucide-react';
 
 const ContractCard = ({ contract, onEdit, onDelete }) => {
+  const navigate = useNavigate();
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -88,7 +90,7 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
 
       <div className="contract-actions">
         <button className="view-details-btn" onClick={() => window.location.href = `/contract-details/${contract.id}`}>View Details</button>
-        <button className="message-btn">Message Freelancer</button>
+        <button className="message-btn" onClick={() => navigate('/client-messages')}>Message Freelancer</button>
         <button className="edit-btn" onClick={() => onEdit(contract.id)}>
           <Edit size={16} />
           Edit

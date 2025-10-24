@@ -118,7 +118,7 @@ const EditContract = () => {
             <Briefcase size={20} />
             <span>My Contracts</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/client-messages')}>
             <MessageSquare size={20} />
             <span>Messages</span>
           </div>

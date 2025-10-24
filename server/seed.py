@@ -176,7 +176,7 @@ def seed_database():
                 freelancer_id=application.freelancer_id,
                 agreed_amount=application.bid_amount,
                 started_at=fake.date_time_between(start_date='-2m', end_date='now'),
-                status=random.choice(['active', 'completed', 'cancelled'])
+                status=random.choice(['active', 'completed'])
             )
             
             if contract.status == 'completed':
@@ -270,8 +270,12 @@ def seed_database():
                 )
                 db.session.add(audit_log)
         
-        # Create messages for contracts
+        # Create messages for contracts - some contracts will have no messages
         for contract in contracts:
+            # 30% chance of having no messages
+            if random.random() < 0.3:
+                continue
+
             num_messages = random.randint(3, 10)
             for _ in range(num_messages):
                 # Randomly choose sender and receiver (client or freelancer)
@@ -281,7 +285,7 @@ def seed_database():
                 else:
                     sender_id = contract.freelancer_id
                     receiver_id = contract.client_id
-                
+
                 message = Message(
                     contract_id=contract.id,
                     sender_id=sender_id,
