@@ -29,7 +29,7 @@ const ClientMessages = () => {
     fetchFreelancersWithMessages();
 
     // Initialize socket connection
-    const newSocket = io('http://localhost:5555');
+    const newSocket = io('/api');
     setSocket(newSocket);
 
     return () => {
@@ -64,7 +64,7 @@ const ClientMessages = () => {
 
   const fetchFreelancersWithMessages = async () => {
     try {
-      // First get all contracts for this client
+      // get all contracts of a client
       const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`);
       if (contractsResponse.ok) {
         const contracts = await contractsResponse.json();
@@ -85,8 +85,9 @@ const ClientMessages = () => {
             const messages = await messagesResponse.json();
             if (messages.length > 0) {
               // Sort messages by created_at descending to get latest
-              messages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-              latestMessage = messages[0];
+              let freelancermessages= messages.filter(message => message.sender_id === freelancerId)
+              freelancermessages.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+              latestMessage = freelancermessages[0];
 
               // Count unread messages (received by client and not read)
               unreadCount = messages.filter(message =>
@@ -266,7 +267,14 @@ const ClientMessages = () => {
                       >
                         <p style={{ margin: 0 }}>{message.content}</p>
                         <small style={{ opacity: 0.7 }}>
-                          {new Date(message.created_at).toLocaleString()}
+                          {new Date(message.created_at).toLocaleString('en-KE', {
+                            timeZone: 'Africa/Nairobi',
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric',
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
                         </small>
                       </div>
                     ))}

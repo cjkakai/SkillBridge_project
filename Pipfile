@@ -13,6 +13,7 @@ flask-sqlalchemy = "*"
 sqlalchemy-serializer = "*"
 faker = "*"
 flask-socketio = "*"
+pytz = "*"
 
 [dev-packages]
 
