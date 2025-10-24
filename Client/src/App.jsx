@@ -10,6 +10,7 @@ import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
 import EditContract from './pages/client/EditContract'
 import ClientMessages from './pages/client/ClientMessages'
+import ContractDetails from './pages/shared/ContractDetails'
 import PostTask from './pages/client/PostTask';
 import './App.css';
 
@@ -20,6 +21,7 @@ function App() {
         <Routes>
           <Route path="/" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
+          <Route path="/contract-details/:id" element={<ContractDetails />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
           <Route path="/client-messages" element={<ClientMessages />} />
           <Route path="/login" element={<Login />} />

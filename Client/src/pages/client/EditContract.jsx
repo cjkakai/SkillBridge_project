@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Trash2 } from 'lucide-react';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
@@ -76,6 +76,23 @@ const EditContract = () => {
       }
     } catch (error) {
       console.error('Error updating contract:', error);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (window.confirm('Are you sure you want to delete this contract? This action cannot be undone.')) {
+      try {
+        const response = await fetch(`/api/clients/${clientId}/contracts/${id}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          navigate('/client-contracts');
+        } else {
+          console.error('Failed to delete contract');
+        }
+      } catch (error) {
+        console.error('Error deleting contract:', error);
+      }
     }
   };
 
@@ -174,7 +191,13 @@ const EditContract = () => {
                 />
               </div>
 
-              <button type="submit" className="save-btn">Save Changes</button>
+              <div className="form-actions">
+                <button type="submit" className="save-btn">Save Changes</button>
+                <button type="button" className="delete-btn" onClick={handleDelete}>
+                  <Trash2 size={16} />
+                  Delete Contract
+                </button>
+              </div>
             </form>
           </div>
         )}

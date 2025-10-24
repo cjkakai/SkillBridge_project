@@ -1,7 +1,7 @@
 import React from 'react';
-import { Calendar, DollarSign, User, FileText, Clock, Star, Edit } from 'lucide-react';
+import { Calendar, DollarSign, User, FileText, Clock, Star, Edit, Trash2 } from 'lucide-react';
 
-const ContractCard = ({ contract, onEdit }) => {
+const ContractCard = ({ contract, onEdit, onDelete }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -87,11 +87,15 @@ const ContractCard = ({ contract, onEdit }) => {
       </div>
 
       <div className="contract-actions">
-        <button className="view-details-btn">View Details</button>
+        <button className="view-details-btn" onClick={() => window.location.href = `/contract-details/${contract.id}`}>View Details</button>
         <button className="message-btn">Message Freelancer</button>
         <button className="edit-btn" onClick={() => onEdit(contract.id)}>
           <Edit size={16} />
           Edit
+        </button>
+        <button className="delete-btn" onClick={() => onDelete(contract.id)}>
+          <Trash2 size={16} />
+          Delete
         </button>
       </div>
     </div>

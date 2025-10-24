@@ -217,6 +217,26 @@
   transform: translateY(-1px);
 }
 
+.delete-btn {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(45deg, #c82333, #a02622);
+  transform: translateY(-1px);
+}
+
 .search-section {
   margin-top: 20px;
   margin-bottom: 20px;
@@ -302,6 +322,35 @@
 .save-btn:hover {
   background: linear-gradient(45deg, #218838, #1aa085);
   transform: translateY(-1px);
+}
+
+.delete-btn {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(45deg, #c82333, #a02622);
+  transform: translateY(-1px);
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .back-btn {
