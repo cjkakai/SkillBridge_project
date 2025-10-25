@@ -4,6 +4,8 @@ import ClientRegister from './components/auth/ClientRegister';
 import FreelancerRegister from './components/auth/FreelancerRegister';
 import Login from './components/auth/Login';
 import RoleSelection from './components/auth/RoleSelection';
+import FreelancerDashboard from './pages/freelancer/FreelancerDashboard';
+import Applications from './pages/freelancer/Applications';
 import './App.css';
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
           <Route path="/role-selection" element={<RoleSelection />} />
           <Route path="/client-register" element={<ClientRegister />} />
           <Route path="/freelancer-register" element={<FreelancerRegister />} />
+          <Route path="/freelancer/dashboard" element={<FreelancerDashboard />} />
+          <Route path="/freelancer/applications" element={<Applications />} />
           <Route path="*" element={<Login />} />
         </Routes>
       </div>
