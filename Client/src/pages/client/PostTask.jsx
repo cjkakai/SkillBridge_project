@@ -7,7 +7,7 @@ import './ClientDashboard.css';
  
 function PostTask() {
   const navigate = useNavigate();
-  const clientId = 2; // Hardcoded for now, should come from auth context
+  const clientId = 5; // Hardcoded for now, should come from auth context
 
    // This state holds all the information the user enters in the form
    const [formData, setFormData] = useState({
