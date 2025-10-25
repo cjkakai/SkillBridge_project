@@ -127,13 +127,13 @@ class Task(db.Model, SerializerMixin):
 
 class Application(db.Model, SerializerMixin):
     __tablename__ = 'applications'
-    
+
     serialize_rules = ('-task.applications', '-freelancer.applications')
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
-    cover_letter = db.Column(db.Text)
+    cover_letter_file = db.Column(db.String(255))
     bid_amount = db.Column(db.Numeric)
     estimated_days = db.Column(db.Integer)
     status = db.Column(db.String(30), default='pending')

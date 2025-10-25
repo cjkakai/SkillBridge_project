@@ -1,12 +1,24 @@
-from flask import Flask, request, jsonify, session, make_response
+import os
+from flask import Flask, request, jsonify, session, make_response, send_file
 from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
+from werkzeug.utils import secure_filename
 from config import db, bcrypt, api , app
 from models import (
-    Client, Freelancer, Admin, Task, Application, Contract, 
-    Milestone, Payment, Review, Complaint, 
+    Client, Freelancer, Admin, Task, Application, Contract,
+    Milestone, Payment, Review, Complaint,
     AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
 )
+
+# Configure upload folder
+UPLOAD_FOLDER = 'uploads/cover_letters'
+ALLOWED_EXTENSIONS = {'pdf'}
+
+if not os.path.exists(UPLOAD_FOLDER):
+    os.makedirs(UPLOAD_FOLDER)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -117,6 +129,52 @@ class TaskResource(Resource):
 api.add_resource(TaskResource, '/api/tasks', '/api/tasks/<int:task_id>')
 
 class ApplicationResource(Resource):
+    # POST method for freelancers to submit applications with PDF cover letters
+    def post(self):
+        try:
+            # Handle file upload
+            if 'cover_letter_file' not in request.files:
+                return make_response({'error': 'No file provided'}, 400)
+
+            file = request.files['cover_letter_file']
+            if file.filename == '':
+                return make_response({'error': 'No file selected'}, 400)
+
+            if not allowed_file(file.filename):
+                return make_response({'error': 'Only PDF files are allowed'}, 400)
+
+            # Get other form data
+            task_id = request.form.get('task_id')
+            freelancer_id = request.form.get('freelancer_id')
+            bid_amount = request.form.get('bid_amount')
+            estimated_days = request.form.get('estimated_days')
+
+            if not all([task_id, freelancer_id, bid_amount, estimated_days]):
+                return make_response({'error': 'Missing required fields'}, 400)
+
+            # Save file
+            filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
+            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file.save(file_path)
+
+            # Create application
+            application = Application(
+                task_id=task_id,
+                freelancer_id=freelancer_id,
+                bid_amount=bid_amount,
+                estimated_days=estimated_days,
+                cover_letter_file=filename
+            )
+
+            db.session.add(application)
+            db.session.commit()
+
+            return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'error': str(e)}, 500)
+
     # can be used by a client to reject a bid(changing status to rejected)
     def put(self, application_id):
         application = Application.query.get_or_404(application_id)
@@ -126,7 +184,20 @@ class ApplicationResource(Resource):
         db.session.commit()
         return make_response(application.to_dict(rules=('-task', '-freelancer',)), 200)
 
-api.add_resource(ApplicationResource, '/api/applications/<int:application_id>')
+class ApplicationDownloadResource(Resource):
+    def get(self, application_id):
+        application = Application.query.get_or_404(application_id)
+        if not application.cover_letter_file:
+            return make_response({'error': 'No cover letter file found'}, 404)
+
+        file_path = os.path.join(UPLOAD_FOLDER, application.cover_letter_file)
+        if not os.path.exists(file_path):
+            return make_response({'error': 'File not found'}, 404)
+
+        return send_file(file_path, as_attachment=True, download_name=f"cover_letter_{application_id}.pdf")
+
+api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
+api.add_resource(ApplicationDownloadResource, '/api/applications/<int:application_id>/download')
 
 class ContractResource(Resource):
     #can be used by an admin to get all contracts
@@ -137,7 +208,7 @@ class ContractResource(Resource):
         contracts = Contract.query.all()
         return make_response([contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints.contract',)) for contract in contracts], 200)
 
-api.add_resource(ContractResource, '/api/contracts/<int:contract_id>')
+api.add_resource(ContractResource, '/api/contracts', '/api/contracts/<int:contract_id>')
 
 
 class PaymentResource(Resource):
@@ -442,15 +513,19 @@ class ClientCreateContractResource(Resource):
 api.add_resource(ClientCreateContractResource, '/api/clients/<int:client_id>/create-contract')
 
 class ContractMilestonesResource(Resource):
+    def get(self, contract_id):
+        milestones = Milestone.query.filter_by(contract_id=contract_id).all()
+        return make_response([milestone.to_dict(rules=('-contract',)) for milestone in milestones], 200)
+
     def post(self, contract_id):
         from datetime import datetime
         data = request.get_json()
-        
+
         # Convert string date to date object
         due_date = data.get('due_date')
         if due_date and isinstance(due_date, str):
             due_date = datetime.strptime(due_date, '%m-%d-%Y').date()
-        
+
         milestone = Milestone(
             contract_id=contract_id,
             title=data['title'],
@@ -461,14 +536,14 @@ class ContractMilestonesResource(Resource):
         db.session.add(milestone)
         db.session.commit()
         return make_response(milestone.to_dict(rules=('-contract',)), 201)
-    
+
     def delete(self, contract_id):
         data = request.get_json()
         milestone = Milestone.query.filter_by(contract_id=contract_id, title=data['title']).first_or_404()
         db.session.delete(milestone)
         db.session.commit()
         return make_response('', 204)
-# used by a client to add a new milestone to a contract or delete a milestone from a contract
+# used by a client to get, add, or delete milestones from a contract
 
 api.add_resource(ContractMilestonesResource, '/api/contracts/<int:contract_id>/milestones')
 

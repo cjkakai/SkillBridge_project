@@ -153,12 +153,15 @@ def seed_database():
         for task in tasks:
             num_applications = random.randint(1, 6)
             selected_freelancers = random.sample(freelancers, min(num_applications, len(freelancers)))
-            
+
             for freelancer in selected_freelancers:
+                # Use the existing dummy PDF file
+                pdf_filename = "DENNIS KARANJA CV-FINAL.pdf"
+
                 application = Application(
                     task_id=task.id,
                     freelancer_id=freelancer.id,
-                    cover_letter=fake.text(max_nb_chars=300),
+                    cover_letter_file=pdf_filename,
                     bid_amount=random.randint(task.budget_min, task.budget_max),
                     estimated_days=random.randint(5, 30),
                     status=random.choice(['pending', 'accepted', 'rejected'])
@@ -200,6 +203,12 @@ def seed_database():
 
             contracts.append(contract)
             db.session.add(contract)
+
+        # Ensure all contracts have a valid task
+        for contract in contracts:
+            task = Task.query.get(contract.task_id)
+            if not task:
+                raise ValueError(f"Contract {contract.id} has no associated task!")
         
         db.session.commit()
         
