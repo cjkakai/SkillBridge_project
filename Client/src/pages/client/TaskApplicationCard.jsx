@@ -87,7 +87,7 @@ const TaskApplicationCard = ({ application }) => {
       <div className="application-details">
         <div className="detail-item">
           <DollarSign size={16} className="detail-icon" />
-          <span>Bid Amount: ksh {application.bid_amount}</span>
+          <span>Bid Amount: ksh {parseFloat(application.bid_amount).toFixed(2)}</span>
         </div>
 
         <div className="detail-item">

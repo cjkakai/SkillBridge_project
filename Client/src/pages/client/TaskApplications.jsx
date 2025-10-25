@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, Search } from 'lucide-react';
 import TaskApplicationCard from './TaskApplicationCard';
 import './TaskApplications.css';
 
@@ -8,11 +8,13 @@ const TaskApplications = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [applications, setApplications] = useState([]);
+  const [filteredApplications, setFilteredApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [taskTitle, setTaskTitle] = useState('');
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
-  const clientId = 3; // Hardcoded for now, should come from auth context
+  const [maxBudget, setMaxBudget] = useState('');
+  const clientId = 5; // Hardcoded for now, should come from auth context
 
   // Get task ID from location state
   const taskId = location.state?.taskId;
@@ -23,6 +25,18 @@ const TaskApplications = () => {
       fetchTaskDetails();
     }
   }, [taskId]);
+
+  useEffect(() => {
+    // Filter applications based on max budget
+    if (maxBudget === '' || maxBudget === '0') {
+      setFilteredApplications(applications);
+    } else {
+      const filtered = applications.filter(app =>
+        parseFloat(app.bid_amount) <= parseFloat(maxBudget)
+      );
+      setFilteredApplications(filtered);
+    }
+  }, [applications, maxBudget]);
 
   useEffect(() => {
     fetch(`/api/clients/${clientId}`).
@@ -116,9 +130,35 @@ const TaskApplications = () => {
             <p>Loading applications...</p>
           ) : applications.length > 0 ? (
             <div className="applications-container">
-              <h2 className="applications-header">Applications ({applications.length})</h2>
+              <h2 className="applications-header">Applications ({filteredApplications.length})</h2>
+
+              {/* Search Bar */}
+              <div className="search-container">
+                <div className="search-input-wrapper">
+                  <Search size={20} className="search-icon" />
+                  <input
+                    type="number"
+                    placeholder="Filter by max budget (ksh)"
+                    value={maxBudget}
+                    onChange={(e) => setMaxBudget(e.target.value)}
+                    className="budget-search-input"
+                    min="0"
+                    step="0.01"
+                  />
+                  {maxBudget && (
+                    <button
+                      onClick={() => setMaxBudget('')}
+                      className="clear-search-btn"
+                      title="Clear filter"
+                    >
+                      ×
+                    </button>
+                  )}
+                </div>
+              </div>
+
               <div className="applications-grid">
-                {applications.map((application) => (
+                {filteredApplications.map((application) => (
                   <TaskApplicationCard key={application.id} application={application} />
                 ))}
               </div>

@@ -11,11 +11,10 @@ from models import (
 )
 
 # Configure upload folder
-UPLOAD_FOLDER = 'uploads/cover_letters'
-ALLOWED_EXTENSIONS = {'pdf'}
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'png'}
 
-if not os.path.exists(UPLOAD_FOLDER):
-    os.makedirs(UPLOAD_FOLDER)
+if not os.path.exists(app.config['UPLOAD_FOLDER']):
+    os.makedirs(app.config['UPLOAD_FOLDER'])
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -154,7 +153,7 @@ class ApplicationResource(Resource):
 
             # Save file
             filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
-            file_path = os.path.join(UPLOAD_FOLDER, filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
 
             # Create application
@@ -185,16 +184,18 @@ class ApplicationResource(Resource):
         return make_response(application.to_dict(rules=('-task', '-freelancer',)), 200)
 
 class ApplicationDownloadResource(Resource):
+    #used by a client to download an applicant's cv
     def get(self, application_id):
         application = Application.query.get_or_404(application_id)
+        applicant= Freelancer.query.get_or_404(application.freelancer_id)
         if not application.cover_letter_file:
             return make_response({'error': 'No cover letter file found'}, 404)
 
-        file_path = os.path.join(UPLOAD_FOLDER, application.cover_letter_file)
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], application.cover_letter_file)
         if not os.path.exists(file_path):
             return make_response({'error': 'File not found'}, 404)
 
-        return send_file(file_path, as_attachment=True, download_name=f"cover_letter_{application_id}.pdf")
+        return send_file(file_path, as_attachment=True, download_name=f"cover_letter_{applicant.name}.pdf")
 
 api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
 api.add_resource(ApplicationDownloadResource, '/api/applications/<int:application_id>/download')
@@ -555,7 +556,7 @@ class TaskApplicationsResource(Resource):
             freelancer = Freelancer.query.get(app.freelancer_id)
             app_data = {
                 'id': app.id,
-                'cover_letter': app.cover_letter,
+                'cover_letter_file': app.cover_letter_file,
                 'bid_amount': app.bid_amount,
                 'estimated_days': app.estimated_days,
                 'status': app.status,
