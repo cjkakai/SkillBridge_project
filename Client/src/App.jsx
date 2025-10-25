@@ -12,6 +12,7 @@ import EditContract from './pages/client/EditContract'
 import ClientMessages from './pages/client/ClientMessages'
 import ContractDetails from './pages/shared/ContractDetails'
 import PostTask from './pages/client/PostTask';
+import TaskApplications from './pages/client/TaskApplications';
 import './App.css';
 
 function App() {
@@ -20,10 +21,12 @@ function App() {
       <div className="App">
         <Routes>
           <Route path="/" element={<ClientDashboard/>} />
+          <Route path="/client-dashboard" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
           <Route path="/contract-details/:id" element={<ContractDetails />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
           <Route path="/client-messages" element={<ClientMessages />} />
+          <Route path="/task-applications" element={<TaskApplications />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

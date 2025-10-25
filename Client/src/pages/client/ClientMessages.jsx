@@ -16,7 +16,7 @@ const ClientMessages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const clientId = 5; // Should come from auth context
+  const clientId = 3; // Should come from auth context
 
   useEffect(() => {
     fetch(`/api/clients/${clientId}`)

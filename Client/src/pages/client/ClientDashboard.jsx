@@ -16,7 +16,7 @@ const ClientDashboard = () => {
   const [totalSpent, setTotalSpent] = useState(0);
   const[contractNumber, setContractNumber]= useState(0)
   const [unreadMessages, setUnreadMessages] = useState(0);
-  const clientId = 5; // Hardcoded for now, should come from auth context
+  const clientId = 3; // Hardcoded for now, should come from auth context
 
   useEffect(() => {
     fetchTasks();

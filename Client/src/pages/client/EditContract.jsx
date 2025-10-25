@@ -17,7 +17,7 @@ const EditContract = () => {
     deadline: '',
     notes: ''
   });
-  const clientId = 2; // Should come from auth context
+  const clientId = 3; // Should come from auth context
 
   useEffect(() => {
     fetchContract();
