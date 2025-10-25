@@ -108,6 +108,7 @@ class Task(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('clients.id'))
+    freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
     budget_min = db.Column(db.Integer)
@@ -201,6 +202,7 @@ class Payment(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
+    freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
     payer_id = db.Column(db.Integer)
     payee_id = db.Column(db.Integer)
     amount = db.Column(db.Numeric)
