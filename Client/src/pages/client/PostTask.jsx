@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, User } from 'lucide-react';
 import "./PostTask.css";
 import './ClientDashboard.css';
 
@@ -131,6 +131,10 @@ function PostTask() {
           <div className="nav-item active">
             <Plus size={20} />
             <span>Post a Job</span>
+          </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
           </div>
           <div className="nav-item">
             <CreditCard size={20} />

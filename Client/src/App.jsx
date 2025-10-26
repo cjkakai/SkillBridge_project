@@ -16,6 +16,7 @@ import TaskApplications from './pages/client/TaskApplications';
 import TaskEdit from './pages/client/TaskEdit';
 import FreelancerExperience from './pages/client/FreelancerExperience';
 import AwardContractForm from './pages/client/AwardContractForm';
+import ClientProfile from './pages/client/ClientProfile';
 import './App.css';
 
 function App() {
@@ -33,6 +34,7 @@ function App() {
           <Route path="/task-edit/:taskId" element={<TaskEdit />} />
           <Route path="/freelancer-experience/:freelancerId" element={<FreelancerExperience />} />
           <Route path="/award-contract/:taskId/:freelancerId" element={<AwardContractForm />} />
+          <Route path="/client-profile" element={<ClientProfile />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

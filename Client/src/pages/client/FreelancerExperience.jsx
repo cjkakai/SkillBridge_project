@@ -68,6 +68,10 @@ const FreelancerExperience = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
+          </div>
           <div className="nav-item">
             <CreditCard size={20} />
             <span>Payments</span>

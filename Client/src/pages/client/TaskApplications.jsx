@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, Search } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, Search, User } from 'lucide-react';
 import TaskApplicationCard from './TaskApplicationCard';
 import './TaskApplications.css';
 
@@ -137,6 +137,10 @@ const TaskApplications = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
+          </div>
           <div className="nav-item">
             <CreditCard size={20} />
             <span>Payments</span>
@@ -149,9 +153,12 @@ const TaskApplications = () => {
         <div className="dashboard-header">
           <div className="welcome-section">
             <img
-              src={clientImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
+              src={clientImage ? `${clientImage}` : 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
               alt="Client profile"
               className="welcome-profile-image"
+              onError={(e) => {
+                e.target.src = 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg';
+              }}
             />
             <div className="welcome-content">
               <h1>Applications for: {taskTitle}</h1>

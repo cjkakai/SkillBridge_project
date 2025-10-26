@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, Search, Send } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, User, FileText, Search, Send } from 'lucide-react';
 import ClientMessageCard from './ClientMessageCard';
 import './ClientDashboard.css';
 import io from 'socket.io-client';
@@ -194,6 +194,10 @@ const ClientMessages = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
+          </div>
           <div className="nav-item">
             <CreditCard size={20} />
             <span>Payments</span>
@@ -206,9 +210,12 @@ const ClientMessages = () => {
         <div className="dashboard-header">
           <div className="welcome-section">
             <img
-              src={clientImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
+              src={clientImage ? `${clientImage}` : 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
               alt="Client profile"
               className="welcome-profile-image"
+              onError={(e) => {
+                e.target.src = 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg';
+              }}
             />
             <div className="welcome-content">
               <h1>Messages</h1>

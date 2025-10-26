@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, User } from 'lucide-react';
 import TaskCard from './TaskCard';
 import FreelancerCard from './FreelancerCard';
 import './ClientDashboard.css';
@@ -31,12 +31,11 @@ const ClientDashboard = () => {
     fetch(`/api/clients/${clientId}`).
     then((response)=>response.json()).
     then((data)=>{
-      console.log(data)
       setClientName(data.name)
       setClientImage(data.image)
     })
   }, [])
-  console.log(clientName)
+
 
 
   const fetchTasks = async () => {
@@ -72,7 +71,6 @@ const ClientDashboard = () => {
     const response= await fetch(`/api/clients/${clientId}/contracts`);
     if(response.ok){
       const contracts= await response.json();
-      console.log(contracts)
       setContractNumber(contracts.length)
     }
    }catch(error){
@@ -147,6 +145,10 @@ const ClientDashboard = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
+          </div>
           <div className="nav-item">
             <CreditCard size={20} />
             <span>Payments</span>
@@ -159,7 +161,7 @@ const ClientDashboard = () => {
         <div className="dashboard-header">
           <div className="welcome-section">
             <img
-              src={clientImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
+              src={clientImage ? `${clientImage}` : 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
               alt="Client profile"
               className="welcome-profile-image"
             />
