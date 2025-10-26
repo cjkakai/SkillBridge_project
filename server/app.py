@@ -74,6 +74,27 @@ class FreelancerResource(Resource):
     #Used by an admin to delete a freelancer
     def delete(self, freelancer_id):
         freelancer = Freelancer.query.get_or_404(freelancer_id)
+
+        # Delete related records first to avoid foreign key constraint errors
+        # Delete applications
+        Application.query.filter_by(freelancer_id=freelancer_id).delete()
+
+        # Delete freelancer skills
+        FreelancerSkill.query.filter_by(freelancer_id=freelancer_id).delete()
+
+        # Delete freelancer experiences
+        FreelancerExperience.query.filter_by(freelancer_id=freelancer_id).delete()
+
+        # Delete contracts and their related records
+        contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
+        for contract in contracts:
+            Message.query.filter_by(contract_id=contract.id).delete()
+            Milestone.query.filter_by(contract_id=contract.id).delete()
+            Payment.query.filter_by(contract_id=contract.id).delete()
+            Review.query.filter_by(contract_id=contract.id).delete()
+            Complaint.query.filter_by(contract_id=contract.id).delete()
+            db.session.delete(contract)
+
         db.session.delete(freelancer)
         db.session.commit()
         return make_response('', 204)
@@ -211,9 +232,53 @@ class ContractResource(Resource):
     def get(self, contract_id=None):
         if contract_id:
             contract = Contract.query.get_or_404(contract_id)
-            return make_response(contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',)), 200)
+            contract_data = contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',))
+            freelancer = Freelancer.query.get(contract.freelancer_id)
+            contract_data['freelancer'] = {
+                'id': freelancer.id,
+                'name': freelancer.name,
+                'bio': freelancer.bio,
+                'contact': freelancer.contact,
+                'email': freelancer.email,
+                'image': freelancer.image,
+                'ratings': freelancer.ratings
+            }
+            task = Task.query.get(contract.task_id)
+            contract_data['task'] = {
+                'id': task.id,
+                'title': task.title,
+                'description': task.description,
+                'deadline': task.deadline.isoformat() if task.deadline else None
+            }
+            return make_response(contract_data, 200)
         contracts = Contract.query.all()
         return make_response([contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints.contract',)) for contract in contracts], 200)
+
+    def patch(self, contract_id):
+        contract = Contract.query.get_or_404(contract_id)
+        data = request.get_json()
+        for key, value in data.items():
+            setattr(contract, key, value)
+        db.session.commit()
+        contract_data = contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',))
+        freelancer = Freelancer.query.get(contract.freelancer_id)
+        contract_data['freelancer'] = {
+            'id': freelancer.id,
+            'name': freelancer.name,
+            'bio': freelancer.bio,
+            'contact': freelancer.contact,
+            'email': freelancer.email,
+            'image': freelancer.image,
+            'ratings': freelancer.ratings
+        }
+        task = Task.query.get(contract.task_id)
+        contract_data['task'] = {
+            'id': task.id,
+            'title': task.title,
+            'description': task.description,
+            'deadline': task.deadline.isoformat() if task.deadline else None
+        }
+        return make_response(contract_data, 200)
 
 api.add_resource(ContractResource, '/api/contracts', '/api/contracts/<int:contract_id>')
 
@@ -491,12 +556,24 @@ class ClientContractsResource(Resource):
         contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
         data = request.get_json()
         for key, value in data.items():
-            setattr(contract, key, value)
+            if key == 'deadline' and value:
+                from datetime import datetime
+                contract.task.deadline = datetime.fromisoformat(value).date()
+            else:
+                setattr(contract, key, value)
         db.session.commit()
         return make_response(contract.to_dict(rules=('-client', '-freelancer', '-task',)), 200)
     
     def delete(self, client_id, contract_id):
         contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+
+        # Delete related records first to avoid foreign key constraint errors
+        Message.query.filter_by(contract_id=contract_id).delete()
+        Milestone.query.filter_by(contract_id=contract_id).delete()
+        Payment.query.filter_by(contract_id=contract_id).delete()
+        Review.query.filter_by(contract_id=contract_id).delete()
+        Complaint.query.filter_by(contract_id=contract_id).delete()
+
         db.session.delete(contract)
         db.session.commit()
         return make_response('', 204)

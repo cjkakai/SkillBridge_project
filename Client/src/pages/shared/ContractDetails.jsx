@@ -11,12 +11,19 @@ const ContractDetails = () => {
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
+  const [contractStatus, setContractStatus] = useState("");
   const clientId = 2; // Should come from auth context
 
   useEffect(() => {
     fetchContract();
     fetchClientData();
   }, [id]);
+
+  useEffect(() => {
+    if (contract) {
+      setContractStatus(contract.status || 'active');
+    }
+  }, [contract]);
 
   const fetchClientData = () => {
     fetch(`/api/clients/${clientId}`)
@@ -32,12 +39,43 @@ const ContractDetails = () => {
       const response = await fetch(`/api/contracts/${id}`);
       if (response.ok) {
         const data = await response.json();
+        // Fetch milestones separately
+        const milestonesResponse = await fetch(`/api/contracts/${id}/milestones`);
+        if (milestonesResponse.ok) {
+          const milestones = await milestonesResponse.json();
+          data.milestones = milestones;
+          // Calculate progress based on milestone weights
+          const completedMilestones = milestones.filter(m => m.status === 'completed');
+          const totalWeight = milestones.reduce((sum, m) => sum + (m.weight || 0), 0);
+          const completedWeight = completedMilestones.reduce((sum, m) => sum + (m.weight || 0), 0);
+          data.progress = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
+        }
         setContract(data);
       }
     } catch (error) {
       console.error('Error fetching contract:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleStatusChange = async (newStatus) => {
+    try {
+      const response = await fetch(`/api/contracts/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (response.ok) {
+        setContractStatus(newStatus);
+        setContract(prev => ({ ...prev, status: newStatus }));
+      } else {
+        console.error('Failed to update contract status');
+      }
+    } catch (error) {
+      console.error('Error updating contract status:', error);
     }
   };
 
@@ -130,9 +168,15 @@ const ContractDetails = () => {
                   <span>Contract Code: {contract.contract_code}</span>
                 </div>
                 <div className="contract-status">
-                  <span className={`status-badge ${contract.status?.toLowerCase() || 'active'}`}>
-                    {contract.status || 'Active'}
-                  </span>
+                  <select
+                    value={contractStatus}
+                    onChange={(e) => handleStatusChange(e.target.value)}
+                    className="status-select"
+                  >
+                    <option value="active">Active</option>
+                    <option value="completed">Completed</option>
+                    <option value="cancelled">Cancelled</option>
+                  </select>
                 </div>
               </div>
             </div>

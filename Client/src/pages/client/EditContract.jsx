@@ -9,6 +9,7 @@ const EditContract = () => {
   const navigate = useNavigate();
   const [contract, setContract] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [formData, setFormData] = useState({
@@ -63,8 +64,9 @@ const EditContract = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setSaving(true);
     try {
-      const response = await fetch(`/api/contracts/${id}`, {
+      const response = await fetch(`/api/clients/${clientId}/contracts/${id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -72,12 +74,16 @@ const EditContract = () => {
         body: JSON.stringify(formData),
       });
       if (response.ok) {
+        alert('Contract updated successfully!');
         navigate('/client-contracts');
       } else {
-        console.error('Failed to update contract');
+        const errorData = await response.json().catch(() => ({}));
+        alert(`Failed to update contract: ${errorData.error || 'Unknown error'}`);
       }
     } catch (error) {
-      console.error('Error updating contract:', error);
+      alert('Error updating contract: ' + error.message);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -204,7 +210,9 @@ const EditContract = () => {
               </div>
 
               <div className="form-actions">
-                <button type="submit" className="save-btn">Save Changes</button>
+                <button type="submit" className="save-btn" disabled={saving}>
+                  {saving ? 'Saving...' : 'Save Changes'}
+                </button>
                 <button type="button" className="delete-btn" onClick={handleDelete}>
                   <Trash2 size={16} />
                   Delete Contract
