@@ -30,23 +30,8 @@ const HomePage = () => {
         </div>
 
         <div className="hero-image">
-          <img src={heroImg} alt="Freelancer working" />
-          <div className="floating-box">
-            <img src={dataIcon} alt="Data Analytics" />
-            <p>Data Analytics</p>
-          </div>
-        </div>
-
-        <svg
-          className="wave"
-          xmlns="http://www.w3.org/2000/svg"
-          viewBox="0 0 1440 320"
-        >
-          <path
-            fill="#E6F0FF"
-            d="M0,224L48,197.3C96,171,192,117,288,117.3C384,117,480,171,576,186.7C672,203,768,181,864,165.3C960,149,1056,139,1152,149.3C1248,160,1344,192,1392,208L1440,224L1440,320L0,320Z"
-          ></path>
-        </svg>
+          <img src="/image.png" alt="Freelancer working" />
+                  </div>
       </section>
 
       <section className="jobs-section">
