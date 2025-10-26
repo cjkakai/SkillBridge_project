@@ -118,8 +118,14 @@ class TaskResource(Resource):
     
     # can be used by a client to edit a task that is existing
     def put(self, task_id):
+        from datetime import datetime
         task = Task.query.get_or_404(task_id)
         data = request.get_json()
+
+        # Convert string dates to date objects
+        if 'deadline' in data and isinstance(data['deadline'], str):
+            data['deadline'] = datetime.fromisoformat(data['deadline'].replace('Z', '+00:00')).date()
+
         for key, value in data.items():
             setattr(task, key, value)
         db.session.commit()

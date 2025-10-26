@@ -136,7 +136,11 @@ const TaskCard = ({ task }) => {
         >
           <Users size={16} />
         </button>
-        <button className="action-btn edit-task-btn" title="Edit Task">
+        <button
+          className="action-btn edit-task-btn"
+          title="Edit Task"
+          onClick={() => navigate(`/task-edit/${task.id}`)}
+        >
           <Edit size={16} />
         </button>
       </div>
