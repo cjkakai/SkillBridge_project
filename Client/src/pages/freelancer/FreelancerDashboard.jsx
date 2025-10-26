@@ -7,10 +7,11 @@ const FreelancerDashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      const freelancerId = localStorage.getItem("freelancerId");
+      const freelancerId = 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -20,7 +21,7 @@ const FreelancerDashboard = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/dashboard`);
+        const response = await fetch(`http://127.0.0.1:5000/api/freelancers/${freelancerId}/dashboard`);
         if (!response.ok) {
           throw new Error("Failed to fetch dashboard data.");
         }
@@ -101,10 +102,14 @@ const FreelancerDashboard = () => {
     return name.split(' ').map(n => n[0]).join('').toUpperCase();
   };
 
+  const handleSidebarToggle = () => {
+    setSidebarCollapsed(!sidebarCollapsed);
+  };
+
   return (
     <div className="freelancer-dashboard">
-      <FreelancerSidebar />
-      <div className="dashboard-content">
+      <FreelancerSidebar isCollapsed={sidebarCollapsed} onToggle={handleSidebarToggle} />
+      <div className={`dashboard-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <div className="dashboard-header">
           <h1>Welcome back, {dashboardData.freelancer?.name || 'Freelancer'}!</h1>
           <p>Here's what's happening with your projects today.</p>
@@ -164,54 +169,58 @@ const FreelancerDashboard = () => {
           </div>
         </div>
 
-        <div className="main-content-grid">
-          <div className="active-projects card">
-            <div className="card-header">
-              <h2>Active Projects</h2>
-              <button className="view-all-btn">View All</button>
-            </div>
-            <div className="card-content">
-              {dashboardData.active_projects?.length > 0 ? (
-                dashboardData.active_projects.map((project) => (
-                  <div key={project.id} className="project-item">
-                    <div className="project-header">
-                      <div className="project-info">
-                        <div className="avatar">{getInitials(project.client)}</div>
-                        <div>
-                          <h4>{project.title}</h4>
-                          <p>{project.client} • Active Project</p>
+        <div className="dashboard-grid">
+          <div className="active-projects-section">
+            <div className="dashboard-card">
+              <div className="card-header">
+                <h2>Active Projects</h2>
+                <button className="view-all-btn">View All</button>
+              </div>
+              <div className="card-content">
+                {dashboardData.active_projects?.length > 0 ? (
+                  <div className="projects-list">
+                    {dashboardData.active_projects.map((project) => (
+                      <div key={project.id} className="project-item">
+                        <div className="project-header">
+                          <div className="project-info">
+                            <div className="avatar">{getInitials(project.client)}</div>
+                            <div>
+                              <h4>{project.title}</h4>
+                              <p>{project.client} • Active Project</p>
+                            </div>
+                          </div>
+                          <span className="status-badge progress">In Progress</span>
+                        </div>
+                        <div className="progress-section">
+                          <div className="progress-label">
+                            <span>Progress</span>
+                            <span>{project.progress}%</span>
+                          </div>
+                          <div className="progress-bar">
+                            <div className="progress-fill" style={{ width: `${project.progress}%` }}></div>
+                          </div>
+                        </div>
+                        <div className="project-footer">
+                          <span>Due: {project.due_date}</span>
+                          <span>{formatCurrency(project.amount)}</span>
+                          <button className="external-link">
+                            <ExternalLink />
+                          </button>
                         </div>
                       </div>
-                      <span className="status-badge progress">In Progress</span>
-                    </div>
-                    <div className="progress-section">
-                      <div className="progress-label">
-                        <span>Progress</span>
-                        <span>{project.progress}%</span>
-                      </div>
-                      <div className="progress-bar">
-                        <div className="progress-fill" style={{ width: `${project.progress}%` }}></div>
-                      </div>
-                    </div>
-                    <div className="project-footer">
-                      <span>Due: {project.due_date}</span>
-                      <span>{formatCurrency(project.amount)}</span>
-                      <button className="external-link">
-                        <ExternalLink />
-                      </button>
-                    </div>
+                    ))}
                   </div>
-                ))
-              ) : (
-                <p style={{ textAlign: 'center', color: '#6B7A99', padding: '24px' }}>
-                  No active projects at the moment.
-                </p>
-              )}
+                ) : (
+                  <div className="empty-state">
+                    <p>No active projects at the moment.</p>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
-          <div className="sidebar-content">
-            <div className="card">
+          <div className="earnings-section">
+            <div className="dashboard-card">
               <div className="card-header">
                 <h2>Earnings</h2>
               </div>
@@ -245,8 +254,10 @@ const FreelancerDashboard = () => {
                 <button className="withdraw-btn">Withdraw Funds</button>
               </div>
             </div>
+          </div>
 
-            <div className="card">
+          <div className="profile-section">
+            <div className="dashboard-card">
               <div className="card-header">
                 <h2>Profile Completion</h2>
               </div>
@@ -273,6 +284,40 @@ const FreelancerDashboard = () => {
                     <li>○ Verify identity</li>
                   </ul>
                 </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="jobs-section">
+            <div className="dashboard-card">
+              <div className="card-header">
+                <h2>Recommended Jobs</h2>
+                <button className="view-all-btn">View All</button>
+              </div>
+              <div className="card-content">
+                {dashboardData.recommended_jobs?.length > 0 ? (
+                  <div className="jobs-list">
+                    {dashboardData.recommended_jobs.map((job) => (
+                      <div key={job.id} className="job-item">
+                        <div className="job-header">
+                          <h4>{job.title}</h4>
+                          <button className="apply-btn">Apply Now</button>
+                        </div>
+                        <div className="job-skills">
+                          <span className="skill-badge">View Details</span>
+                        </div>
+                        <div className="job-footer">
+                          <span>{job.budget}</span>
+                          <span>Posted {job.posted_date}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="empty-state">
+                    <p>No recommended jobs available at the moment.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>

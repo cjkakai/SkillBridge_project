@@ -150,11 +150,35 @@ api.add_resource(PaymentResource, '/api/payments', '/api/payments/<int:payment_i
 
 
 #FREELANCER SIDE ROUTES
+
 class FreelancerApplicationsResource(Resource):
     def get(self, freelancer_id):
         applications = Application.query.filter_by(freelancer_id=freelancer_id).all()
-        return make_response([app.to_dict(rules=('-task',)) for app in applications], 200)
-#used by a freelancer to fetch all his/her applications
+
+        result = []
+        for app in applications:
+            task = app.task
+            client = task.client if task else None
+
+            result.append({
+                "id": app.id,
+                "cover_letter": app.cover_letter,
+                "bid_amount": float(app.bid_amount or 0),
+                "estimated_days": app.estimated_days,
+                "status": app.status,
+                "created_at": app.created_at.isoformat() if app.created_at else None,
+                "task": {
+                    "id": task.id if task else None,
+                    "title": task.title if task else "Unknown Task",
+                    "client": {
+                        "id": client.id if client else None,
+                        "name": client.name if client else "Unknown Client"
+                    } if client else None
+                } if task else None
+            })
+
+        return make_response(result, 200)
+    
 api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
 
 class FreelancerProfileResource(Resource):

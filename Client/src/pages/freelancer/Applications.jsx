@@ -10,7 +10,7 @@ const Applications = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const freelancerId = localStorage.getItem("freelancerId");
+      const freelancerId = 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -20,7 +20,7 @@ const Applications = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/applications`);
+        const response = await fetch(`http://127.0.0.1:5000/api/freelancers/${freelancerId}/applications`);
         if (!response.ok) {
           throw new Error("Failed to fetch applications.");
         }
