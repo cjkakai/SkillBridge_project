@@ -11,10 +11,43 @@ from models import (
 )
 
 # Configure upload folder
-ALLOWED_EXTENSIONS = {'pdf', 'docx', 'png'}
+ALLOWED_EXTENSIONS = {'pdf', 'docx', 'png', 'jpg', 'jpeg'}
 
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
+
+# Add static folder for serving uploaded images
+app.config['UPLOAD_FOLDER_IMAGES'] = os.path.join(app.config['UPLOAD_FOLDER'], 'images')
+if not os.path.exists(app.config['UPLOAD_FOLDER_IMAGES']):
+    os.makedirs(app.config['UPLOAD_FOLDER_IMAGES'])
+
+# Add folder for cover letters
+app.config['UPLOAD_FOLDER_COVER_LETTERS'] = os.path.join(app.config['UPLOAD_FOLDER'], 'cover_letters')
+if not os.path.exists(app.config['UPLOAD_FOLDER_COVER_LETTERS']):
+    os.makedirs(app.config['UPLOAD_FOLDER_COVER_LETTERS'])
+
+# Serve uploaded files
+from flask import send_from_directory
+@app.route('/api/uploads/<path:filename>')
+def uploaded_file(filename):
+    # Handle nested paths like /uploads/images/filename.jpg or /uploads/cover_letters/filename.pdf
+    if filename.startswith('images/'):
+        image_filename = filename[7:]  # Remove 'images/' prefix
+        image_path = os.path.join(app.config['UPLOAD_FOLDER_IMAGES'], image_filename)
+        if os.path.exists(image_path):
+            return send_from_directory(app.config['UPLOAD_FOLDER_IMAGES'], image_filename)
+        else:
+            # Return 404 for missing images
+            return ('', 404)
+    elif filename.startswith('cover_letters/'):
+        cover_filename = filename[13:]  # Remove 'cover_letters/' prefix
+        cover_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], cover_filename)
+        if os.path.exists(cover_path):
+            return send_from_directory(app.config['UPLOAD_FOLDER_COVER_LETTERS'], cover_filename)
+        else:
+            # Return 404 for missing cover letters
+            return ('', 404)
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
@@ -178,9 +211,9 @@ class ApplicationResource(Resource):
             if not all([task_id, freelancer_id, bid_amount, estimated_days]):
                 return make_response({'error': 'Missing required fields'}, 400)
 
-            # Save file
+            # Save file to cover_letters folder
             filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
-            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], filename)
             file.save(file_path)
 
             # Create application
@@ -218,7 +251,8 @@ class ApplicationDownloadResource(Resource):
         if not application.cover_letter_file:
             return make_response({'error': 'No cover letter file found'}, 404)
 
-        file_path = os.path.join(app.config['UPLOAD_FOLDER'], application.cover_letter_file)
+        # Check if file is in the cover_letters folder
+        file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], application.cover_letter_file)
         if not os.path.exists(file_path):
             return make_response({'error': 'File not found'}, 404)
 
@@ -511,7 +545,41 @@ class ClientProfileResource(Resource):
         db.session.commit()
         return make_response(client.to_dict(rules=('-_password_hash', '-tasks', '-contracts',)), 200)
 #used by a client to edit their profile
+class ClientImageUploadResource(Resource):
+    def post(self, client_id):
+        try:
+            # Check if image file is provided
+            if 'image' not in request.files:
+                return make_response({'error': 'No image file provided'}, 400)
+
+            file = request.files['image']
+            if file.filename == '':
+                return make_response({'error': 'No image selected'}, 400)
+
+            if not allowed_file(file.filename):
+                return make_response({'error': 'Select an allowed file type: png,jpg, jpeg'}, 400)
+
+            # Get client
+            client = Client.query.get_or_404(client_id)
+
+            # Save file to images folder
+            filename = secure_filename(f"client_{client_id}_{file.filename}")
+            file_path = os.path.join(app.config['UPLOAD_FOLDER_IMAGES'], filename)
+            file.save(file_path)
+
+            # Update client image URL
+            image_url = f"/api/uploads/images/{filename}"
+            client.image = image_url
+            db.session.commit()
+
+            return make_response({'message': 'Image uploaded successfully', 'image_url': image_url}, 200)
+
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'error': str(e)}, 500)
+
 api.add_resource(ClientProfileResource, '/api/clients/<int:client_id>/profile')
+api.add_resource(ClientImageUploadResource, '/api/clients/<int:client_id>/upload-image')
 
 
 class ClientContractsResource(Resource):
