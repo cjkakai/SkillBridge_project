@@ -1,7 +1,7 @@
 import React from 'react';
-import { Star, Calendar, DollarSign, Clock, Download } from 'lucide-react';
+import { Star, Calendar, DollarSign, Clock, Download, Eye, X, Award } from 'lucide-react';
 
-const TaskApplicationCard = ({ application }) => {
+const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwardContract }) => {
   const formatDate = (dateString) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
@@ -82,9 +82,11 @@ const TaskApplicationCard = ({ application }) => {
           <span className="contact-label">Email:</span>
           <span>{application.freelancer.email}</span>
         </div>
+         <hr />
       </div>
 
       <div className="application-details">
+        <h4>Bid Details</h4>
         <div className="detail-item">
           <DollarSign size={16} className="detail-icon" />
           <span>Bid Amount: ksh {parseFloat(application.bid_amount).toFixed(2)}</span>
@@ -111,13 +113,37 @@ const TaskApplicationCard = ({ application }) => {
               title="Download Cover Letter PDF"
             >
               <Download size={16} />
-              Download PDF
+              Download CV
             </button>
           )}
         </div>
         {!application.cover_letter_file && (
           <p>No cover letter provided</p>
         )}
+      </div>
+       <div className="application-actions">
+        <h4>Select an action</h4>
+        <button
+          className="action-btn award-contract-btn"
+          onClick={() => onAwardContract && onAwardContract(application.id)}
+          title="Award Contract"
+        >
+          <Award size={16} />
+        </button>
+        <button
+          className="action-btn view-experience-btn"
+          onClick={() => onViewExperience && onViewExperience(application.freelancer.id)}
+          title="View Freelancer Experience"
+        >
+          <Eye size={16} />
+        </button>
+        <button
+          className={`action-btn ${application.status === 'rejected' ? 'undo-reject-btn' : 'reject-bid-btn'}`}
+          onClick={() => onRejectBid && onRejectBid(application.id)}
+          title={application.status === 'rejected' ? 'Undo Rejection' : 'Reject Bid'}
+        >
+          <X size={16} />
+        </button>
       </div>
     </div>
   );

@@ -14,6 +14,7 @@ import ContractDetails from './pages/shared/ContractDetails'
 import PostTask from './pages/client/PostTask';
 import TaskApplications from './pages/client/TaskApplications';
 import TaskEdit from './pages/client/TaskEdit';
+import FreelancerExperience from './pages/client/FreelancerExperience';
 import './App.css';
 
 function App() {
@@ -29,6 +30,7 @@ function App() {
           <Route path="/client-messages" element={<ClientMessages />} />
           <Route path="/task-applications" element={<TaskApplications />} />
           <Route path="/task-edit/:taskId" element={<TaskEdit />} />
+          <Route path="/freelancer-experience/:freelancerId" element={<FreelancerExperience />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

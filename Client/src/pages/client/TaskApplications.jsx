@@ -15,9 +15,8 @@ const TaskApplications = () => {
   const [clientImage, setClientImage] = useState("");
   const [maxBudget, setMaxBudget] = useState('');
   const clientId = 5; // Hardcoded for now, should come from auth context
-
-  // Get task ID from location state
   const taskId = location.state?.taskId;
+
 
   useEffect(() => {
     if (taskId) {
@@ -71,6 +70,79 @@ const TaskApplications = () => {
       }
     } catch (error) {
       console.error('Error fetching task details:', error);
+    }
+  };
+
+  const handleViewExperience = (freelancerId) => {
+    // Navigate to freelancer experience page
+    navigate(`/freelancer-experience/${freelancerId}`);
+  };
+
+  const handleRejectBid = async (applicationId) => {
+    // Find the current application to check its status
+    const application = applications.find(app => app.id === applicationId);
+    if (!application) return;
+
+    const newStatus = application.status === 'rejected' ? 'pending' : 'rejected';
+
+    try {
+      const response = await fetch(`/api/applications/${applicationId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ status: newStatus })
+      });
+
+      if (response.ok) {
+        // Refresh applications list
+        fetchApplications();
+      } else {
+        console.error('Failed to update bid status');
+      }
+    } catch (error) {
+      console.error('Error updating bid status:', error);
+    }
+  };
+
+  const handleAwardContract = async (applicationId) => {
+    // Find the application to get freelancer and task details
+    const application = applications.find(app => app.id === applicationId);
+    if (!application) return;
+
+    try {
+      const response = await fetch(`/api/clients/${clientId}/create-contract`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          task_id: taskId,
+          freelancer_id: application.freelancer.id,
+          agreed_amount: application.bid_amount
+        })
+      });
+
+      if (response.ok) {
+        // Update application status to accepted
+        await fetch(`/api/applications/${applicationId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ status: 'accepted' })
+        });
+
+        // Refresh applications list
+        fetchApplications();
+        alert('Contract awarded successfully!');
+      } else {
+        console.error('Failed to award contract');
+        alert('Failed to award contract. Please try again.');
+      }
+    } catch (error) {
+      console.error('Error awarding contract:', error);
+      alert('Error awarding contract. Please try again.');
     }
   };
 
@@ -159,7 +231,13 @@ const TaskApplications = () => {
 
               <div className="applications-grid">
                 {filteredApplications.map((application) => (
-                  <TaskApplicationCard key={application.id} application={application} />
+                  <TaskApplicationCard
+                    key={application.id}
+                    application={application}
+                    onViewExperience={handleViewExperience}
+                    onRejectBid={handleRejectBid}
+                    onAwardContract={handleAwardContract}
+                  />
                 ))}
               </div>
             </div>
