@@ -69,7 +69,7 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
       <div className="contract-details">
         <div className="detail-item">
           <DollarSign size={16} />
-          <span>Agreed Amount: ${contract.agreed_amount}</span>
+          <span>Agreed Amount: ${parseFloat(contract.agreed_amount).toFixed(2)}</span>
         </div>
         <div className="detail-item">
           <Calendar size={16} />

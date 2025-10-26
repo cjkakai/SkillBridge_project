@@ -125,14 +125,14 @@ const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwa
         <h4>Select an action</h4>
         <button
           className="action-btn award-contract-btn"
-          onClick={() => onAwardContract && onAwardContract(application.id)}
+          onClick={() => onAwardContract(application.id)}
           title="Award Contract"
         >
           <Award size={16} />
         </button>
         <button
           className="action-btn view-experience-btn"
-          onClick={() => onViewExperience && onViewExperience(application.freelancer.id)}
+          onClick={() => onViewExperience(application.freelancer.id)}
           title="View Freelancer Experience"
         >
           <Eye size={16} />

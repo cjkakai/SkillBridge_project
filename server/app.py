@@ -505,15 +505,36 @@ api.add_resource(ClientContractsResource, '/api/clients/<int:client_id>/contract
 
 class ClientCreateContractResource(Resource):
     def post(self, client_id):
+        from datetime import datetime
         data = request.get_json()
+
+        # Check if a contract already exists for this task
+        existing_contract = Contract.query.filter_by(task_id=data['task_id']).first()
+        if existing_contract:
+            return make_response({'error': 'A contract has already been awarded for this task'}, 400)
+
+        # Convert started_at string to date if provided
+        started_at = None
+        if data.get('started_at'):
+            started_at = datetime.fromisoformat(data['started_at'].replace('Z', '+00:00')).date()
+
         contract = Contract(
             client_id=client_id,
             task_id=data['task_id'],
             freelancer_id=data['freelancer_id'],
             agreed_amount=data['agreed_amount'],
-            contract_code=f"SK-{data.get('contract_code', '0000')}"
+            contract_code=data.get('contract_code', f"SK-{data['task_id']}-{data['freelancer_id']}-{datetime.now().strftime('%Y%m%d%H%M%S')}"),
+            started_at=started_at,
+            status=data.get('status', 'active')
         )
         db.session.add(contract)
+
+        # Update task status to in_progress when contract is awarded
+        task = Task.query.get(data['task_id'])
+        if task:
+            task.status = 'in_progress'
+            db.session.add(task)
+
         db.session.commit()
         return make_response(contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',)), 201)
 #used by a client to create a new contract

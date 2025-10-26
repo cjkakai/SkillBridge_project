@@ -105,44 +105,11 @@ const TaskApplications = () => {
     }
   };
 
-  const handleAwardContract = async (applicationId) => {
-    // Find the application to get freelancer and task details
+  const handleAwardContract = (applicationId) => {
+    // Navigate to award contract form with taskId and freelancerId
     const application = applications.find(app => app.id === applicationId);
-    if (!application) return;
-
-    try {
-      const response = await fetch(`/api/clients/${clientId}/create-contract`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          task_id: taskId,
-          freelancer_id: application.freelancer.id,
-          agreed_amount: application.bid_amount
-        })
-      });
-
-      if (response.ok) {
-        // Update application status to accepted
-        await fetch(`/api/applications/${applicationId}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ status: 'accepted' })
-        });
-
-        // Refresh applications list
-        fetchApplications();
-        alert('Contract awarded successfully!');
-      } else {
-        console.error('Failed to award contract');
-        alert('Failed to award contract. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error awarding contract:', error);
-      alert('Error awarding contract. Please try again.');
+    if (application) {
+      navigate(`/award-contract/${taskId}/${application.freelancer.id}`);
     }
   };
 
