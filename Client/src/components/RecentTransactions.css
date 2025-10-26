@@ -1,0 +1,10 @@
+.transactions-card{
+  background:white;border-radius:14px;padding:18px;box-shadow:0 6px 18px rgba(0,0,0,0.04);
+}
+.transactions-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.transactions-header h4{margin:0}
+.transactions-table{width:100%;border-collapse:collapse}
+.transactions-table th{color:#6b7280;text-align:left;padding:10px 8px;border-bottom:1px solid #f1f5f9;font-weight:600}
+.transactions-table td{padding:14px 8px;border-bottom:1px solid #f6f8fb}
+.view-all{color:var(--brand-blue);cursor:pointer;font-weight:600}
+.table-wrap{overflow:auto;max-height:300px;padding-right:6px}
