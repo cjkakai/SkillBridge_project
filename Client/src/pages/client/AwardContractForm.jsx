@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2 } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2, AlertTriangle } from 'lucide-react';
 import './AwardContractForm.css';
 
 const AwardContractForm = () => {
@@ -231,6 +231,10 @@ const AwardContractForm = () => {
           <div className="nav-item" onClick={() => navigate('/client-profile')}>
             <User size={20} />
             <span>Your Profile</span>
+          </div>
+          <div className="nav-item" onClick={() => navigate('/client-report')}>
+            <AlertTriangle size={20} />
+            <span>Report a Freelancer</span>
           </div>
           <div className="nav-item">
             <CreditCard size={20} />

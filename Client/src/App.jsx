@@ -18,6 +18,7 @@ import FreelancerExperience from './pages/client/FreelancerExperience';
 import AwardContractForm from './pages/client/AwardContractForm';
 import ClientProfile from './pages/client/ClientProfile';
 import FreelancerReview from './pages/client/FreelancerReview';
+import ClientReport from './pages/client/ClientReport';
 import './App.css';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
           <Route path="/award-contract/:taskId/:freelancerId" element={<AwardContractForm />} />
           <Route path="/client-profile" element={<ClientProfile />} />
           <Route path="/freelancer-review/:contractId" element={<FreelancerReview />} />
+          <Route path="/client-report" element={<ClientReport />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

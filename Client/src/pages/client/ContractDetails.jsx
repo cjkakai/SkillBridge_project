@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download, AlertTriangle } from 'lucide-react';
 import '../client/ClientDashboard.css';
 import '../client/ClientContracts.css';
 
@@ -121,6 +121,10 @@ const ContractDetails = () => {
           <div className="nav-item" onClick={() => navigate('/client-profile')}>
             <User size={20} />
             <span>Your Profile</span>
+          </div>
+          <div className="nav-item" onClick={() => navigate('/client-report')}>
+            <AlertTriangle size={20} />
+            <span>Report a Freelancer</span>
           </div>
           <div className="nav-item">
             <CreditCard size={20} />

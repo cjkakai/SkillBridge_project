@@ -601,3 +601,114 @@
   background: #1a6bd1;
   transform: translateY(-1px);
 }
+
+/* Complaints Section Styles */
+.complaints-section {
+  margin-top: 30px;
+}
+
+.complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.complaint-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.complaint-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #2F80ED;
+}
+
+.complaint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.complaint-info h4 {
+  margin: 0 0 4px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.complaint-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.complaint-status.open {
+  background: #ffc107;
+  color: #0A1F44;
+}
+
+.complaint-status.in-progress {
+  background: #2F80ED;
+  color: white;
+}
+
+.complaint-status.resolved {
+  background: #28a745;
+  color: white;
+}
+
+.complaint-details p {
+  margin: 8px 0;
+  color: #6B7A99;
+  font-size: 14px;
+}
+
+.complaint-details p strong {
+  color: #0A1F44;
+}
+
+.delete-complaint-btn {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-complaint-btn:hover {
+  background: linear-gradient(45deg, #c82333, #a02622);
+  transform: translateY(-1px);
+}
+
+/* Submit Complaint Button */
+.submit-report-btn {
+  background: #2F80ED !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.submit-report-btn:hover {
+  background: #1a6bd1 !important;
+  transform: translateY(-1px) !important;
+}

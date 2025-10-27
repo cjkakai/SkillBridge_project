@@ -503,7 +503,17 @@ class AdminComplaintResource(Resource):
             complaint = Complaint.query.get_or_404(complaint_id)
             return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
         complaints = Complaint.query.all()
-        return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
+        return make_response([{
+            'id': complaint.id,
+            'complainant_id': complaint.complainant_id,
+            'respondent_id': complaint.respondent_id,
+            'contract_id': complaint.contract_id,
+            'complainant_type': complaint.complainant_type,
+            'description': complaint.description,
+            'status': complaint.status,
+            'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
+            'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
+        } for complaint in complaints], 200)
     
     def put(self, complaint_id):
         complaint = Complaint.query.get_or_404(complaint_id)
@@ -511,7 +521,17 @@ class AdminComplaintResource(Resource):
         for key, value in data.items():
             setattr(complaint, key, value)
         db.session.commit()
-        return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
+        return make_response({
+            'id': complaint.id,
+            'complainant_id': complaint.complainant_id,
+            'respondent_id': complaint.respondent_id,
+            'contract_id': complaint.contract_id,
+            'complainant_type': complaint.complainant_type,
+            'description': complaint.description,
+            'status': complaint.status,
+            'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
+            'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
+        }, 200)
 #used by an admin to fetch all complaints and edit a particular complaint
 api.add_resource(AdminComplaintResource, '/api/admin/complaints', '/api/admin/complaints/<int:complaint_id>')
 
@@ -882,6 +902,91 @@ class ClientReviewResource(Resource):
 #used by a client to review a contract and update freelancer rating
 api.add_resource(ClientReviewResource, '/api/clients/<int:client_id>/contracts/<int:contract_id>/review')
 
+class ClientComplaintResource(Resource):
+    def get(self, client_id, contract_id=None):
+        """Get all complaints for a client, or complaints for a specific contract"""
+        if contract_id:
+            # Get complaints for a specific contract
+            contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+            complaints = Complaint.query.filter_by(contract_id=contract_id, complainant_id=client_id).all()
+        else:
+            # Get all complaints for the client
+            contracts = Contract.query.filter_by(client_id=client_id).all()
+            contract_ids = [contract.id for contract in contracts]
+            complaints = Complaint.query.filter(Complaint.contract_id.in_(contract_ids), Complaint.complainant_id == client_id).all()
+
+        return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
+
+    def post(self, client_id, contract_id):
+        """Create a new complaint for a contract"""
+        contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+
+        data = request.get_json()
+        complaint = Complaint(
+            contract_id=contract_id,
+            complainant_id=client_id,
+            respondent_id=contract.freelancer_id,
+            complainant_type='client',
+            description=data['description'],
+            status='open'
+        )
+        db.session.add(complaint)
+        db.session.commit()
+        return make_response({
+            'id': complaint.id,
+            'complainant_id': complaint.complainant_id,
+            'respondent_id': complaint.respondent_id,
+            'contract_id': complaint.contract_id,
+            'complainant_type': complaint.complainant_type,
+            'description': complaint.description,
+            'status': complaint.status,
+            'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
+            'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
+        }, 201)
+
+    def put(self, client_id, contract_id, complaint_id):
+        """Update a complaint"""
+        contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+        complaint = Complaint.query.filter_by(id=complaint_id, contract_id=contract_id, complainant_id=client_id).first_or_404()
+
+        data = request.get_json()
+        # Only allow updating description and status (if not resolved)
+        if 'description' in data:
+            complaint.description = data['description']
+        if 'status' in data and complaint.status != 'resolved':
+            complaint.status = data['status']
+
+        db.session.commit()
+        return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
+
+    def delete(self, client_id, contract_id, complaint_id):
+        """Delete a complaint (only if it's not resolved)"""
+        contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+        complaint = Complaint.query.filter_by(id=complaint_id, contract_id=contract_id, complainant_id=client_id).first_or_404()
+
+        # Only allow deletion if complaint is not resolved
+        if complaint.status == 'resolved':
+            return make_response({'error': 'Cannot delete a resolved complaint'}, 400)
+
+        db.session.delete(complaint)
+        db.session.commit()
+        return make_response('', 204)
+
+#used by a client to manage complaints related to their contracts
+api.add_resource(ClientComplaintResource, '/api/clients/<int:client_id>/complaints', '/api/clients/<int:client_id>/contracts/<int:contract_id>/complaints', '/api/clients/<int:client_id>/contracts/<int:contract_id>/complaints/<int:complaint_id>')
+
+class GetAdminsResource(Resource):
+    def get(self):
+        admins = Admin.query.all()
+        return make_response([{
+            'id': admin.id,
+            'name': admin.name,
+            'email': admin.email,
+            'created_at': admin.created_at.isoformat() if admin.created_at else None
+        } for admin in admins], 200)
+
+api.add_resource(GetAdminsResource, '/api/admins')
+
 class ClientFreelancersResource(Resource):
     def get(self, client_id):
         contracts = Contract.query.filter_by(client_id=client_id).all()
@@ -896,7 +1001,16 @@ class ClientPaymentsResource(Resource):
         contracts = Contract.query.filter_by(client_id=client_id).all()
         contract_ids = [contract.id for contract in contracts]
         payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
-        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
+        return make_response([{
+            'id': payment.id,
+            'contract_id': payment.contract_id,
+            'payer_id': payment.payer_id,
+            'payee_id': payment.payee_id,
+            'amount': str(payment.amount),
+            'method': payment.method,
+            'status': payment.status,
+            'created_at': payment.created_at.isoformat() if payment.created_at else None
+        } for payment in payments], 200)
 #used by a client to access all his/her payments
 api.add_resource(ClientPaymentsResource, '/api/clients/<int:client_id>/payments')
 
