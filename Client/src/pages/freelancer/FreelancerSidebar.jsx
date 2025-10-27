@@ -23,7 +23,6 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
     { path: '/freelancer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/freelancer/browse-tasks', label: 'Browse Tasks', icon: Search },
     { path: '/freelancer/applications', label: 'My Applications', icon: FileText },
-    { path: '/freelancer/application-form', label: 'Application Form', icon: ClipboardList },
     { path: '/freelancer/earnings', label: 'Earnings', icon: DollarSign },
     { path: '/freelancer/my-projects', label: 'My Projects', icon: Folder },
     { path: '/freelancer/profile', label: 'Profile', icon: User },

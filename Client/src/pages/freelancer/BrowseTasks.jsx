@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
+import ApplicationForm from './ApplicationForm';
 
 const BrowseTasks = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [jobTab, setJobTab] = useState('all');
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
+  const [showApplicationModal, setShowApplicationModal] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
+  
+  const freelancerId = 1001; // Mock freelancer ID
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -41,6 +46,16 @@ const BrowseTasks = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleApplyClick = (task) => {
+    setSelectedTask(task);
+    setShowApplicationModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowApplicationModal(false);
+    setSelectedTask(null);
   };
 
 
@@ -238,15 +253,19 @@ const BrowseTasks = () => {
                           <span style={{ color: '#6b7280', fontSize: '14px' }}>
                             Posted {formatDate(task.created_at)}
                           </span>
-                          <button style={{ 
-                            padding: '8px 24px', 
-                            backgroundColor: '#3b82f6', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '6px', 
-                            fontWeight: '500',
-                            cursor: 'pointer'
-                          }}>Apply Now</button>
+                          <button 
+                            onClick={() => handleApplyClick(task)}
+                            style={{ 
+                              padding: '8px 24px', 
+                              backgroundColor: '#3b82f6', 
+                              color: 'white', 
+                              border: 'none', 
+                              borderRadius: '6px', 
+                              fontWeight: '500',
+                              cursor: 'pointer'
+                            }}>
+                            Apply Now
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -254,6 +273,13 @@ const BrowseTasks = () => {
                 )}
               </div>
             </div>
+
+        <ApplicationForm
+          isOpen={showApplicationModal}
+          onClose={handleCloseModal}
+          task={selectedTask}
+          freelancerId={freelancerId}
+        />
       </div>
     </div>
   );
