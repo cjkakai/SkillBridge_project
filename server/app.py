@@ -1,5 +1,7 @@
 from openai import OpenAI
 import os
+import urllib.request
+import json
 from flask import Flask, request, jsonify, session, make_response, send_file, Blueprint
 from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
@@ -55,9 +57,9 @@ def allowed_file(filename):
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
-#OPEN AI functionality
+#AI functionality (Google Gemini)
 ai_bp = Blueprint('ai', __name__)
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
 @ai_bp.route('/api/ai/describe-task', methods=['POST'])
 def describe_task():
     data = request.get_json()
@@ -66,24 +68,55 @@ def describe_task():
     if not prompt:
         return jsonify({'error': 'Prompt is required'}), 400
 
-    try:
-        # Generate AI response
-        completion = client.chat.completions.create(
-            model="gpt-5",
-            messages=[
-                {"role": "system", "content": "You are a professional job post writer who creates concise, detailed freelance task descriptions."},
-                {"role": "user", "content": f"Write a professional task description based on: {prompt}"}
-            ],
-            max_tokens=250,
-        )
+    api_key = os.getenv("GOOGLE_API_KEY")
+    print(f"API Key found: {bool(api_key)}")
+    if not api_key:
+        return jsonify({'error': 'Google Gemini API key not configured. Please set GOOGLE_API_KEY environment variable.'}), 500
 
-        ai_text = completion.choices[0].message.content.strip()
+    try:
+        # Use Google Gemini REST API directly
+        url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key={api_key}"
+
+        full_prompt = f"""You are a professional job post writer who creates concise, detailed freelance task descriptions.
+
+Write a professional task description based on: {prompt}
+
+Please provide a clear, detailed, and professional description suitable for a freelance job posting."""
+
+        payload = {
+            "contents": [{
+                "parts": [{
+                    "text": full_prompt
+                }]
+            }]
+        }
+
+        # Convert payload to JSON string
+        data = json.dumps(payload).encode('utf-8')
+
+        # Create request
+        req = urllib.request.Request(url, data=data, headers={'Content-Type': 'application/json'})
+
+        # Make request
+        with urllib.request.urlopen(req) as response:
+            result = json.loads(response.read().decode('utf-8'))
+            ai_text = result["candidates"][0]["content"]["parts"][0]["text"].strip()
 
         return jsonify({'description': ai_text})
 
+    except urllib.error.HTTPError as e:
+        print("HTTP Error generating description:", e.code, e.read().decode('utf-8'))
+        # Provide a more helpful error message
+        error_message = e.read().decode('utf-8')
+        if "quota" in error_message.lower():
+            return jsonify({'error': 'Google Gemini API quota exceeded. Please check your billing status at https://makersuite.google.com/app/apikey'}), 500
+        elif "invalid" in error_message.lower() or "permission" in error_message.lower():
+            return jsonify({'error': 'Google Gemini API key invalid. Please check your API key at https://makersuite.google.com/app/apikey'}), 500
+        else:
+            return jsonify({'error': f'AI generation failed: {error_message}'}), 500
     except Exception as e:
         print("Error generating description:", e)
-        return jsonify({'error': 'AI generation failed'}), 500
+        return jsonify({'error': f'AI generation failed: {str(e)}'}), 500
 
 
 
@@ -217,6 +250,39 @@ class TaskResource(Resource):
             setattr(task, key, value)
         db.session.commit()
         return make_response(task.to_dict(rules=('-client', '-applications', '-contract',)), 200)
+
+    # Delete a task
+    def delete(self, task_id):
+        task = Task.query.get_or_404(task_id)
+
+        # Delete related records first to avoid foreign key constraint errors
+        # Delete task skills
+        TaskSkill.query.filter_by(task_id=task_id).delete()
+
+        # Delete applications and their related files
+        applications = Application.query.filter_by(task_id=task_id).all()
+        for application in applications:
+            # Delete cover letter file if it exists
+            if application.cover_letter_file:
+                file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], application.cover_letter_file)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
+            db.session.delete(application)
+
+        # Delete contracts and their related records
+        contracts = Contract.query.filter_by(task_id=task_id).all()
+        for contract in contracts:
+            Message.query.filter_by(contract_id=contract.id).delete()
+            Milestone.query.filter_by(contract_id=contract.id).delete()
+            Payment.query.filter_by(contract_id=contract.id).delete()
+            Review.query.filter_by(contract_id=contract.id).delete()
+            Complaint.query.filter_by(contract_id=contract.id).delete()
+            db.session.delete(contract)
+
+        # Finally delete the task
+        db.session.delete(task)
+        db.session.commit()
+        return make_response('', 204)
 
 api.add_resource(TaskResource, '/api/tasks', '/api/tasks/<int:task_id>')
 
@@ -1102,6 +1168,7 @@ class ClientFreelancerMessagesResource(Resource):
 api.add_resource(ClientFreelancerMessagesResource, '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages')
 
 # Register API routes
+app.register_blueprint(ai_bp)
 
 # Nested resource routes
 

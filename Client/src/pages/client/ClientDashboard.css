@@ -374,6 +374,19 @@
   background-color: #2563EB;
 }
 
+.delete-task-btn {
+  background-color: #2F80ED !important;
+}
+
+.delete-task-btn:hover {
+  background-color: #2563EB !important;
+}
+
+.delete-task-btn:disabled {
+  background-color: #9CA3AF !important;
+  cursor: not-allowed;
+}
+
 .content-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;

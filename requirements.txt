@@ -1,4 +1,4 @@
-alembic==1.14.1
+ralembic==1.14.1
 aniso8601==10.0.1
 annotated-types==0.7.0
 anyio==4.5.2
@@ -46,3 +46,5 @@ typing-extensions==4.13.2
 werkzeug==3.0.6
 wsproto==1.2.0
 zipp==3.20.2
+requests==2.31.0
+google-generativeai==0.8.3

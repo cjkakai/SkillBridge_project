@@ -20,6 +20,11 @@ function PostTask() {
      deadline: "",
    });
 
+   // AI generation states
+   const [showAIPrompt, setShowAIPrompt] = useState(false);
+   const [aiPrompt, setAiPrompt] = useState("");
+   const [isGenerating, setIsGenerating] = useState(false);
+
   
   // It updates the formData state with the new value for the given field
   const handleInputChange = (field, value) => {
@@ -47,6 +52,39 @@ function PostTask() {
       ...prev,
       skills: prev.skills.filter((skill) => skill !== skillToRemove), // Keep only skills that don't match
     }));
+  };
+
+  // Function to handle AI description generation
+  const handleGenerateWithAI = async () => {
+    if (!aiPrompt.trim()) {
+      alert('Please enter a prompt for AI generation.');
+      return;
+    }
+
+    setIsGenerating(true);
+    try {
+      const response = await fetch('/api/ai/describe-task', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: aiPrompt }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate description');
+      }
+
+      const data = await response.json();
+      setFormData((prev) => ({ ...prev, description: data.description }));
+      setShowAIPrompt(false);
+      setAiPrompt("");
+    } catch (error) {
+      console.error('Error generating AI description:', error);
+      alert('Failed to generate description. Please try again.');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   // Function to handle form submission
@@ -174,6 +212,48 @@ function PostTask() {
             value={formData.description}
             onChange={(e) => handleInputChange("description", e.target.value)}
           ></textarea>
+          <button
+            type="button"
+            className="generate-ai-btn"
+            onClick={() => setShowAIPrompt(true)}
+          >
+            Generate with AI
+          </button>
+
+          {showAIPrompt && (
+            <div className="ai-prompt-modal">
+              <div className="ai-prompt-content">
+                <h3>Generate Task Description with AI</h3>
+                <p>Provide a brief description of what you need, and AI will create a detailed professional task description.</p>
+                <textarea
+                  rows={3}
+                  placeholder="e.g., I need a React developer to build a dashboard with charts and user management"
+                  value={aiPrompt}
+                  onChange={(e) => setAiPrompt(e.target.value)}
+                  disabled={isGenerating}
+                />
+                <div className="ai-prompt-buttons">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowAIPrompt(false);
+                      setAiPrompt("");
+                    }}
+                    disabled={isGenerating}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleGenerateWithAI}
+                    disabled={isGenerating || !aiPrompt.trim()}
+                  >
+                    {isGenerating ? "Generating..." : "Generate"}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           
           <label>Required Skills *</label>

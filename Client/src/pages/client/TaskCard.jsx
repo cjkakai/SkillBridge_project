@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, Clock, MapPin, Tag, Users, Edit } from 'lucide-react';
+import { Calendar, DollarSign, Clock, MapPin, Tag, Users, Edit, Trash2 } from 'lucide-react';
 
-const TaskCard = ({ task }) => {
+const TaskCard = ({ task, onTaskDeleted }) => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   useEffect(() => {
     if (task.status === 'in_progress' || task.status === 'completed') {
@@ -64,6 +65,31 @@ const TaskCard = ({ task }) => {
         return '#2F80ED';
       default:
         return '#6B7A99';
+    }
+  };
+
+  const handleDeleteTask = async () => {
+    if (window.confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
+      setIsDeleting(true);
+      try {
+        const response = await fetch(`/api/tasks/${task.id}`, {
+          method: 'DELETE',
+        });
+
+        if (response.ok) {
+          alert('Task deleted successfully!');
+          if (onTaskDeleted) {
+            onTaskDeleted(task.id);
+          }
+        } else {
+          throw new Error('Failed to delete task');
+        }
+      } catch (error) {
+        console.error('Error deleting task:', error);
+        alert('Failed to delete task. Please try again.');
+      } finally {
+        setIsDeleting(false);
+      }
     }
   };
 
@@ -142,6 +168,14 @@ const TaskCard = ({ task }) => {
           onClick={() => navigate(`/task-edit/${task.id}`)}
         >
           <Edit size={16} />
+        </button>
+        <button
+          className="action-btn delete-task-btn"
+          title="Delete Task"
+          onClick={handleDeleteTask}
+          disabled={isDeleting}
+        >
+          <Trash2 size={16} />
         </button>
       </div>
     </div>

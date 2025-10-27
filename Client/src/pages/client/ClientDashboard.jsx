@@ -241,7 +241,7 @@ const ClientDashboard = () => {
               <div className="tasks-container">
                 <h2 className="tasks-header">Your Tasks</h2>
                 {tasks.map((task) => (
-                  <TaskCard key={task.id} task={task} />
+                  <TaskCard key={task.id} task={task} onTaskDeleted={fetchTasks} />
                 ))}
               </div>
             ) : (
