@@ -1,5 +1,6 @@
+from openai import OpenAI
 import os
-from flask import Flask, request, jsonify, session, make_response, send_file
+from flask import Flask, request, jsonify, session, make_response, send_file, Blueprint
 from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
 from werkzeug.utils import secure_filename
@@ -53,6 +54,38 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 socketio = SocketIO(app, cors_allowed_origins="*")
+
+#OPEN AI functionality
+ai_bp = Blueprint('ai', __name__)
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+@ai_bp.route('/api/ai/describe-task', methods=['POST'])
+def describe_task():
+    data = request.get_json()
+    prompt = data.get('prompt', '')
+
+    if not prompt:
+        return jsonify({'error': 'Prompt is required'}), 400
+
+    try:
+        # Generate AI response
+        completion = client.chat.completions.create(
+            model="gpt-5",
+            messages=[
+                {"role": "system", "content": "You are a professional job post writer who creates concise, detailed freelance task descriptions."},
+                {"role": "user", "content": f"Write a professional task description based on: {prompt}"}
+            ],
+            max_tokens=250,
+        )
+
+        ai_text = completion.choices[0].message.content.strip()
+
+        return jsonify({'description': ai_text})
+
+    except Exception as e:
+        print("Error generating description:", e)
+        return jsonify({'error': 'AI generation failed'}), 500
+
+
 
 #COMMON RESOURCES(SHARED BY DIFFERENT USERS)
 class ClientResource(Resource):
