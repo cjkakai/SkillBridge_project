@@ -19,7 +19,7 @@ function App() {
           <Route path="/client-register" element={<ClientRegister />} />
           <Route path="/freelancer-register" element={<FreelancerRegister />} />
           <Route path="/freelancer/dashboard" element={<FreelancerDashboard />} />
-          <Route path="/freelancer/browse-tasks" element={<FreelancerDashboard />} />
+          <Route path="/freelancer/browse-tasks" element={<BrowseTasks />} />
           <Route path="/freelancer/applications" element={<Applications />} />
           <Route path="/freelancer/profile" element={<FreelancerDashboard />} />
           <Route path="/freelancer/payments" element={<FreelancerDashboard />} />
