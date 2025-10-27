@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download, AlertTriangle } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download, AlertTriangle, Trash2 } from 'lucide-react';
 import '../client/ClientDashboard.css';
 import '../client/ClientContracts.css';
 
@@ -14,6 +14,7 @@ const ContractDetails = () => {
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [contractStatus, setContractStatus] = useState("");
+  const [showAddMilestoneForm, setShowAddMilestoneForm] = useState(false);
   const clientId = 5; // Should come from auth context
 
   useEffect(() => {
@@ -72,6 +73,64 @@ const ContractDetails = () => {
       month: 'short',
       day: 'numeric'
     });
+  };
+
+  const handleDeleteMilestone = async (milestoneId) => {
+    if (window.confirm('Are you sure you want to delete this milestone?')) {
+      try {
+        const response = await fetch(`/api/contracts/${id}/milestones/${milestoneId}`, {
+          method: 'DELETE'
+        });
+
+        if (response.ok) {
+          // Refresh contract data to update milestones and progress
+          fetchContract();
+          alert('Milestone deleted successfully.');
+        } else {
+          const errorData = await response.json();
+          alert(`Failed to delete milestone: ${errorData.error || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Error deleting milestone:', error);
+        alert('Error deleting milestone. Please try again.');
+      }
+    }
+  };
+
+  const handleAddMilestone = async (e) => {
+    e.preventDefault();
+
+    const formData = new FormData(e.target);
+    const milestoneData = {
+      title: formData.get('title'),
+      description: formData.get('description'),
+      due_date: formData.get('due_date'),
+      weight: parseFloat(formData.get('weight')) / 100 // Convert percentage to decimal
+    };
+
+    try {
+      const response = await fetch(`/api/contracts/${id}/milestones`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(milestoneData)
+      });
+
+      if (response.ok) {
+        // Refresh contract data to update milestones and progress
+        fetchContract();
+        setShowAddMilestoneForm(false);
+        e.target.reset();
+        alert('Milestone added successfully.');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to add milestone: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error adding milestone:', error);
+      alert('Error adding milestone. Please try again.');
+    }
   };
 
   const renderStars = (rating) => {
@@ -205,7 +264,7 @@ const ContractDetails = () => {
               <div className="contract-details">
                 <div className="detail-item">
                   <DollarSign size={16} />
-                  <span>Agreed Amount: ${contract.agreed_amount}</span>
+                  <span>Agreed Amount: ${parseFloat(contract.agreed_amount).toFixed(2)}</span>
                 </div>
                 <div className="detail-item">
                   <Calendar size={16} />
@@ -232,6 +291,73 @@ const ContractDetails = () => {
             {/* Project Progress */}
             <div className="contract-card">
               <h3>Project Progress</h3>
+
+              {/* Add Milestone Section */}
+              <div className="add-milestone-section">
+                <button
+                  className="add-milestone-btn"
+                  onClick={() => setShowAddMilestoneForm(!showAddMilestoneForm)}
+                >
+                  <Plus size={16} />
+                  {showAddMilestoneForm ? 'Cancel' : 'Add Milestone'}
+                </button>
+
+                {showAddMilestoneForm && (
+                  <form className="add-milestone-form" onSubmit={handleAddMilestone}>
+                    <div className="form-group">
+                      <label htmlFor="milestone-title">Title</label>
+                      <input
+                        type="text"
+                        id="milestone-title"
+                        name="title"
+                        required
+                        placeholder="Enter milestone title"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="milestone-description">Description</label>
+                      <textarea
+                        id="milestone-description"
+                        name="description"
+                        rows="3"
+                        placeholder="Describe the milestone"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="milestone-due-date">Due Date</label>
+                      <input
+                        type="date"
+                        id="milestone-due-date"
+                        name="due_date"
+                        required
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="milestone-weight">Weight (%)</label>
+                      <input
+                        type="number"
+                        id="milestone-weight"
+                        name="weight"
+                        min="1"
+                        max="100"
+                        required
+                        placeholder="Enter weight as percentage (e.g., 25)"
+                      />
+                    </div>
+
+                    <div className="form-actions">
+                      <button type="submit" className="submit-milestone-btn">
+                        <Plus size={16} />
+                        Add Milestone
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+
               {milestones && milestones.length > 0 ? (
                 <>
                   <div className="progress-section">
@@ -250,9 +376,18 @@ const ContractDetails = () => {
                       <div key={milestone.id || index} className="milestone-item">
                         <div className="milestone-header">
                           <span className="milestone-title">{milestone.title}</span>
-                          <span className={`milestone-status ${milestone.completed ? 'completed' : 'pending'}`}>
-                            {milestone.completed ? 'Completed' : 'Pending'}
-                          </span>
+                          <div className="milestone-actions">
+                            <span className={`milestone-status ${milestone.completed ? 'completed' : 'pending'}`}>
+                              {milestone.completed ? 'Completed' : 'Pending'}
+                            </span>
+                            <button
+                              className="delete-milestone-btn"
+                              onClick={() => handleDeleteMilestone(milestone.id)}
+                              title="Delete milestone"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </div>
                         </div>
                         <p className="milestone-description">{milestone.description}</p>
                         <div className="milestone-details">

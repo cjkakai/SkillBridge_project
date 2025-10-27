@@ -780,9 +780,8 @@ class ContractMilestonesResource(Resource):
 
         return make_response(milestone.to_dict(rules=('-contract',)), 200)
 
-    def delete(self, contract_id):
-        data = request.get_json()
-        milestone = Milestone.query.filter_by(contract_id=contract_id, title=data['title']).first_or_404()
+    def delete(self, contract_id, milestone_id):
+        milestone = Milestone.query.filter_by(id=milestone_id, contract_id=contract_id).first_or_404()
         db.session.delete(milestone)
         db.session.commit()
 

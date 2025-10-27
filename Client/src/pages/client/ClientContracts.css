@@ -503,8 +503,8 @@
 
 .milestone-item {
   width: 900px;
-  background: #F8F9FA;
-  border: 1px solid #E6F0FF;
+  background: #e6f1fcff;
+  border: 3px solid #E6F0FF;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
@@ -532,8 +532,8 @@
 
 .milestone-header {
   display: flex;
-  justify-content: space-between;
-  gap: 300px;
+  justify-content: space-evenly;
+  text-align: justify;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -576,10 +576,121 @@
 
 .milestone-details {
   display: flex;
-  gap: 20px;
+  flex-wrap: wrap;
+  gap: 16px;
   font-size: 12px;
   color: #A3B1C6;
-  align-items: flex-start;
+  align-items: center;
+}
+
+.milestone-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-milestone-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-milestone-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.add-milestone-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.add-milestone-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-milestone-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.add-milestone-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.add-milestone-form .form-group {
+  margin-bottom: 16px;
+}
+
+.add-milestone-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #0A1F44;
+  font-size: 14px;
+}
+
+.add-milestone-form input,
+.add-milestone-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.add-milestone-form input:focus,
+.add-milestone-form textarea:focus {
+  outline: none;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+}
+
+.submit-milestone-btn {
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.submit-milestone-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
 }
 
 .download-btn {
