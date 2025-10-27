@@ -27,7 +27,6 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
     { path: '/freelancer/earnings', label: 'Earnings', icon: DollarSign },
     { path: '/freelancer/my-projects', label: 'My Projects', icon: Folder },
     { path: '/freelancer/profile', label: 'Profile', icon: User },
-    { path: '/freelancer/payments', label: 'Payments', icon: CreditCard },
     { path: '/freelancer/reviews', label: 'Reviews', icon: Star },
   ];
 
