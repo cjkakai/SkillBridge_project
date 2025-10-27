@@ -389,7 +389,7 @@ const ContractDetails = () => {
                             </button>
                           </div>
                         </div>
-                        <p className="milestone-description">{milestone.description}</p>
+                        <p className="milestone-description" style={{width:'600px'}}>{milestone.description}</p>
                         <div className="milestone-details">
                           <span>Due: {milestone.due_date ? formatDate(milestone.due_date) : 'Not set'}</span>
                           <span>Created: {milestone.created_at ? formatDate(milestone.created_at) : 'Not set'}</span>
