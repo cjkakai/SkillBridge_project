@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2 } from 'lucide-react';
 import './AwardContractForm.css';
 
 const AwardContractForm = () => {
@@ -16,6 +16,14 @@ const AwardContractForm = () => {
     started_at: new Date().toISOString().split('T')[0], // Today's date as default
     status: 'active'
   });
+  const [milestones, setMilestones] = useState([]);
+  const [milestoneForm, setMilestoneForm] = useState({
+    title: '',
+    description: '',
+    due_date: '',
+    weight: ''
+  });
+  const [contractId, setContractId] = useState(null);
 
   useEffect(() => {
     if (taskId && freelancerId) {
@@ -86,8 +94,9 @@ const AwardContractForm = () => {
       });
 
       if (response.ok) {
-        alert('Contract awarded successfully!');
-        navigate('/client-dashboard');
+        const contractData = await response.json();
+        setContractId(contractData.id);
+        alert('Contract awarded successfully! You can now add milestones.');
       } else {
         const errorData = await response.json();
         alert(`Failed to award contract: ${errorData.error || 'Unknown error'}`);
@@ -98,6 +107,86 @@ const AwardContractForm = () => {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleMilestoneInputChange = (e) => {
+    const { name, value } = e.target;
+    setMilestoneForm(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleAddMilestone = async (e) => {
+    e.preventDefault();
+    if (!contractId) {
+      alert('Please create the contract first.');
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/contracts/${contractId}/milestones`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: milestoneForm.title,
+          description: milestoneForm.description,
+          due_date: milestoneForm.due_date,
+          weight: parseFloat(milestoneForm.weight) / 100 // Convert percentage back to decimal
+        })
+      });
+
+      if (response.ok) {
+        const newMilestone = await response.json();
+        setMilestones(prev => [...prev, newMilestone]);
+        setMilestoneForm({
+          title: '',
+          description: '',
+          due_date: '',
+          weight: ''
+        });
+        alert('Milestone added successfully!');
+      } else {
+        const errorData = await response.json();
+        alert(`Failed to add milestone: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error adding milestone:', error);
+      alert('Error adding milestone. Please try again.');
+    }
+  };
+
+  const handleDeleteMilestone = async (milestoneId) => {
+    try {
+      const response = await fetch(`/api/contracts/${contractId}/milestones`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: milestones.find(m => m.id === milestoneId)?.title
+        })
+      });
+
+      if (response.ok) {
+        setMilestones(prev => prev.filter(m => m.id !== milestoneId));
+      } else {
+        alert('Failed to delete milestone');
+      }
+    } catch (error) {
+      console.error('Error deleting milestone:', error);
+      alert('Error deleting milestone. Please try again.');
+    }
+  };
+
+  const formatDate = (dateString) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric'
+    });
   };
 
   if (loading) {
@@ -170,6 +259,7 @@ const AwardContractForm = () => {
         </div>
 
         <div className="contract-form-container">
+          {/* Contract Form */}
           <form onSubmit={handleSubmit} className="contract-form">
             <div className="form-group">
               <label htmlFor="contract_code">Contract Code</label>
@@ -255,6 +345,99 @@ const AwardContractForm = () => {
               </button>
             </div>
           </form>
+
+          {/* Milestones Section */}
+          {contractId && (
+            <div className="milestones-section">
+              <h3>Project Milestones</h3>
+              <p>Define the key deliverables and milestones for this contract.</p>
+
+              {/* Add Milestone Form */}
+              <form onSubmit={handleAddMilestone} className="milestone-form">
+                <div className="form-row">
+                  <div className="form-group">
+                    <label htmlFor="milestone_title">Title</label>
+                    <input
+                      type="text"
+                      id="milestone_title"
+                      name="title"
+                      value={milestoneForm.title}
+                      onChange={handleMilestoneInputChange}
+                      required
+                      placeholder="e.g., Initial Design Phase"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="milestone_weight">Weight (%)</label>
+                    <input
+                      type="number"
+                      id="milestone_weight"
+                      name="weight"
+                      value={milestoneForm.weight}
+                      onChange={handleMilestoneInputChange}
+                      min="0"
+                      max="100"
+                      step="0.1"
+                      required
+                      placeholder="e.g., 25"
+                    />
+                  </div>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="milestone_description">Description</label>
+                  <textarea
+                    id="milestone_description"
+                    name="description"
+                    value={milestoneForm.description}
+                    onChange={handleMilestoneInputChange}
+                    rows="3"
+                    placeholder="Describe what needs to be delivered in this milestone..."
+                  />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="milestone_due_date">Due Date</label>
+                  <input
+                    type="date"
+                    id="milestone_due_date"
+                    name="due_date"
+                    value={milestoneForm.due_date}
+                    onChange={handleMilestoneInputChange}
+                    required
+                  />
+                </div>
+                <button type="submit" className="add-milestone-btn">
+                  <Plus size={16} />
+                  Add Milestone
+                </button>
+              </form>
+
+              {/* Milestones List */}
+              {milestones.length > 0 && (
+                <div className="milestones-list">
+                  <h4>Added Milestones</h4>
+                  {milestones.map((milestone, index) => (
+                    <div key={milestone.id || index} className="milestone-item">
+                      <div className="milestone-content">
+                        <h5>{milestone.title}</h5>
+                        <p>{milestone.description}</p>
+                        <div className="milestone-meta">
+                          <span>Weight: {(milestone.weight * 100).toFixed(1)}%</span>
+                          <span>Due: {milestone.due_date ? formatDate(milestone.due_date) : 'Not set'}</span>
+                        </div>
+                      </div>
+                      <button
+                        className="delete-milestone-btn"
+                        onClick={() => handleDeleteMilestone(milestone.id)}
+                        title="Delete milestone"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>

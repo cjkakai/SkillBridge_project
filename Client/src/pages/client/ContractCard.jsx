@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, DollarSign, User, FileText, Clock, Star, Edit, Trash2 } from 'lucide-react';
+import { Calendar, DollarSign, User, FileText, Clock, Star, Edit, Trash2, MessageCircle } from 'lucide-react';
 
 const ContractCard = ({ contract, onEdit, onDelete }) => {
   const navigate = useNavigate();
@@ -90,15 +90,40 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
       </div>
 
       <div className="contract-actions">
-        <button className="view-details-btn" onClick={() => navigate(`/contract-details/${contract.id}`)}>View Details</button>
-        <button className="message-btn">Message Freelancer</button>
-        <button className="edit-btn" onClick={() => onEdit(contract.id)}>
-          <Edit size={16} />
-          Edit
+        <button
+          className="action-btn view-btn"
+          onClick={() => navigate(`/contract-details/${contract.id}`)}
+          title="View Details"
+        >
+          <FileText size={16} />
         </button>
-        <button className="delete-btn" onClick={() => onDelete(contract.id)}>
+        <button
+          className="action-btn message-btn"
+          onClick={() => navigate(`/client-messages`)}
+          title="Message Freelancer"
+        >
+          <User size={16} />
+        </button>
+        <button
+          className="action-btn review-btn"
+          onClick={() => navigate(`/freelancer-review/${contract.id}`)}
+          title="Review this freelancer"
+        >
+          <MessageCircle size={16} />
+        </button>
+        <button
+          className="action-btn edit-btn"
+          onClick={() => onEdit(contract.id)}
+          title="Edit Contract"
+        >
+          <Edit size={16} />
+        </button>
+        <button
+          className="action-btn delete-btn"
+          onClick={() => onDelete(contract.id)}
+          title="Delete Contract"
+        >
           <Trash2 size={16} />
-          Delete
         </button>
       </div>
     </div>

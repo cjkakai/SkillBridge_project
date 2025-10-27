@@ -15,10 +15,8 @@ const EditContract = () => {
   const [formData, setFormData] = useState({
     agreed_amount: '',
     status: '',
-    deadline: '',
-    notes: ''
   });
-  const clientId = 3; // Should come from auth context
+  const clientId = 5; // Should come from auth context
 
   useEffect(() => {
     fetchContract();
@@ -43,8 +41,7 @@ const EditContract = () => {
         setFormData({
           agreed_amount: data.agreed_amount || '',
           status: data.status || '',
-          deadline: data.task?.deadline ? data.task.deadline.split('T')[0] : '',
-          notes: data.notes || ''
+          deadline: data.task?.deadline ? data.task.deadline.split('T')[0] : ''
         });
       }
     } catch (error) {
@@ -66,8 +63,8 @@ const EditContract = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts/${id}`, {
-        method: 'PUT',
+      const response = await fetch(`/api/contracts/${id}`, {
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
@@ -84,23 +81,6 @@ const EditContract = () => {
       alert('Error updating contract: ' + error.message);
     } finally {
       setSaving(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (window.confirm('Are you sure you want to delete this contract? This action cannot be undone.')) {
-      try {
-        const response = await fetch(`/api/clients/${clientId}/contracts/${id}`, {
-          method: 'DELETE',
-        });
-        if (response.ok) {
-          navigate('/client-contracts');
-        } else {
-          console.error('Failed to delete contract');
-        }
-      } catch (error) {
-        console.error('Error deleting contract:', error);
-      }
     }
   };
 
@@ -190,32 +170,17 @@ const EditContract = () => {
               <div className="form-group">
                 <label htmlFor="deadline">Task Deadline</label>
                 <input
-                  type="date"
+                  type="text"
+                  placeholder='change task deadline in client dashboard'
                   id="deadline"
                   name="deadline"
-                  value={formData.deadline}
-                  onChange={handleInputChange}
                 />
               </div>
 
-              <div className="form-group">
-                <label htmlFor="notes">Notes</label>
-                <textarea
-                  id="notes"
-                  name="notes"
-                  value={formData.notes}
-                  onChange={handleInputChange}
-                  rows="4"
-                />
-              </div>
 
               <div className="form-actions">
                 <button type="submit" className="save-btn" disabled={saving}>
                   {saving ? 'Saving...' : 'Save Changes'}
-                </button>
-                <button type="button" className="delete-btn" onClick={handleDelete}>
-                  <Trash2 size={16} />
-                  Delete Contract
                 </button>
               </div>
             </form>

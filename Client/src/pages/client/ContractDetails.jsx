@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star } from 'lucide-react';
+import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download } from 'lucide-react';
 import '../client/ClientDashboard.css';
 import '../client/ClientContracts.css';
 
@@ -8,11 +8,13 @@ const ContractDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [contract, setContract] = useState(null);
+  const [milestones, setMilestones] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [progress, setProgress] = useState(0);
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [contractStatus, setContractStatus] = useState("");
-  const clientId = 2; // Should come from auth context
+  const clientId = 5; // Should come from auth context
 
   useEffect(() => {
     fetchContract();
@@ -39,43 +41,28 @@ const ContractDetails = () => {
       const response = await fetch(`/api/contracts/${id}`);
       if (response.ok) {
         const data = await response.json();
+        setContract(data);
+
         // Fetch milestones separately
         const milestonesResponse = await fetch(`/api/contracts/${id}/milestones`);
         if (milestonesResponse.ok) {
-          const milestones = await milestonesResponse.json();
-          data.milestones = milestones;
+          const milestonesData = await milestonesResponse.json();
+          console.log(milestonesData)
+          setMilestones(milestonesData);
+
           // Calculate progress based on milestone weights
-          const completedMilestones = milestones.filter(m => m.status === 'completed');
-          const totalWeight = milestones.reduce((sum, m) => sum + (m.weight || 0), 0);
-          const completedWeight = completedMilestones.reduce((sum, m) => sum + (m.weight || 0), 0);
-          data.progress = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
+          const completedMilestones = milestonesData.filter(m => m.completed === true);
+          const totalWeight = milestonesData.reduce((sum, m) => sum + (parseFloat(m.weight) || 0), 0);
+          const completedWeight = completedMilestones.reduce((sum, m) => sum + (parseFloat(m.weight) || 0), 0);
+          const completionRate = totalWeight > 0 ? Math.round((completedWeight / totalWeight) * 100) : 0;
+          console.log('Completion Rate:', completionRate);
+          setProgress(completionRate);
         }
-        setContract(data);
       }
     } catch (error) {
       console.error('Error fetching contract:', error);
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleStatusChange = async (newStatus) => {
-    try {
-      const response = await fetch(`/api/contracts/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status: newStatus }),
-      });
-      if (response.ok) {
-        setContractStatus(newStatus);
-        setContract(prev => ({ ...prev, status: newStatus }));
-      } else {
-        console.error('Failed to update contract status');
-      }
-    } catch (error) {
-      console.error('Error updating contract status:', error);
     }
   };
 
@@ -131,6 +118,10 @@ const ContractDetails = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
+          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+            <User size={20} />
+            <span>Your Profile</span>
+          </div>
           <div className="nav-item">
             <CreditCard size={20} />
             <span>Payments</span>
@@ -166,17 +157,6 @@ const ContractDetails = () => {
                 <div className="contract-code">
                   <FileText size={20} />
                   <span>Contract Code: {contract.contract_code}</span>
-                </div>
-                <div className="contract-status">
-                  <select
-                    value={contractStatus}
-                    onChange={(e) => handleStatusChange(e.target.value)}
-                    className="status-select"
-                  >
-                    <option value="active">Active</option>
-                    <option value="completed">Completed</option>
-                    <option value="cancelled">Cancelled</option>
-                  </select>
                 </div>
               </div>
             </div>
@@ -227,10 +207,6 @@ const ContractDetails = () => {
                   <Calendar size={16} />
                   <span>Started: {formatDate(contract.started_at)}</span>
                 </div>
-                <div className="detail-item">
-                  <FileText size={16} />
-                  <span>Notes: {contract.notes || 'No notes'}</span>
-                </div>
               </div>
             </div>
 
@@ -252,35 +228,52 @@ const ContractDetails = () => {
             {/* Project Progress */}
             <div className="contract-card">
               <h3>Project Progress</h3>
-              <div className="progress-section">
-                <div className="progress-bar">
-                  <div 
-                    className="progress-fill" 
-                    style={{ width: `${contract.progress || 0}%` }}
-                  ></div>
-                </div>
-                <span className="progress-text">{contract.progress || 0}% Complete</span>
-              </div>
-              
-              {contract.milestones && contract.milestones.length > 0 && (
-                <div className="milestones-section">
-                  <h4>Milestones</h4>
-                  {contract.milestones.map((milestone, index) => (
-                    <div key={index} className="milestone-item">
-                      <div className="milestone-header">
-                        <span className="milestone-title">{milestone.title}</span>
-                        <span className={`milestone-status ${milestone.status?.toLowerCase()}`}>
-                          {milestone.status || 'Pending'}
-                        </span>
-                      </div>
-                      <p className="milestone-description">{milestone.description}</p>
-                      <div className="milestone-details">
-                        <span>Weight: {milestone.weight}%</span>
-                        <span>Due: {milestone.deadline ? formatDate(milestone.deadline) : 'Not set'}</span>
-                      </div>
+              {milestones && milestones.length > 0 ? (
+                <>
+                  <div className="progress-section">
+                    <div className="progress-bar">
+                      <div
+                        className="progress-fill"
+                        style={{ width: `${progress || 0 }%` }}
+                      ></div>
                     </div>
-                  ))}
-                </div>
+                    <span className="progress-text">{progress || 0}% Complete</span>
+                  </div>
+
+                  <div className="milestones-section">
+                    <h4>Milestones</h4>
+                    {milestones.map((milestone, index) => (
+                      <div key={milestone.id || index} className="milestone-item">
+                        <div className="milestone-header">
+                          <span className="milestone-title">{milestone.title}</span>
+                          <span className={`milestone-status ${milestone.completed ? 'completed' : 'pending'}`}>
+                            {milestone.completed ? 'Completed' : 'Pending'}
+                          </span>
+                        </div>
+                        <p className="milestone-description">{milestone.description}</p>
+                        <div className="milestone-details">
+                          <span>Due: {milestone.due_date ? formatDate(milestone.due_date) : 'Not set'}</span>
+                          <span>Created: {milestone.created_at ? formatDate(milestone.created_at) : 'Not set'}</span>
+                          <span>Weight: {milestone.weight ? (milestone.weight * 100) + '%' : 'Not set'}</span>
+                          {milestone.file_url && (
+                            <button
+                              className="download-btn"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                window.open(milestone.file_url, '_blank');
+                              }}
+                            >
+                              <Download size={14} />
+                              Download File
+                            </button>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No milestones found for this contract.</p>
               )}
             </div>
           </div>

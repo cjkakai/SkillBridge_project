@@ -254,7 +254,7 @@ const ClientDashboard = () => {
                 <h2 className="freelancers-header">Your Freelancers</h2>
                 <div className="freelancers-grid">
                   {freelancers.map((freelancer) => (
-                    <FreelancerCard key={freelancer.id} freelancer={freelancer} />
+                    <FreelancerCard key={freelancer.id} freelancer={freelancer} task={null} />
                   ))}
                 </div>
               </div>

@@ -588,6 +588,7 @@ class ClientContractsResource(Resource):
             contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
             contract_data = contract.to_dict(rules=('-client', '-freelancer', '-task',))
             freelancer = Freelancer.query.get(contract.freelancer_id)
+            task = Task.query.get(contract.task_id)
             contract_data['freelancer'] = {
                 'id': freelancer.id,
                 'name': freelancer.name,
@@ -596,6 +597,12 @@ class ClientContractsResource(Resource):
                 'email': freelancer.email,
                 'image': freelancer.image,
                 'ratings': freelancer.ratings
+            }
+            contract_data['task'] = {
+                'id': task.id,
+                'title': task.title,
+                'description': task.description,
+                'deadline': task.deadline.isoformat() if task.deadline else None
             }
             return make_response(contract_data, 200)
         contracts = Contract.query.filter_by(client_id=client_id).all()
@@ -634,6 +641,21 @@ class ClientContractsResource(Resource):
     
     def delete(self, client_id, contract_id):
         contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+
+        # Before deleting the contract, reset the freelancer's application status to 'pending'
+        freelancer_application = Application.query.filter_by(
+            task_id=contract.task_id,
+            freelancer_id=contract.freelancer_id
+        ).first()
+        if freelancer_application:
+            freelancer_application.status = 'pending'
+            db.session.add(freelancer_application)
+
+        # Update task status back to 'open' since contract is being deleted
+        task = Task.query.get(contract.task_id)
+        if task:
+            task.status = 'open'
+            db.session.add(task)
 
         # Delete related records first to avoid foreign key constraint errors
         Message.query.filter_by(contract_id=contract_id).delete()
@@ -680,6 +702,15 @@ class ClientCreateContractResource(Resource):
             task.status = 'in_progress'
             db.session.add(task)
 
+        # Update the winning application status to 'accepted'
+        winning_application = Application.query.filter_by(
+            task_id=data['task_id'],
+            freelancer_id=data['freelancer_id']
+        ).first()
+        if winning_application:
+            winning_application.status = 'accepted'
+            db.session.add(winning_application)
+
         db.session.commit()
         return make_response(contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints',)), 201)
 #used by a client to create a new contract
@@ -697,7 +728,7 @@ class ContractMilestonesResource(Resource):
         # Convert string date to date object
         due_date = data.get('due_date')
         if due_date and isinstance(due_date, str):
-            due_date = datetime.strptime(due_date, '%m-%d-%Y').date()
+            due_date = datetime.strptime(due_date, '%Y-%m-%d').date()
 
         milestone = Milestone(
             contract_id=contract_id,
@@ -708,17 +739,52 @@ class ContractMilestonesResource(Resource):
         )
         db.session.add(milestone)
         db.session.commit()
+
+        # Check if all milestones are completed and update contract status
+        self._check_and_update_contract_status(contract_id)
+
         return make_response(milestone.to_dict(rules=('-contract',)), 201)
+
+    def put(self, contract_id, milestone_id):
+        milestone = Milestone.query.filter_by(id=milestone_id, contract_id=contract_id).first_or_404()
+        data = request.get_json()
+
+        # Update milestone fields
+        for key, value in data.items():
+            setattr(milestone, key, value)
+
+        db.session.commit()
+
+        # Check if all milestones are completed and update contract status
+        self._check_and_update_contract_status(contract_id)
+
+        return make_response(milestone.to_dict(rules=('-contract',)), 200)
 
     def delete(self, contract_id):
         data = request.get_json()
         milestone = Milestone.query.filter_by(contract_id=contract_id, title=data['title']).first_or_404()
         db.session.delete(milestone)
         db.session.commit()
+
+        # Check if all remaining milestones are completed and update contract status
+        self._check_and_update_contract_status(contract_id)
+
         return make_response('', 204)
+
+    def _check_and_update_contract_status(self, contract_id):
+        """Helper method to check if all milestones are completed and update contract status"""
+        milestones = Milestone.query.filter_by(contract_id=contract_id).all()
+
+        if milestones:  # Only check if there are milestones
+            all_completed = all(milestone.completed for milestone in milestones)
+            if all_completed:
+                contract = Contract.query.get(contract_id)
+                if contract and contract.status != 'completed':
+                    contract.status = 'completed'
+                    db.session.commit()
 # used by a client to get, add, or delete milestones from a contract
 
-api.add_resource(ContractMilestonesResource, '/api/contracts/<int:contract_id>/milestones')
+api.add_resource(ContractMilestonesResource, '/api/contracts/<int:contract_id>/milestones', '/api/contracts/<int:contract_id>/milestones/<int:milestone_id>')
 
 class TaskApplicationsResource(Resource):
     def get(self, task_id):
@@ -765,10 +831,18 @@ class ClientSkillResource(Resource):
 api.add_resource(ClientSkillResource, '/api/clients/<int:client_id>/skills')
 
 class ClientReviewResource(Resource):
+    def get(self, client_id, contract_id):
+        contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+        review = Review.query.filter_by(contract_id=contract_id, reviewer_id=client_id).first()
+        if review:
+            return make_response(review.to_dict(rules=('-contract',)), 200)
+        else:
+            return make_response({'message': 'No review found'}, 404)
+
     def post(self, client_id, contract_id):
         contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
         data = request.get_json()
-        
+
         review = Review(
             contract_id=contract_id,
             reviewer_id=client_id,
@@ -778,15 +852,33 @@ class ClientReviewResource(Resource):
         )
         db.session.add(review)
         db.session.commit()
-        
+
         # Update freelancer rating
         freelancer_reviews = Review.query.filter_by(reviewee_id=contract.freelancer_id).all()
         avg_rating = sum(r.rating for r in freelancer_reviews) / len(freelancer_reviews)
         freelancer = Freelancer.query.get(contract.freelancer_id)
         freelancer.ratings = avg_rating
         db.session.commit()
-        
+
         return make_response(review.to_dict(rules=('-contract',)), 201)
+
+    def put(self, client_id, contract_id):
+        contract = Contract.query.filter_by(id=contract_id, client_id=client_id).first_or_404()
+        review = Review.query.filter_by(contract_id=contract_id, reviewer_id=client_id).first_or_404()
+        data = request.get_json()
+
+        review.rating = data['rating']
+        review.comment = data.get('comment')
+        db.session.commit()
+
+        # Update freelancer rating
+        freelancer_reviews = Review.query.filter_by(reviewee_id=contract.freelancer_id).all()
+        avg_rating = sum(r.rating for r in freelancer_reviews) / len(freelancer_reviews)
+        freelancer = Freelancer.query.get(contract.freelancer_id)
+        freelancer.ratings = avg_rating
+        db.session.commit()
+
+        return make_response(review.to_dict(rules=('-contract',)), 200)
 #used by a client to review a contract and update freelancer rating
 api.add_resource(ClientReviewResource, '/api/clients/<int:client_id>/contracts/<int:contract_id>/review')
 

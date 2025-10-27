@@ -10,13 +10,14 @@ import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
 import EditContract from './pages/client/EditContract'
 import ClientMessages from './pages/client/ClientMessages'
-import ContractDetails from './pages/shared/ContractDetails'
+import ContractDetails from './pages/client/ContractDetails'
 import PostTask from './pages/client/PostTask';
 import TaskApplications from './pages/client/TaskApplications';
 import TaskEdit from './pages/client/TaskEdit';
 import FreelancerExperience from './pages/client/FreelancerExperience';
 import AwardContractForm from './pages/client/AwardContractForm';
 import ClientProfile from './pages/client/ClientProfile';
+import FreelancerReview from './pages/client/FreelancerReview';
 import './App.css';
 
 function App() {
@@ -35,6 +36,7 @@ function App() {
           <Route path="/freelancer-experience/:freelancerId" element={<FreelancerExperience />} />
           <Route path="/award-contract/:taskId/:freelancerId" element={<AwardContractForm />} />
           <Route path="/client-profile" element={<ClientProfile />} />
+          <Route path="/freelancer-review/:contractId" element={<FreelancerReview />} />
           <Route path="/login" element={<Login />} />
           <Route path="/post-task" element={<PostTask />} />
           <Route path="/role-selection" element={<RoleSelection />} />

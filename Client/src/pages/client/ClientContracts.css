@@ -170,71 +170,143 @@
 
 .contract-actions {
   display: flex;
-  gap: 12px;
+  gap: 8px;
   justify-content: flex-end;
+  margin-top: 16px;
 }
 
-.view-details-btn, .message-btn, .edit-btn {
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
   border: none;
+  cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 16px;
 }
 
-.view-details-btn {
+.view-btn {
   background: #2F80ED;
   color: white;
 }
 
-.view-details-btn:hover {
+.view-btn:hover {
   background: #1a6bd1;
   transform: translateY(-1px);
 }
 
 .message-btn {
-  background: #2F80ED;
+  background: #17a2b8;
   color: white;
 }
 
 .message-btn:hover {
-  background: #1a6bd1;
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.review-btn {
+  background: #6f42c1;
+  color: white;
+}
+
+.review-btn:hover {
+  background: #5a359a;
   transform: translateY(-1px);
 }
 
 .edit-btn {
-  background: #2F80ED;
-  color: white;
+  background: #ffc107;
+  color: #212529;
 }
 
 .edit-btn:hover {
-  background: #1a6bd1;
+  background: #e0a800;
   transform: translateY(-1px);
 }
 
 .delete-btn {
   background: linear-gradient(45deg, #dc3545, #c82333);
   color: white;
-  padding: 10px 16px;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  border: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
 }
 
 .delete-btn:hover {
   background: linear-gradient(45deg, #c82333, #a02622);
   transform: translateY(-1px);
+}
+
+/* Freelancer Review Styles */
+.review-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contract-summary {
+  margin-bottom: 20px;
+}
+
+.contract-summary p {
+  margin: 8px 0;
+  color: #6B7A99;
+}
+
+.existing-review {
+  margin-bottom: 20px;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.review-comment {
+  margin-top: 12px;
+}
+
+.review-comment p {
+  margin: 8px 0;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  color: #6B7A99;
+  line-height: 1.4;
+}
+
+.review-form {
+  max-width: 600px;
+}
+
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stars-interactive {
+  display: flex;
+  gap: 4px;
+}
+
+.rating-number-input {
+  width: 60px;
+  padding: 8px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 4px;
 }
 
 .search-section {
@@ -416,6 +488,10 @@
 /* Milestones Section Styles */
 .milestones-section {
   margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
 }
 
 .milestones-section h4 {
@@ -426,16 +502,38 @@
 }
 
 .milestone-item {
+  width: 900px;
   background: #F8F9FA;
   border: 1px solid #E6F0FF;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.milestone-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #2F80ED 0%, #56CCF2 100%);
+  border-radius: 12px 0 0 12px;
+}
+
+.milestone-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #2F80ED;
 }
 
 .milestone-header {
   display: flex;
   justify-content: space-between;
+  gap: 300px;
   align-items: center;
   margin-bottom: 8px;
 }
@@ -465,8 +563,8 @@
 }
 
 .milestone-status.pending {
-  background: #FFC107;
-  color: #0A1F44;
+  background: #dc3545;
+  color: white;
 }
 
 .milestone-description {
@@ -478,7 +576,28 @@
 
 .milestone-details {
   display: flex;
-  gap: 16px;
+  gap: 20px;
   font-size: 12px;
   color: #A3B1C6;
+  align-items: flex-start;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
 }
