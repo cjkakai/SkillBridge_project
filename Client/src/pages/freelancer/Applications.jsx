@@ -20,7 +20,7 @@ const Applications = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5000/api/freelancers/${freelancerId}/applications`);
+        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/applications`);
         if (!response.ok) {
           throw new Error("Failed to fetch applications.");
         }

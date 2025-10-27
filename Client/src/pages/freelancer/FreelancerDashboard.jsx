@@ -21,7 +21,7 @@ const FreelancerDashboard = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5000/api/freelancers/${freelancerId}/dashboard`);
+        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/dashboard`);
         if (!response.ok) {
           throw new Error("Failed to fetch dashboard data.");
         }
