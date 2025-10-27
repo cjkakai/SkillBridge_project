@@ -310,36 +310,20 @@ api.add_resource(FreelancerContractsResource, '/api/freelancers/<int:freelancer_
 class FreelancerPaymentsResource(Resource):
     def get(self, freelancer_id):
         contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
-        contract_ids = [contract.id for contract in contracts]
+        contract_ids = [c.id for c in contracts]
         payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
         return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
-#used by a freelancer to fetch all his/her payments
+
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
 
 class FreelancerClientMessagesResource(Resource):
-    def get(self, freelancer_id, client_id):
-        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
-        messages = Message.query.filter(
-            Message.contract_id == contract.id,
-            ((Message.sender_id == freelancer_id) & (Message.receiver_id == client_id)) |
-            ((Message.sender_id == client_id) & (Message.receiver_id == freelancer_id))
-        ).order_by(Message.created_at).all()
+    def get(self, freelancer_id):
+        contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
+        contract_ids = [c.id for c in contracts]
+        messages = Message.query.filter(Message.contract_id.in_(contract_ids)).all()
         return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
-    
-    def post(self, freelancer_id, client_id):
-        data = request.get_json()
-        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
-        message = Message(
-            contract_id=contract.id,
-            sender_id=freelancer_id,
-            receiver_id=client_id,
-            content=data['content']
-        )
-        db.session.add(message)
-        db.session.commit()
-        return make_response(message.to_dict(rules=('-contract',)), 201)
-#used by a freelancer to send and receive message from a client
-api.add_resource(FreelancerClientMessagesResource, '/api/freelancers/<int:freelancer_id>/clients/<int:client_id>/messages')
+
+api.add_resource(FreelancerClientMessagesResource, '/api/freelancers/<int:freelancer_id>/messages')
 
 class FreelancerSkillResource(Resource):
     def post(self, freelancer_id):

@@ -6,6 +6,7 @@ import Login from './components/auth/Login';
 import RoleSelection from './components/auth/RoleSelection';
 import FreelancerDashboard from './pages/freelancer/FreelancerDashboard';
 import Applications from './pages/freelancer/Applications';
+import BrowseTasks from './pages/freelancer/BrowseTasks';
 import './App.css';
 
 function App() {
@@ -23,6 +24,7 @@ function App() {
           <Route path="/freelancer/profile" element={<FreelancerDashboard />} />
           <Route path="/freelancer/payments" element={<FreelancerDashboard />} />
           <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
+          <Route path="/my-projects" element={<BrowseTasks />} />
           <Route path="*" element={<Login />} />
         </Routes>
       </div>
