@@ -1,12 +1,11 @@
 import React from "react";
 import "./StatCard.css";
 
-const StatCard = ({ title, value, note, icon }) => {
+const StatCard = ({ title, value, note }) => {
   return (
     <div className="stat-card">
       <div className="stat-top">
         <div className="stat-title">{title}</div>
-        {icon && <div className="stat-icon">{icon}</div>}
       </div>
       <div className="stat-value">{value}</div>
       {note && <div className="stat-note">{note}</div>}
