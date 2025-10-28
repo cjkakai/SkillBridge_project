@@ -17,7 +17,8 @@ const FreelancerDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
 
-      const freelancerId = user?.id
+
+      const freelancerId = user?.freelancerId 
 
 
       if (!freelancerId) {

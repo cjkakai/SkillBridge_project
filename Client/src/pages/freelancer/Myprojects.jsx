@@ -14,7 +14,14 @@ const Myprojects = () => {
 
   // Mock freelancer ID - in real app, get from auth context
 
-  const freelancerId = user?.freelancerId
+
+  
+
+  
+
+  const freelancerId = user?.freelancerId 
+
+
 
   useEffect(() => {
     fetchProjectData();

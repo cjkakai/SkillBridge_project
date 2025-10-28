@@ -1,30 +1,62 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import './Register.css';
 
 const FreelancerRegister = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    profileImage: null,
-    contact: '',
-    password: '',
-    confirmPassword: ''
+  const navigate = useNavigate();
+
+  const validationSchema = Yup.object({
+    username: Yup.string().required('Username is required'),
+    email: Yup.string()
+      .email('Invalid email address')
+      .matches(/@/, 'Email must contain @')
+      .required('Email is required'),
+    contact: Yup.string()
+      .matches(/^0\d{9}$/, 'Contact must start with 0 and be exactly 10 digits')
+      .required('Contact is required'),
+    password: Yup.string()
+      .min(8, 'Password must be at least 8 characters')
+      .required('Password is required'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
+      .required('Confirm password is required')
   });
 
-  const [errors, setErrors] = useState({});
+  const handleSubmit = async (values, { setSubmitting, setErrors }) => {
+    try {
+      const response = await fetch('/api/freelancers', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.username,
+          email: values.email,
+          contact: values.contact,
+          password: values.password
+        }),
+      });
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
-  };
+      const data = await response.json();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Freelancer signup data:', formData);
+      if (response.ok) {
+        // Registration successful, redirect to login
+        navigate('/');
+      } else {
+        // Handle errors
+        if (data.error) {
+          setErrors({ general: data.error });
+        } else {
+          setErrors({ general: 'Registration failed. Please try again.' });
+        }
+      }
+    } catch (error) {
+      setErrors({ general: 'Network error. Please try again.' });
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const styles = {
@@ -115,83 +147,87 @@ const FreelancerRegister = () => {
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>Hey freelancer, signup here</h2>
-        
-        <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>username</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="John Doe"
-            />
-          </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="johndoe@gmail.com"
-            />
-          </div>
+        <Formik
+          initialValues={{
+            username: '',
+            email: '',
+            contact: '',
+            password: '',
+            confirmPassword: ''
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting, errors }) => (
+            <Form>
+              {errors.general && (
+                <div style={{ ...styles.error, marginBottom: '20px', textAlign: 'center' }}>
+                  {errors.general}
+                </div>
+              )}
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>profile image</label>
-            <input
-              type="file"
-              name="profileImage"
-              onChange={handleChange}
-              style={styles.fileInput}
-              accept="image/*"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>username</label>
+                <Field
+                  type="text"
+                  name="username"
+                  style={styles.input}
+                  placeholder="John Doe"
+                />
+                <ErrorMessage name="username" component="div" style={styles.error} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>contact</label>
-            <input
-              type="tel"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="0711234355"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>email</label>
+                <Field
+                  type="email"
+                  name="email"
+                  style={styles.input}
+                  placeholder="johndoe@gmail.com"
+                />
+                <ErrorMessage name="email" component="div" style={styles.error} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="must have at least 6 characters"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>contact</label>
+                <Field
+                  type="tel"
+                  name="contact"
+                  style={styles.input}
+                  placeholder="0711234355"
+                />
+                <ErrorMessage name="contact" component="div" style={styles.error} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Confirm password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="must have at least 6 characters"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>password</label>
+                <Field
+                  type="password"
+                  name="password"
+                  style={styles.input}
+                  placeholder="must have at least 8 characters"
+                />
+                <ErrorMessage name="password" component="div" style={styles.error} />
+              </div>
 
-          <button type="submit" style={styles.button}>
-            Sign Up
-          </button>
-        </form>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Confirm password</label>
+                <Field
+                  type="password"
+                  name="confirmPassword"
+                  style={styles.input}
+                  placeholder="must have at least 8 characters"
+                />
+                <ErrorMessage name="confirmPassword" component="div" style={styles.error} />
+              </div>
+
+              <button type="submit" style={styles.button} disabled={isSubmitting}>
+                {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+              </button>
+            </Form>
+          )}
+        </Formik>
 
         <div style={styles.loginLink}>
           Already signed up? <Link to="/" style={styles.link}>Login here</Link>
