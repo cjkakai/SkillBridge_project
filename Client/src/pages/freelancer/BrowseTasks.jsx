@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import ApplicationForm from './ApplicationForm';
+import useApplyJob from '../../hooks/useApplyJob';
 
 const BrowseTasks = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [jobTab, setJobTab] = useState('all');
   const [tasks, setTasks] = useState([]);
   const [tasksLoading, setTasksLoading] = useState(false);
-  const [showApplicationModal, setShowApplicationModal] = useState(false);
-  const [selectedTask, setSelectedTask] = useState(null);
-  
+  const { showApplicationModal, selectedTask, handleApplyClick, handleCloseModal } = useApplyJob();
+
   const freelancerId = 1001; // Mock freelancer ID
 
   const handleSidebarToggle = () => {
@@ -48,15 +48,6 @@ const BrowseTasks = () => {
     });
   };
 
-  const handleApplyClick = (task) => {
-    setSelectedTask(task);
-    setShowApplicationModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setShowApplicationModal(false);
-    setSelectedTask(null);
-  };
 
 
 

@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
+import ApplicationForm from './ApplicationForm';
+import useApplyJob from '../../hooks/useApplyJob';
 import { DollarSign, TrendingUp, Clock, CheckCircle, ExternalLink, Star, Loader2 } from 'lucide-react';
 import './FreelancerDashboard.css';
 
@@ -8,6 +10,7 @@ const FreelancerDashboard = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const { showApplicationModal, selectedTask, handleApplyClick, handleCloseModal } = useApplyJob();
 
   useEffect(() => {
     const fetchDashboardData = async () => {
@@ -301,7 +304,7 @@ const FreelancerDashboard = () => {
                       <div key={job.id} className="job-item">
                         <div className="job-header">
                           <h4>{job.title}</h4>
-                          <button className="apply-btn">Apply Now</button>
+                          <button className="apply-btn" onClick={() => handleApplyClick(job)}>Apply Now</button>
                         </div>
                         <div className="job-skills">
                           <span className="skill-badge">View Details</span>
@@ -334,7 +337,7 @@ const FreelancerDashboard = () => {
                 <div key={job.id} className="job-item">
                   <div className="job-header">
                     <h4>{job.title}</h4>
-                    <button className="apply-btn">Apply Now</button>
+                    <button className="apply-btn" onClick={() => handleApplyClick(job)}>Apply Now</button>
                   </div>
                   <div className="job-skills">
                     {/* Skills would need to be fetched separately or included in API response */}
@@ -354,6 +357,13 @@ const FreelancerDashboard = () => {
           </div>
         </div>
       </div>
+
+      <ApplicationForm
+        isOpen={showApplicationModal}
+        onClose={handleCloseModal}
+        task={selectedTask}
+        freelancerId={1001} // Mock freelancer ID
+      />
     </div>
   );
 };
