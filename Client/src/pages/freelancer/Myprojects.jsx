@@ -136,13 +136,18 @@ const Myprojects = () => {
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
-      <FreelancerSidebar 
-        isCollapsed={sidebarCollapsed} 
-        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} 
+      <FreelancerSidebar
+        isCollapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
       />
 
       {/* Main Content */}
-      <div style={{ flex: 1, backgroundColor: '#f3f4f6' }}>
+      <div style={{
+        flex: 1,
+        backgroundColor: '#f3f4f6',
+        marginLeft: sidebarCollapsed ? '72px' : '280px',
+        transition: 'margin-left 0.3s ease'
+      }}>
         {/* Global Header */}
         <div style={{ 
           backgroundColor: 'white', 
