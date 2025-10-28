@@ -1,0 +1,165 @@
+/* FreelancerExperience Styles */
+.experience-header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #6B7A99;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #5A6A8A;
+}
+
+.freelancer-info {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.freelancer-icon {
+  color: #2F80ED;
+}
+
+.freelancer-info h1 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.freelancer-info p {
+  margin: 0;
+  color: #6B7A99;
+  font-size: 16px;
+}
+
+.experience-content {
+  margin-top: 20px;
+}
+
+.experiences-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 20px;
+}
+
+.no-experiences {
+  text-align: center;
+  padding: 40px;
+  color: #6B7A99;
+  font-size: 16px;
+}
+
+/* Experience Card Styles */
+.experience-card {
+  background-color: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.experience-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.experience-header {
+  margin-bottom: 16px;
+}
+
+.experience-company {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+
+.company-icon {
+  color: #2F80ED;
+}
+
+.company-name {
+  margin: 0;
+  color: #0A1F44;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.experience-role {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.role-icon {
+  color: #FF9800;
+}
+
+.role-title {
+  margin: 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.experience-dates {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+  color: #6B7A99;
+  font-size: 14px;
+}
+
+.date-icon {
+  color: #2F80ED;
+}
+
+.experience-description {
+  margin-bottom: 16px;
+}
+
+.experience-description p {
+  color: #6B7A99;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.experience-project-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.link-icon {
+  color: #4CAF50;
+}
+
+.project-link {
+  color: #2F80ED;
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+.project-link:hover {
+  color: #2563EB;
+  text-decoration: underline;
+}

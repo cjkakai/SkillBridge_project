@@ -1,5 +1,7 @@
-from app import app
-from config import db
+import sys
+import os
+sys.path.insert(0, os.path.dirname(__file__))
+
 from models import *
 from faker import Faker
 import random
@@ -8,6 +10,7 @@ from datetime import datetime, timedelta, date
 fake = Faker()
 
 def seed_database():
+    from config import app, db
     with app.app_context():
         # Clear existing data
         db.drop_all()
@@ -128,7 +131,7 @@ def seed_database():
                     budget_min=random.randint(500, 2000),
                     budget_max=random.randint(2500, 10000),
                     deadline=fake.date_between(start_date='today', end_date='+3m'),
-                    status=random.choice(['open', 'in_progress', 'completed', 'cancelled'])
+                    status=random.choice(['open', 'in_progress', 'completed'])
                 )
                 tasks.append(task)
                 db.session.add(task)
@@ -150,12 +153,15 @@ def seed_database():
         for task in tasks:
             num_applications = random.randint(1, 6)
             selected_freelancers = random.sample(freelancers, min(num_applications, len(freelancers)))
-            
+
             for freelancer in selected_freelancers:
+                # Use the existing dummy PDF file
+                pdf_filename = "DENNIS KARANJA CV-FINAL.pdf"
+
                 application = Application(
                     task_id=task.id,
                     freelancer_id=freelancer.id,
-                    cover_letter=fake.text(max_nb_chars=300),
+                    cover_letter_file=pdf_filename,
                     bid_amount=random.randint(task.budget_min, task.budget_max),
                     estimated_days=random.randint(5, 30),
                     status=random.choice(['pending', 'accepted', 'rejected'])
@@ -166,9 +172,22 @@ def seed_database():
         # Create contracts for accepted applications
         contracts = []
         accepted_applications = [app for app in applications if app.status == 'accepted']
-        
-        for application in accepted_applications[:20]:  # Limit to 20 contracts
+
+        # Only create contracts for tasks that are not 'open'
+        filtered_applications = []
+        for app in accepted_applications:
+            task = Task.query.get(app.task_id)
+            if task.status != 'open':
+                filtered_applications.append(app)
+
+        for application in filtered_applications[:20]:  # Limit to 20 contracts
             task = Task.query.get(application.task_id)
+            if task.status == 'in_progress':
+                status = 'active'
+            elif task.status == 'completed':
+                status = 'completed'
+            else:
+                continue  # Should not happen since we filtered
             contract = Contract(
                 contract_code=f"SK-{fake.random_int(min=1000, max=9999)}",
                 task_id=application.task_id,
@@ -176,28 +195,50 @@ def seed_database():
                 freelancer_id=application.freelancer_id,
                 agreed_amount=application.bid_amount,
                 started_at=fake.date_time_between(start_date='-2m', end_date='now'),
-                status=random.choice(['active', 'completed', 'cancelled'])
+                status=status
             )
-            
+
             if contract.status == 'completed':
                 contract.completed_at = fake.date_time_between(start_date=contract.started_at, end_date='now')
-            
+
             contracts.append(contract)
             db.session.add(contract)
+
+        # Ensure all contracts have a valid task
+        for contract in contracts:
+            task = Task.query.get(contract.task_id)
+            if not task:
+                raise ValueError(f"Contract {contract.id} has no associated task!")
         
         db.session.commit()
         
         # Create milestones for contracts
         for contract in contracts:
             num_milestones = random.randint(2, 5)
+            weights = []
+            for i in range(num_milestones - 1):
+                w = round(1.0 / num_milestones, 2)
+                weights.append(w)
+            weights.append(round(1.0 - sum(weights), 2))
+            random.shuffle(weights)
             for i in range(num_milestones):
+                if contract.status == 'completed':
+                    completed = True
+                elif contract.status == 'active':
+                    # For active contracts, ensure at least one milestone is not completed
+                    if i == 0:
+                        completed = False  # First milestone not completed
+                    else:
+                        completed = random.choice([True, False])
+                else:
+                    completed = random.choice([True, False])
                 milestone = Milestone(
                     contract_id=contract.id,
                     title=f"Milestone {i+1}: {fake.bs()}",
                     description=fake.text(max_nb_chars=150),
                     due_date=fake.date_between(start_date='today', end_date='+2m'),
-                    completed=random.choice([True, False]),
-                    weight=round(random.uniform(0.1, 0.4), 2),
+                    completed=completed,
+                    weight=weights[i],
                     file_url=fake.url() if random.choice([True, False]) else None
                 )
                 db.session.add(milestone)
@@ -270,8 +311,12 @@ def seed_database():
                 )
                 db.session.add(audit_log)
         
-        # Create messages for contracts
+        # Create messages for contracts - some contracts will have no messages
         for contract in contracts:
+            # 30% chance of having no messages
+            if random.random() < 0.3:
+                continue
+
             num_messages = random.randint(3, 10)
             for _ in range(num_messages):
                 # Randomly choose sender and receiver (client or freelancer)
@@ -281,7 +326,7 @@ def seed_database():
                 else:
                     sender_id = contract.freelancer_id
                     receiver_id = contract.client_id
-                
+
                 message = Message(
                     contract_id=contract.id,
                     sender_id=sender_id,
