@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 import './ApplicationForm.css';
 
 const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
+  const { user } = useAuth();
+  const currentFreelancerId = user?.freelancerId || freelancerId;
   const [applicationData, setApplicationData] = useState({
     cover_letter: '',
     bid_amount: '',
@@ -20,7 +23,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
-      const response = await fetch(`/api/freelancers/${freelancerId}/applications`, {
+      const response = await fetch(`/api/freelancers/${currentFreelancerId}/applications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
