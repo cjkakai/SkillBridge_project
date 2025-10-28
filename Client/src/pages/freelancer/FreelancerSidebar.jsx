@@ -90,6 +90,7 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
                 </li>
               );
             })}
+            <LogoutButton />
           </ul>
         </nav>
         <div className="sidebar-footer">
@@ -102,7 +103,6 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
               </div>
             </div>
           )}
-          <LogoutButton />
         </div>
       </div>
     </>
