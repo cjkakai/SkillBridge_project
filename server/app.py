@@ -333,7 +333,7 @@ class AdminComplaintResource(Resource):
             return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
         complaints = Complaint.query.all()
         return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
-    
+
     def put(self, complaint_id):
         complaint = Complaint.query.get_or_404(complaint_id)
         data = request.get_json()
@@ -343,6 +343,16 @@ class AdminComplaintResource(Resource):
         return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
 #used by an admin to fetch all complaints and edit a particular complaint
 api.add_resource(AdminComplaintResource, '/api/admin/complaints', '/api/admin/complaints/<int:complaint_id>')
+
+class AuditLogResource(Resource):
+    def get(self, audit_log_id=None):
+        if audit_log_id:
+            audit_log = AuditLog.query.get_or_404(audit_log_id)
+            return make_response(audit_log.to_dict(rules=('-admin',)), 200)
+        audit_logs = AuditLog.query.all()
+        return make_response([audit_log.to_dict(rules=('-admin',)) for audit_log in audit_logs], 200)
+#used by an admin to fetch all audit logs
+api.add_resource(AuditLogResource, '/api/admin/audit_logs', '/api/admin/audit_logs/<int:audit_log_id>')
 
 
 
