@@ -441,7 +441,7 @@ class FreelancerApplicationsResource(Resource):
 
             result.append({
                 "id": app.id,
-                "cover_letter": app.cover_letter,
+                "cover_letter_file": app.cover_letter_file,
                 "bid_amount": float(app.bid_amount or 0),
                 "estimated_days": app.estimated_days,
                 "status": app.status,
@@ -460,110 +460,151 @@ class FreelancerApplicationsResource(Resource):
     
 api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
 
-class FreelancerProfileResource(Resource):
-    def put(self, freelancer_id):
-        freelancer = Freelancer.query.get_or_404(freelancer_id)
-        data = request.get_json()
-        password = data.pop('password', None)
-        for key, value in data.items():
-            setattr(freelancer, key, value)
-        if password:
-            freelancer.password_hash = password
-        db.session.commit()
-        return make_response(freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences',)), 200)
-#used by a freelancer to edit their profile
-api.add_resource(FreelancerProfileResource, '/api/freelancers/<int:freelancer_id>/profile')
-
 class FreelancerDashboard(Resource):
     def get(self, freelancer_id):
         try:
-            # Check if freelancer exists
+            # ✅ 1. Check if freelancer exists
             freelancer = Freelancer.query.get(freelancer_id)
             if not freelancer:
                 return {"error": "Freelancer not found"}, 404
 
-            # Get stats separately to avoid complex joins
-            total_earnings = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(Payment.freelancer_id == freelancer_id).scalar() or 0
-            active_contracts = Contract.query.filter_by(freelancer_id=freelancer_id, status="active").count()
-            completed_tasks = Task.query.filter_by(freelancer_id=freelancer_id, status="completed").count()
+            # ✅ 2. Total Earnings (using payee_id)
+            total_earnings = (
+                db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0))
+                .filter(Payment.payee_id == freelancer_id)
+                .scalar() or 0
+            )
+
+            # ✅ 3. Basic stats
+            active_contracts = Contract.query.filter_by(
+                freelancer_id=freelancer_id, status="active"
+            ).count()
+
+            # ✅ Completed tasks (via Contract → Task)
+            completed_tasks = (
+                db.session.query(db.func.count(Task.id))
+                .join(Contract, Contract.task_id == Task.id)
+                .filter(
+                    Contract.freelancer_id == freelancer_id,
+                    Task.status == "completed"
+                )
+                .scalar()
+            )
+
             reviews = Review.query.filter_by(reviewee_id=freelancer_id).count()
 
-            # Get active projects with joined data
-            active_projects = db.session.query(
-                Contract.id,
-                Task.title.label('task_title'),
-                Client.name.label('client_name'),
-                Contract.agreed_amount,
-                Task.deadline
-            ).join(Task, Contract.task_id == Task.id
-            ).join(Client, Contract.client_id == Client.id
-            ).filter(Contract.freelancer_id == freelancer_id, Contract.status == "active"
-            ).limit(3).all()
+            # ✅ 4. Active Projects (Contract → Task → Client)
+            active_projects = (
+                db.session.query(
+                    Contract.id,
+                    Task.title.label("task_title"),
+                    Client.name.label("client_name"),
+                    Contract.agreed_amount,
+                    Task.deadline,
+                )
+                .join(Task, Contract.task_id == Task.id)
+                .join(Client, Contract.client_id == Client.id)
+                .filter(Contract.freelancer_id == freelancer_id, Contract.status == "active")
+                .limit(3)
+                .all()
+            )
 
-            active_projects_data = [{
-                "id": p.id,
-                "title": p.task_title or "Unknown Task",
-                "client": p.client_name or "Unknown Client",
-                "progress": 75,  # TODO: Calculate from milestones
-                "due_date": p.deadline.strftime("%b %d, %Y") if p.deadline else "TBD",
-                "amount": float(p.agreed_amount) if p.agreed_amount else 0
-            } for p in active_projects]
-
-            # Get earnings trend efficiently
-            earnings_trend = db.session.query(
-                db.func.strftime("%Y-%m", Payment.created_at).label("month"),
-                db.func.sum(Payment.amount).label("amount")
-            ).filter(Payment.freelancer_id == freelancer_id
-            ).group_by(db.func.strftime("%Y-%m", Payment.created_at)
-            ).order_by(db.func.strftime("%Y-%m", Payment.created_at).desc()
-            ).limit(6).all()
-
-            trend_data = [{"month": month, "amount": float(amount or 0)} for month, amount in earnings_trend]
-
-            # Get recommended jobs efficiently
-            recommended_jobs = db.session.query(
-                Task.id,
-                Task.title,
-                Client.name.label('client_name'),
-                Task.budget_min,
-                Task.budget_max,
-                Task.created_at
-            ).join(Client, Task.client_id == Client.id
-            ).filter(~Task.id.in_(
-                db.session.query(Contract.task_id).filter(Contract.task_id.isnot(None))
-            )).limit(3).all()
-
-            recommended_jobs_data = [{
-                "id": j.id,
-                "title": j.title,
-                "client": j.client_name or "Unknown Client",
-                "budget": f"${j.budget_min}-{j.budget_max}" if j.budget_min and j.budget_max else "TBD",
-                "posted_date": j.created_at.strftime("%b %d, %Y") if j.created_at else "Unknown"
-            } for j in recommended_jobs]
-
-            return jsonify({
-                "earnings": float(total_earnings),
-                "active_contracts": active_contracts,
-                "completed_tasks": completed_tasks,
-                "reviews": reviews,
-                "earnings_trend": trend_data,
-                "active_projects": active_projects_data,
-                "recommended_jobs": recommended_jobs_data,
-                "freelancer": {
-                    "id": freelancer.id,
-                    "name": freelancer.name,
-                    "email": freelancer.email,
-                    "bio": freelancer.bio,
-                    "image": freelancer.image,
-                    "ratings": freelancer.ratings
+            active_projects_data = [
+                {
+                    "id": p.id,
+                    "title": p.task_title or "Unknown Task",
+                    "client": p.client_name or "Unknown Client",
+                    "progress": 75,  # TODO: replace with milestone progress
+                    "due_date": p.deadline.strftime("%b %d, %Y") if p.deadline else "TBD",
+                    "amount": float(p.agreed_amount) if p.agreed_amount else 0,
                 }
-            })
+                for p in active_projects
+            ]
+
+            # ✅ 5. Earnings Trend (using payee_id)
+            earnings_trend = (
+                db.session.query(
+                    db.func.strftime("%Y-%m", Payment.created_at).label("month"),
+                    db.func.sum(Payment.amount).label("amount"),
+                )
+                .filter(Payment.payee_id == freelancer_id)
+                .group_by(db.func.strftime("%Y-%m", Payment.created_at))
+                .order_by(db.func.strftime("%Y-%m", Payment.created_at).desc())
+                .limit(6)
+                .all()
+            )
+
+            trend_data = [
+                {"month": month, "amount": float(amount or 0)}
+                for month, amount in earnings_trend
+            ]
+
+            # ✅ 6. Recommended Jobs (exclude already contracted or applied)
+            recommended_jobs = (
+                db.session.query(
+                    Task.id,
+                    Task.title,
+                    Client.name.label("client_name"),
+                    Task.budget_min,
+                    Task.budget_max,
+                    Task.created_at,
+                )
+                .join(Client, Task.client_id == Client.id)
+                .filter(
+                    ~Task.id.in_(db.session.query(Contract.task_id)),
+                    ~Task.id.in_(
+                        db.session.query(Application.task_id).filter_by(
+                            freelancer_id=freelancer_id
+                        )
+                    ),
+                )
+                .limit(3)
+                .all()
+            )
+
+            recommended_jobs_data = [
+                {
+                    "id": j.id,
+                    "title": j.title,
+                    "client": j.client_name or "Unknown Client",
+                    "budget": f"${j.budget_min}-{j.budget_max}"
+                    if j.budget_min and j.budget_max
+                    else "TBD",
+                    "posted_date": j.created_at.strftime("%b %d, %Y")
+                    if j.created_at
+                    else "Unknown",
+                }
+                for j in recommended_jobs
+            ]
+
+            # ✅ 7. Return structured dashboard JSON
+            return jsonify(
+                {
+                    "freelancer": {
+                        "id": freelancer.id,
+                        "name": freelancer.name,
+                        "email": freelancer.email,
+                        "bio": freelancer.bio,
+                        "image": freelancer.image,
+                        "ratings": freelancer.ratings,
+                    },
+                    "earnings": float(total_earnings),
+                    "active_contracts": active_contracts,
+                    "completed_tasks": completed_tasks,
+                    "reviews": reviews,
+                    "earnings_trend": trend_data,
+                    "active_projects": active_projects_data,
+                    "recommended_jobs": recommended_jobs_data,
+                }
+            )
 
         except Exception as e:
             print("Error fetching dashboard data:", e)
             return {"error": str(e)}, 500
 
-api.add_resource(FreelancerDashboard, '/api/freelancers/<int:freelancer_id>/dashboard')
+
+# ✅ Register the endpoint
+api.add_resource(FreelancerDashboard, "/api/freelancers/<int:freelancer_id>/dashboard")
 
 
 class FreelancerContractsResource(Resource):

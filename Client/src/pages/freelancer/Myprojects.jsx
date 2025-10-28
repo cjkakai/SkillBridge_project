@@ -13,11 +13,7 @@ const Myprojects = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock freelancer ID - in real app, get from auth context
-<<<<<<< HEAD
   const freelancerId = 1017;
-=======
-  const freelancerId = user?.freelancerId || 1001;
->>>>>>> 41573b5503d99d45cb2e68365c812fd2cded108e
 
   useEffect(() => {
     fetchProjectData();
@@ -230,7 +226,7 @@ const Myprojects = () => {
             onClick={() => setActiveTab('active')}
             className={`tab-button ${activeTab === 'active' ? 'active' : ''}`}
           >
-            Active Projects ({contracts.filter(c => c.status === 'active').length})
+            Active Contracts ({contracts.filter(c => c.status === 'active').length})
           </button>
           <button
             onClick={() => setActiveTab('completed')}

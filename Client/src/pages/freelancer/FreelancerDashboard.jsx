@@ -16,11 +16,8 @@ const FreelancerDashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-<<<<<<< HEAD
-      const freelancerId = 1017;
-=======
-      const freelancerId = user?.freelancerId || 1001;
->>>>>>> 41573b5503d99d45cb2e68365c812fd2cded108e
+
+      const freelancerId = 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -147,10 +144,10 @@ const FreelancerDashboard = () => {
               <Clock style={{ color: '#FF9800' }} />
             </div>
             <div className="stat-content">
-              <h3>Active Projects</h3>
+              <h3>Active Contracts</h3>
               <div className="stat-value">{dashboardData.active_contracts}</div>
               <div className="stat-trend">
-                {dashboardData.active_projects?.filter(p => new Date(p.due_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).length || 0} due this week
+                {dashboardData.active_projects?.filter(p => new Date(p.due_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)).length || 0} 
               </div>
             </div>
           </div>
@@ -182,7 +179,7 @@ const FreelancerDashboard = () => {
           <div className="active-projects-section">
             <div className="dashboard-card">
               <div className="card-header">
-                <h2>Active Projects</h2>
+                <h2>Active Contracts</h2>
                 <button className="view-all-btn">View All</button>
               </div>
               <div className="card-content">
@@ -329,37 +326,6 @@ const FreelancerDashboard = () => {
                 )}
               </div>
             </div>
-          </div>
-        </div>
-
-        <div className="recommended-jobs card">
-          <div className="card-header">
-            <h2>Recommended Jobs</h2>
-            <button className="view-all-btn">View All</button>
-          </div>
-          <div className="card-content">
-            {dashboardData.recommended_jobs?.length > 0 ? (
-              dashboardData.recommended_jobs.map((job) => (
-                <div key={job.id} className="job-item">
-                  <div className="job-header">
-                    <h4>{job.title}</h4>
-                    <button className="apply-btn" onClick={() => handleApplyClick(job)}>Apply Now</button>
-                  </div>
-                  <div className="job-skills">
-                    {/* Skills would need to be fetched separately or included in API response */}
-                    <span className="skill-badge">View Details</span>
-                  </div>
-                  <div className="job-footer">
-                    <span>{job.budget}</span>
-                    <span>Posted {job.posted_date}</span>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p style={{ textAlign: 'center', color: '#6B7A99', padding: '24px' }}>
-                No recommended jobs available at the moment.
-              </p>
-            )}
           </div>
         </div>
       </div>

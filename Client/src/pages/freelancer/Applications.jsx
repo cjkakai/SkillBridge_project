@@ -12,7 +12,7 @@ const Applications = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const freelancerId = user?.freelancerId || 1001;
+      const freelancerId = 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
