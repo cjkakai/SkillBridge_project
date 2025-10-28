@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { useAuth } from "../../context/AuthContext";
 // import { fetchClients, fetchFreelancers, fetchTasks, fetchContracts, fetchPayments } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const AnalyticsManagement = () => {
+  const { user } = useAuth();
   const [analytics, setAnalytics] = useState({});
   const [loading, setLoading] = useState(true);
 

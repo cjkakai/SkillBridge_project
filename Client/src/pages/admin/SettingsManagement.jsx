@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { useAuth } from "../../context/AuthContext";
 // import { fetchCurrentUser, logout } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const SettingsManagement = () => {
+  const { user } = useAuth();
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);

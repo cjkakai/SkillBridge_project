@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { useAuth } from "../../context/AuthContext";
 // import { fetchPayments, fetchTasks, fetchClients, fetchFreelancers } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const TransactionManagement = () => {
+  const { user } = useAuth();
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");

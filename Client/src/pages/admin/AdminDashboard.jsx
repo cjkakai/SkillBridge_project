@@ -2,6 +2,7 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import StatCard from "./StatCard";
+import { useAuth } from "../../context/AuthContext";
 // import RevenueChart from "../../components/RevenueChart";
 // import UserGrowthChart from "../../components/UserGrowthChart";
 // import RecentTransactions from "../../components/RecentTransactions";
@@ -10,6 +11,7 @@ import StatCard from "./StatCard";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
+  const { user } = useAuth();
   return (
     <div className="admin-container">
       <Sidebar />
