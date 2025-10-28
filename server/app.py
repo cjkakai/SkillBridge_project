@@ -483,9 +483,11 @@ class FreelancerDashboard(Resource):
                 return {"error": "Freelancer not found"}, 404
 
             # Get stats separately to avoid complex joins
-            total_earnings = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(Payment.freelancer_id == freelancer_id).scalar() or 0
+            total_earnings = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(Payment.contract_id.in_(
+                db.session.query(Contract.id).filter(Contract.freelancer_id == freelancer_id)
+            )).scalar() or 0
             active_contracts = Contract.query.filter_by(freelancer_id=freelancer_id, status="active").count()
-            completed_tasks = Task.query.filter_by(freelancer_id=freelancer_id, status="completed").count()
+            completed_tasks = Contract.query.filter_by(freelancer_id=freelancer_id, status="completed").count()
             reviews = Review.query.filter_by(reviewee_id=freelancer_id).count()
 
             # Get active projects with joined data
