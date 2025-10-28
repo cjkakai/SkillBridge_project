@@ -120,7 +120,7 @@ const FreelancerReview = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/')}>
+          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>

@@ -2,10 +2,12 @@ import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import ApplicationForm from './ApplicationForm';
 import useApplyJob from '../../hooks/useApplyJob';
+import { useAuth } from '../../context/AuthContext';
 import { DollarSign, TrendingUp, Clock, CheckCircle, ExternalLink, Star, Loader2 } from 'lucide-react';
 import './FreelancerDashboard.css';
 
 const FreelancerDashboard = () => {
+  const { user } = useAuth();
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -14,7 +16,11 @@ const FreelancerDashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+<<<<<<< HEAD
       const freelancerId = 1017;
+=======
+      const freelancerId = user?.freelancerId || 1001;
+>>>>>>> 41573b5503d99d45cb2e68365c812fd2cded108e
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -362,7 +368,7 @@ const FreelancerDashboard = () => {
         isOpen={showApplicationModal}
         onClose={handleCloseModal}
         task={selectedTask}
-        freelancerId={1001} // Mock freelancer ID
+        freelancerId={user?.freelancerId || 1001}
       />
     </div>
   );

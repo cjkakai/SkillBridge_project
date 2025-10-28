@@ -1,12 +1,18 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
+import './Login.css';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
-    role: ''
+    user_type: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -15,138 +21,81 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login data:', formData);
-  };
+    setError('');
+    setLoading(true);
 
-  const styles = {
-    container: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: '100vh',
-      backgroundColor: '#f8f9fa',
-      padding: '20px',
-      fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
-    },
-    card: {
-      backgroundColor: '#f0f8ff',
-      padding: '40px',
-      borderRadius: '10px',
-      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
-      width: '450px',
-      height: '699px',
-      textAlign: 'center'
-    },
-    title: {
-      color: '#ffb366',
-      fontSize: '24px',
-      fontWeight: '600',
-      marginBottom: '30px',
-      letterSpacing: '0.5px'
-    },
-    form: {
-      textAlign: 'left'
-    },
-    formGroup: {
-      marginBottom: '20px'
-    },
-    label: {
-      display: 'block',
-      color: '#666',
-      fontSize: '14px',
-      fontWeight: '500',
-      marginBottom: '8px',
-      textTransform: 'lowercase'
-    },
-    input: {
-      width: '100%',
-      padding: '12px 16px',
-      border: '2px solid #e0e0e0',
-      borderRadius: '6px',
-      fontSize: '14px',
-      transition: 'border-color 0.3s ease',
-      boxSizing: 'border-box'
-    },
-    select: {
-      width: '100%',
-      padding: '12px 16px',
-      border: '2px solid #e0e0e0',
-      borderRadius: '6px',
-      fontSize: '14px',
-      backgroundColor: 'white',
-      cursor: 'pointer',
-      boxSizing: 'border-box'
-    },
-    loginButton: {
-      width: '100%',
-      padding: '12px',
-      backgroundColor: '#007bff',
-      color: 'white',
-      border: 'none',
-      borderRadius: '6px',
-      fontSize: '16px',
-      fontWeight: '600',
-      cursor: 'pointer',
-      transition: 'background-color 0.3s ease',
-      marginTop: '10px',
-      textTransform: 'uppercase'
-    },
-    links: {
-      marginTop: '20px',
-      textAlign: 'center',
-      fontSize: '14px',
-      color: '#666'
-    },
-    link: {
-      color: '#007bff',
-      textDecoration: 'none',
-      margin: '0 5px'
-    },
-    linkText: {
-      marginBottom: '8px'
+    if (!formData.email || !formData.password || !formData.user_type) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const result = await login(formData.email, formData.password, formData.user_type);
+      if (result.success) {
+        // Redirect based on user type
+        if (formData.user_type === 'client') {
+          navigate('/client/dashboard');
+        } else if (formData.user_type === 'freelancer') {
+          navigate('/freelancer/dashboard');
+        } else if (formData.user_type === 'admin') {
+          navigate('/admin/dashboard');
+        }
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
+
   return (
-    <div style={styles.container}>
-      <div style={styles.card}>
-        <h2 style={styles.title}>Login here</h2>
-        
-        <form style={styles.form} onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>username</label>
+    <div className="login-container">
+      <div className="login-card">
+        <h2 className="login-title">Login here</h2>
+
+        {error && <div className="error-message">{error}</div>}
+
+        <form className="login-form" onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label className="form-label">email</label>
             <input
-              type="text"
-              name="username"
-              value={formData.username}
+              type="email"
+              name="email"
+              value={formData.email}
               onChange={handleChange}
-              style={styles.input}
-              placeholder="Value"
+              className="form-input"
+              placeholder="Enter your email"
+              required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>password</label>
+          <div className="form-group">
+            <label className="form-label">password</label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
-              style={styles.input}
-              placeholder="Value"
+              className="form-input"
+              placeholder="Enter your password"
+              required
             />
           </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>choose a role</label>
+          <div className="form-group">
+            <label className="form-label">choose a role</label>
             <select
-              name="role"
-              value={formData.role}
+              name="user_type"
+              value={formData.user_type}
               onChange={handleChange}
-              style={styles.select}
+              className="form-select"
+              required
             >
               <option value="">Select role</option>
               <option value="admin">Admin</option>
@@ -155,19 +104,19 @@ const Login = () => {
             </select>
           </div>
 
-          <button type="submit" style={styles.loginButton}>
-            Login
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 
-        <div style={styles.links}>
-          <div style={styles.linkText}>
-            <Link to="/forgot-password" style={styles.link}>
+        <div className="login-links">
+          <div className="link-text">
+            <Link to="/forgot-password" className="login-link">
               Forgot password?
             </Link>
             <span style={{margin: '0 20px'}}>|</span>
             <span>No account? </span>
-            <Link to="/role-selection" style={styles.link}>
+            <Link to="/role-selection" className="login-link">
               Sign up here
             </Link>
           </div>

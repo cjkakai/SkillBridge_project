@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ClientRegister from './components/auth/ClientRegister';
 import FreelancerRegister from './components/auth/FreelancerRegister';
@@ -25,15 +26,22 @@ import Applications from './pages/freelancer/Applications';
 import BrowseTasks from './pages/freelancer/BrowseTasks';
 import Myprojects from './pages/freelancer/Myprojects';
 import Earnings from './pages/freelancer/Earnings';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import UserManagement from './pages/admin/UserManagement';
+import ProjectManagement from './pages/admin/ProjectManagement';
+import TransactionManagement from './pages/admin/TransactionManagement';
+import AnalyticsManagement from './pages/admin/AnalyticsManagement';
+import SettingsManagement from './pages/admin/SettingsManagement';
+
 import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/" element={<ClientDashboard/>} />
-          <Route path="/client-dashboard" element={<ClientDashboard/>} />
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+          <Route path="/client/dashboard" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
           <Route path="/contract-details/:id" element={<ContractDetails />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
@@ -59,10 +67,17 @@ function App() {
           <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
           <Route path="/my-projects" element={<Myprojects />} />
           <Route path="/freelancer/my-projects" element={<Myprojects />} />
-          <Route path="*" element={<Login />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<UserManagement />} />
+          <Route path="/admin/projects" element={<ProjectManagement />} />
+          <Route path="/admin/transactions" element={<TransactionManagement />} />
+          <Route path="/admin/analytics" element={<AnalyticsManagement />} />
+          <Route path="/admin/settings" element={<SettingsManagement />} />
+          <Route path="/" element={<Login />} />
         </Routes>
       </div>
     </Router>
+    </AuthProvider>
 
   );
 }

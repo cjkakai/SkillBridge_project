@@ -103,7 +103,7 @@ const ClientReport = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client-dashboard')}>
+          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
@@ -247,7 +247,7 @@ const ClientReport = () => {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={() => navigate('/client-dashboard')}>Cancel</button>
+                <button type="button" className="cancel-btn" onClick={() => navigate('/client/dashboard')}>Cancel</button>
                 <button type="submit" className="submit-report-btn">
                   <Send size={16} />
                   Submit Complaint

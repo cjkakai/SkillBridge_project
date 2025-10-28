@@ -1,16 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
+import { useAuth } from '../../context/AuthContext';
 import { Clock, CheckCircle, XCircle, Eye, Loader2 } from 'lucide-react';
 import './Applications.css';
 
 const Applications = () => {
+  const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const freelancerId = 1001;
+      const freelancerId = user?.freelancerId || 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");

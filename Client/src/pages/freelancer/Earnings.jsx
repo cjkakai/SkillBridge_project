@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
+import { useAuth } from '../../context/AuthContext';
 import './Earnings.css';
 
 const Earnings = () => {
+  const { user } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
-  const freelancerId = 1001;
+  const freelancerId = user?.freelancerId || 1001;
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed);

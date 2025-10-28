@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
+import { useAuth } from '../../context/AuthContext';
 import './Myprojects.css';
 
 const Myprojects = () => {
+  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState('active');
   const [contracts, setContracts] = useState([]);
   const [totalPayments, setTotalPayments] = useState(0);
@@ -11,7 +13,11 @@ const Myprojects = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock freelancer ID - in real app, get from auth context
+<<<<<<< HEAD
   const freelancerId = 1017;
+=======
+  const freelancerId = user?.freelancerId || 1001;
+>>>>>>> 41573b5503d99d45cb2e68365c812fd2cded108e
 
   useEffect(() => {
     fetchProjectData();
