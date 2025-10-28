@@ -121,7 +121,7 @@ const TaskApplications = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client-dashboard')}>
+          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
@@ -165,7 +165,7 @@ const TaskApplications = () => {
               <p>Review freelancer applications for this task</p>
             </div>
           </div>
-          <button onClick={() => navigate('/client-dashboard')} className="back-btn">
+          <button onClick={() => navigate('/client/dashboard')} className="back-btn">
             Back to Dashboard
           </button>
         </div>

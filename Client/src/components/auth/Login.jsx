@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
@@ -8,6 +9,10 @@ const Login = () => {
     password: '',
     user_type: ''
   });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -16,10 +21,36 @@ const Login = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Handle login logic here
-    console.log('Login data:', formData);
+    setError('');
+    setLoading(true);
+
+    if (!formData.email || !formData.password || !formData.user_type) {
+      setError('Please fill in all fields');
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const result = await login(formData.email, formData.password, formData.user_type);
+      if (result.success) {
+        // Redirect based on user type
+        if (formData.user_type === 'client') {
+          navigate('/client/dashboard');
+        } else if (formData.user_type === 'freelancer') {
+          navigate('/freelancer/dashboard');
+        } else if (formData.user_type === 'admin') {
+          navigate('/admin/dashboard');
+        }
+      } else {
+        setError(result.error);
+      }
+    } catch (err) {
+      setError('An unexpected error occurred. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
 
@@ -28,16 +59,19 @@ const Login = () => {
       <div className="login-card">
         <h2 className="login-title">Login here</h2>
 
+        {error && <div className="error-message">{error}</div>}
+
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
             <label className="form-label">email</label>
             <input
-              type="text"
+              type="email"
               name="email"
               value={formData.email}
               onChange={handleChange}
               className="form-input"
-              placeholder="Value"
+              placeholder="Enter your email"
+              required
             />
           </div>
 
@@ -49,7 +83,8 @@ const Login = () => {
               value={formData.password}
               onChange={handleChange}
               className="form-input"
-              placeholder="Value"
+              placeholder="Enter your password"
+              required
             />
           </div>
 
@@ -60,16 +95,17 @@ const Login = () => {
               value={formData.user_type}
               onChange={handleChange}
               className="form-select"
+              required
             >
               <option value="">Select role</option>
-              <option name="admin" value="admin">Admin</option>
-              <option name="freelancer" value="freelancer">Freelancer</option>
-              <option name="client" value="client">Client</option>
+              <option value="admin">Admin</option>
+              <option value="freelancer">Freelancer</option>
+              <option value="client">Client</option>
             </select>
           </div>
 
-          <button type="submit" className="login-button">
-            Login
+          <button type="submit" className="login-button" disabled={loading}>
+            {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
 

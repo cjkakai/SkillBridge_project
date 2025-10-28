@@ -171,7 +171,7 @@ const ClientProfile = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client-dashboard')}>
+          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
@@ -207,7 +207,7 @@ const ClientProfile = () => {
         <div className="profile-header">
           <button
             className="back-btn"
-            onClick={() => navigate('/client-dashboard')}
+            onClick={() => navigate('/client/dashboard')}
           >
             <ArrowLeft size={20} />
             Back to Dashboard

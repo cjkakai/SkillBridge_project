@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import ClientRegister from './components/auth/ClientRegister';
 import FreelancerRegister from './components/auth/FreelancerRegister';
@@ -36,10 +37,11 @@ import './App.css';
 
 function App() {
   return (
-    <Router>
-      <div className="App">
-        <Routes>
-          <Route path="/client-dashboard" element={<ClientDashboard/>} />
+    <AuthProvider>
+      <Router>
+        <div className="App">
+          <Routes>
+          <Route path="/client/dashboard" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
           <Route path="/contract-details/:id" element={<ContractDetails />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
@@ -75,6 +77,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </AuthProvider>
 
   );
 }

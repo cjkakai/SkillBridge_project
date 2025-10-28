@@ -67,7 +67,7 @@ const TaskEdit = () => {
       });
 
       if (response.ok) {
-        navigate('/client-dashboard');
+        navigate('/client/dashboard');
       } else {
         console.error('Failed to update task');
       }
@@ -101,7 +101,7 @@ const TaskEdit = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client-dashboard')}>
+          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
@@ -134,7 +134,7 @@ const TaskEdit = () => {
           <h1>Edit Task</h1>
           <button
             className="back-btn"
-            onClick={() => navigate('/client-dashboard')}
+            onClick={() => navigate('/client/dashboard')}
           >
             <ArrowLeft size={20} />
             Back to Dashboard

@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, User, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import TaskCard from './TaskCard';
 import FreelancerCard from './FreelancerCard';
 import './ClientDashboard.css';
 
 const ClientDashboard = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [tasks, setTasks] = useState([]);
   const [freelancers, setFreelancers]= useState([])
   const [loading, setLoading] = useState(true);
@@ -16,7 +18,7 @@ const ClientDashboard = () => {
   const [totalSpent, setTotalSpent] = useState(0);
   const[contractNumber, setContractNumber]= useState(0)
   const [unreadMessages, setUnreadMessages] = useState(0);
-  const clientId = 5; // Hardcoded for now, should come from auth context
+  const clientId = user?.id; // From auth context
 
   useEffect(() => {
     fetchTasks();
