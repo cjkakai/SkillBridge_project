@@ -1,8 +1,8 @@
 """Initial migration
 
-Revision ID: a711a2523ef5
+Revision ID: 6d1ef967796f
 Revises: 
-Create Date: 2025-10-20 15:47:37.367355
+Create Date: 2025-10-28 13:41:22.685345
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'a711a2523ef5'
+revision = '6d1ef967796f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -22,6 +22,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
+    sa.Column('_password_hash', sa.Text(), nullable=False),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email')
@@ -41,8 +42,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=100), nullable=False),
     sa.Column('email', sa.String(length=100), nullable=False),
+    sa.Column('_password_hash', sa.Text(), nullable=False),
     sa.Column('bio', sa.Text(), nullable=True),
-    sa.Column('skills', sa.Text(), nullable=True),
     sa.Column('image', sa.Text(), nullable=True),
     sa.Column('contact', sa.String(length=100), nullable=True),
     sa.Column('ratings', sa.Float(), nullable=True),
@@ -95,7 +96,6 @@ def upgrade():
     sa.Column('client_id', sa.Integer(), nullable=True),
     sa.Column('title', sa.String(length=150), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('required_skills', sa.Text(), nullable=True),
     sa.Column('budget_min', sa.Integer(), nullable=True),
     sa.Column('budget_max', sa.Integer(), nullable=True),
     sa.Column('deadline', sa.Date(), nullable=True),
@@ -108,7 +108,7 @@ def upgrade():
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('task_id', sa.Integer(), nullable=True),
     sa.Column('freelancer_id', sa.Integer(), nullable=True),
-    sa.Column('cover_letter', sa.Text(), nullable=True),
+    sa.Column('cover_letter_file', sa.String(length=255), nullable=True),
     sa.Column('bid_amount', sa.Numeric(), nullable=True),
     sa.Column('estimated_days', sa.Integer(), nullable=True),
     sa.Column('status', sa.String(length=30), nullable=True),
@@ -156,14 +156,15 @@ def upgrade():
     sa.ForeignKeyConstraint(['contract_id'], ['contracts.id'], name=op.f('fk_complaints_contract_id_contracts')),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('deliverables',
+    op.create_table('messages',
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('contract_id', sa.Integer(), nullable=True),
-    sa.Column('uploader_id', sa.Integer(), nullable=True),
-    sa.Column('file_url', sa.Text(), nullable=True),
-    sa.Column('description', sa.Text(), nullable=True),
+    sa.Column('contract_id', sa.Integer(), nullable=False),
+    sa.Column('sender_id', sa.Integer(), nullable=False),
+    sa.Column('receiver_id', sa.Integer(), nullable=False),
+    sa.Column('content', sa.Text(), nullable=False),
+    sa.Column('is_read', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
-    sa.ForeignKeyConstraint(['contract_id'], ['contracts.id'], name=op.f('fk_deliverables_contract_id_contracts')),
+    sa.ForeignKeyConstraint(['contract_id'], ['contracts.id'], name=op.f('fk_messages_contract_id_contracts')),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('milestones',
@@ -175,6 +176,7 @@ def upgrade():
     sa.Column('completed', sa.Boolean(), nullable=True),
     sa.Column('created_at', sa.DateTime(), nullable=True),
     sa.Column('weight', sa.Numeric(), nullable=True),
+    sa.Column('file_url', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['contract_id'], ['contracts.id'], name=op.f('fk_milestones_contract_id_contracts')),
     sa.PrimaryKeyConstraint('id')
     )
@@ -209,7 +211,7 @@ def downgrade():
     op.drop_table('reviews')
     op.drop_table('payments')
     op.drop_table('milestones')
-    op.drop_table('deliverables')
+    op.drop_table('messages')
     op.drop_table('complaints')
     op.drop_table('task_skills')
     op.drop_table('contracts')

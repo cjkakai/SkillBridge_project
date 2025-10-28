@@ -12,6 +12,9 @@ flask-migrate = "*"
 flask-sqlalchemy = "*"
 sqlalchemy-serializer = "*"
 faker = "*"
+flask-socketio = "*"
+pytz = "*"
+openai = "*"
 
 [dev-packages]
 

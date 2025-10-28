@@ -2,6 +2,7 @@ from config import db, bcrypt
 from sqlalchemy_serializer import SerializerMixin
 from sqlalchemy.ext.hybrid import hybrid_property
 from datetime import datetime, timezone
+import pytz
 
 
 class Client(db.Model, SerializerMixin):
@@ -38,7 +39,7 @@ class Client(db.Model, SerializerMixin):
 
 class Freelancer(db.Model, SerializerMixin):
     __tablename__ = 'freelancers'
-    
+
     serialize_rules = ('-_password_hash', '-applications.freelancer', '-contracts.freelancer', '-experiences.freelancer')
 
     id = db.Column(db.Integer, primary_key=True)
@@ -49,7 +50,7 @@ class Freelancer(db.Model, SerializerMixin):
     image = db.Column(db.Text)
     contact = db.Column(db.String(100))
     ratings = db.Column(db.Float)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     applications = db.relationship('Application', back_populates='freelancer')
     contracts = db.relationship('Contract', back_populates='freelancer')
@@ -80,7 +81,7 @@ class Admin(db.Model, SerializerMixin):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
     _password_hash = db.Column(db.Text, nullable=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     complaints = db.relationship('Complaint', back_populates='admin')
     audit_logs = db.relationship('AuditLog', back_populates='admin')
@@ -103,19 +104,18 @@ class Admin(db.Model, SerializerMixin):
 
 class Task(db.Model, SerializerMixin):
     __tablename__ = 'tasks'
-    
+
     serialize_rules = ('-client.tasks', '-applications.task', '-contract.task')
 
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('clients.id'))
-    freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
     title = db.Column(db.String(150), nullable=False)
     description = db.Column(db.Text)
     budget_min = db.Column(db.Integer)
     budget_max = db.Column(db.Integer)
     deadline = db.Column(db.Date)
     status = db.Column(db.String(30), default='open')
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     client = db.relationship('Client', back_populates='tasks')
     applications = db.relationship('Application', back_populates='task')
@@ -127,17 +127,17 @@ class Task(db.Model, SerializerMixin):
 
 class Application(db.Model, SerializerMixin):
     __tablename__ = 'applications'
-    
+
     serialize_rules = ('-task.applications', '-freelancer.applications')
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'))
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
-    cover_letter = db.Column(db.Text)
+    cover_letter_file = db.Column(db.String(255))
     bid_amount = db.Column(db.Numeric)
     estimated_days = db.Column(db.Integer)
     status = db.Column(db.String(30), default='pending')
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     task = db.relationship('Task', back_populates='applications')
     freelancer = db.relationship('Freelancer', back_populates='applications')
@@ -185,7 +185,7 @@ class Milestone(db.Model, SerializerMixin):
     description = db.Column(db.Text)
     due_date = db.Column(db.Date)
     completed = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
     weight = db.Column(db.Numeric)
     file_url = db.Column(db.Text)
 
@@ -202,13 +202,12 @@ class Payment(db.Model, SerializerMixin):
 
     id = db.Column(db.Integer, primary_key=True)
     contract_id = db.Column(db.Integer, db.ForeignKey('contracts.id'))
-    freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'))
     payer_id = db.Column(db.Integer)
     payee_id = db.Column(db.Integer)
     amount = db.Column(db.Numeric)
     method = db.Column(db.String(50))
     status = db.Column(db.String(30), default='pending')
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     contract = db.relationship('Contract', back_populates='payments')
 
@@ -227,7 +226,7 @@ class Review(db.Model, SerializerMixin):
     reviewee_id = db.Column(db.Integer)
     rating = db.Column(db.Integer)
     comment = db.Column(db.Text)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     contract = db.relationship('Contract', back_populates='reviews')
 
@@ -249,7 +248,7 @@ class Complaint(db.Model, SerializerMixin):
     status = db.Column(db.String(30), default='open')
     resolution = db.Column(db.Text)
     admin_id = db.Column(db.Integer, db.ForeignKey('admins.id'))
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
     resolved_at = db.Column(db.DateTime)
 
     contract = db.relationship('Contract', back_populates='complaints')
@@ -270,7 +269,7 @@ class AuditLog(db.Model, SerializerMixin):
     target_table = db.Column(db.String(50))
     target_id = db.Column(db.Integer)
     meta = db.Column(db.JSON)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     admin = db.relationship('Admin', back_populates='audit_logs')
 
@@ -281,7 +280,7 @@ class AuditLog(db.Model, SerializerMixin):
 
 class Skill(db.Model, SerializerMixin):
     __tablename__ = 'skills'
-    
+
     serialize_rules = ()
 
     id = db.Column(db.Integer, primary_key=True)
@@ -293,14 +292,14 @@ class Skill(db.Model, SerializerMixin):
 
 class FreelancerSkill(db.Model, SerializerMixin):
     __tablename__ = 'freelancer_skills'
-    
+
     serialize_rules = ()
 
     freelancer_id = db.Column(db.Integer, db.ForeignKey('freelancers.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skills.id'), primary_key=True)
     proficiency_level = db.Column(db.String(50))
     years_of_experience = db.Column(db.Integer)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     def __repr__(self):
         return f'<FreelancerSkill: Freelancer {self.freelancer_id} - Skill {self.skill_id}>'
@@ -308,12 +307,12 @@ class FreelancerSkill(db.Model, SerializerMixin):
 
 class TaskSkill(db.Model, SerializerMixin):
     __tablename__ = 'task_skills'
-    
+
     serialize_rules = ()
 
     task_id = db.Column(db.Integer, db.ForeignKey('tasks.id'), primary_key=True)
     skill_id = db.Column(db.Integer, db.ForeignKey('skills.id'), primary_key=True)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     def __repr__(self):
         return f'<TaskSkill: Task {self.task_id} - Skill {self.skill_id}>'
@@ -333,7 +332,7 @@ class FreelancerExperience(db.Model, SerializerMixin):
     end_date = db.Column(db.Date)
     description = db.Column(db.Text)
     project_link = db.Column(db.String(255))
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     freelancer = db.relationship('Freelancer', back_populates='experiences')
 
@@ -352,7 +351,7 @@ class Message(db.Model, SerializerMixin):
     receiver_id = db.Column(db.Integer, nullable=False)
     content = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
-    created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     contract = db.relationship('Contract', back_populates='messages')
 
