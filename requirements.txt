@@ -35,6 +35,7 @@ pydantic-core==2.27.2
 python-dateutil==2.9.0.post0
 python-engineio==4.12.3
 python-socketio==5.14.2
+python-dotenv==1.0.0
 pytz==2025.2
 simple-websocket==1.1.0
 six==1.17.0

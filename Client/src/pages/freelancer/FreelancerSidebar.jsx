@@ -91,7 +91,6 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
               );
             })}
           </ul>
-          <LogoutButton />
         </nav>
         <div className="sidebar-footer">
           {!isCollapsed && (
@@ -103,6 +102,7 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
               </div>
             </div>
           )}
+          <LogoutButton />
         </div>
       </div>
     </>

@@ -6,7 +6,11 @@ from flask import Flask, request, jsonify, session, make_response, send_file, Bl
 from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
 from werkzeug.utils import secure_filename
+from dotenv import load_dotenv
 from config import db, bcrypt, api , app
+
+# Load environment variables from .env file
+load_dotenv()
 from models import (
     Client, Freelancer, Admin, Task, Application, Contract,
     Milestone, Payment, Review, Complaint,
@@ -71,7 +75,7 @@ def describe_task():
     api_key = os.getenv("GOOGLE_API_KEY")
     print(f"API Key found: {bool(api_key)}")
     if not api_key:
-        return jsonify({'error': 'Google Gemini API key not configured. Please set GOOGLE_API_KEY environment variable.'}), 500
+        return jsonify({'error': 'Google Gemini API key not configured. Please set GOOGLE_API_KEY environment variable in .env file.'}), 500
 
     try:
         # Use Google Gemini REST API directly

@@ -18,7 +18,7 @@ const FreelancerDashboard = () => {
     const fetchDashboardData = async () => {
 
 
-      const freelancerId = user?.freelancerId 
+      const freelancerId = user?.id
 
 
       if (!freelancerId) {
