@@ -14,7 +14,7 @@ const RecentTransactions = () => {
     <div className="transactions-card">
       <div className="transactions-header">
         <h4>Recent Transactions</h4>
-        <a className="view-all">View All</a>
+        <a className="view-all" onClick={(e) => { e.preventDefault(); alert("View all transactions functionality would open here"); }}>View All</a>
       </div>
       <div className="table-wrap">
         <table className="transactions-table">

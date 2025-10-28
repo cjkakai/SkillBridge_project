@@ -40,8 +40,8 @@ const AdminDashboard = () => {
 
             <aside className="overview-right">
               <div className="actions-row">
-                <button className="btn-filter">Filter</button>
-                <button className="btn-export">Export Report</button>
+                <button className="btn-filter" onClick={() => alert("Filter functionality would open here")}>Filter</button>
+                <button className="btn-export" onClick={() => alert("Export report functionality would run here")}>Export Report</button>
               </div>
 
               <TopPerformers />
