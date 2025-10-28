@@ -11,7 +11,7 @@ const Myprojects = () => {
   const [loading, setLoading] = useState(true);
 
   // Mock freelancer ID - in real app, get from auth context
-  const freelancerId = 1001;
+  const freelancerId = 1017;
 
   useEffect(() => {
     fetchProjectData();

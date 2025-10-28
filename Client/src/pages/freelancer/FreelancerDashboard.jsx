@@ -14,7 +14,7 @@ const FreelancerDashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
-      const freelancerId = 1001;
+      const freelancerId = 1017;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
