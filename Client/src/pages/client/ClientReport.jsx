@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User, AlertTriangle, Send } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './ClientDashboard.css';
 
 const ClientReport = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [freelancers, setFreelancers] = useState([]);
@@ -12,7 +15,7 @@ const ClientReport = () => {
   const [admins, setAdmins] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
     fetchClientData();
@@ -131,6 +134,7 @@ const ClientReport = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

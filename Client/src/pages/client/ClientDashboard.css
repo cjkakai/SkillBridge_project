@@ -324,6 +324,7 @@
 
 .task-progress {
   margin-top: 16px;
+  width: 100%;
 }
 
 .progress-label {
@@ -342,6 +343,7 @@
   background-color: #E6F0FF;
   border-radius: 4px;
   overflow: hidden;
+  position: relative;
 }
 
 .progress-fill {

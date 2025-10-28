@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, User, FileText, Search, Send } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import ClientMessageCard from './ClientMessageCard';
 import './ClientDashboard.css';
 import io from 'socket.io-client';
 
 const ClientMessages = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [freelancersWithMessages, setFreelancersWithMessages] = useState([]);
@@ -16,7 +19,7 @@ const ClientMessages = () => {
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState("");
   const [socket, setSocket] = useState(null);
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
     fetch(`/api/clients/${clientId}`)
@@ -202,6 +205,7 @@ const ClientMessages = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

@@ -95,7 +95,7 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
           onClick={() => navigate(`/contract-details/${contract.id}`)}
           title="View Details"
         >
-          <FileText size={16} />
+          <FileText size={16} color="white" />
         </button>
         <button
           className="action-btn message-btn"
@@ -123,7 +123,7 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
           onClick={() => onDelete(contract.id)}
           title="Delete Contract"
         >
-          <Trash2 size={16} />
+          <Trash2 size={16} color="white" />
         </button>
       </div>
     </div>

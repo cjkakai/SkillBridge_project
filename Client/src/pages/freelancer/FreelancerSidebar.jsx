@@ -15,6 +15,7 @@ import {
   Folder,
   X
 } from 'lucide-react';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './FreelancerSidebar.css';
 
 const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
@@ -90,6 +91,7 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
               );
             })}
           </ul>
+          <LogoutButton />
         </nav>
         <div className="sidebar-footer">
           {!isCollapsed && (

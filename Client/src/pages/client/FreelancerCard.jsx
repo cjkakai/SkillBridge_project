@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 const FreelancerCard = ({ freelancer, task }) => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [contractId, setContractId] = useState(null);
   const [loading, setLoading] = useState(false);
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
     fetchContractId();

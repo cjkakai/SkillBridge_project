@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, Search, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import TaskApplicationCard from './TaskApplicationCard';
 import './TaskApplications.css';
 
 const TaskApplications = () => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
   const [applications, setApplications] = useState([]);
   const [filteredApplications, setFilteredApplications] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -14,7 +17,7 @@ const TaskApplications = () => {
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [maxBudget, setMaxBudget] = useState('');
-  const clientId = 5; // Hardcoded for now, should come from auth context
+  const clientId = user?.id;
   const taskId = location.state?.taskId;
 
 
@@ -145,6 +148,7 @@ const TaskApplications = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

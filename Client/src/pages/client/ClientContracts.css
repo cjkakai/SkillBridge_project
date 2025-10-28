@@ -329,7 +329,7 @@
   transition: border-color 0.3s ease;
 }
 
-.search-input:focus {
+.search-input:focus 
 /* Edit Contract Form Styles */
 .edit-contract-form {
   max-width: 600px;
@@ -429,7 +429,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #6c757d;
+  background: #007bff;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -443,7 +443,6 @@
 .back-btn:hover {
   background: #5a6268;
   transform: translateY(-1px);
-}
   outline: none;
   border-color: #4169E1;
   box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
