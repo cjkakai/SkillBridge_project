@@ -134,7 +134,7 @@ class ContractResource(Resource):
         contracts = Contract.query.all()
         return make_response([contract.to_dict(rules=('-task', '-client', '-freelancer', '-milestones', '-payments', '-reviews', '-complaints.contract',)) for contract in contracts], 200)
 
-api.add_resource(ContractResource, '/api/contracts', '/api/contracts/<int:contract_id>')
+api.add_resource(ContractResource, '/api/contracts/<int:contract_id>')
 
 
 class PaymentResource(Resource):
@@ -145,15 +145,6 @@ class PaymentResource(Resource):
             return make_response(payment.to_dict(rules=('-contract',)), 200)
         payments = Payment.query.all()
         return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
-    
-    # Used by admin to update payment status (e.g., process refunds)
-    def put(self, payment_id):
-        payment = Payment.query.get_or_404(payment_id)
-        data = request.get_json()
-        for key, value in data.items():
-            setattr(payment, key, value)
-        db.session.commit()
-        return make_response(payment.to_dict(rules=('-contract',)), 200)
    
 api.add_resource(PaymentResource, '/api/payments', '/api/payments/<int:payment_id>')
 
@@ -333,7 +324,7 @@ class AdminComplaintResource(Resource):
             return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
         complaints = Complaint.query.all()
         return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
-
+    
     def put(self, complaint_id):
         complaint = Complaint.query.get_or_404(complaint_id)
         data = request.get_json()
@@ -343,16 +334,6 @@ class AdminComplaintResource(Resource):
         return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 200)
 #used by an admin to fetch all complaints and edit a particular complaint
 api.add_resource(AdminComplaintResource, '/api/admin/complaints', '/api/admin/complaints/<int:complaint_id>')
-
-class AuditLogResource(Resource):
-    def get(self, audit_log_id=None):
-        if audit_log_id:
-            audit_log = AuditLog.query.get_or_404(audit_log_id)
-            return make_response(audit_log.to_dict(rules=('-admin',)), 200)
-        audit_logs = AuditLog.query.all()
-        return make_response([audit_log.to_dict(rules=('-admin',)) for audit_log in audit_logs], 200)
-#used by an admin to fetch all audit logs
-api.add_resource(AuditLogResource, '/api/admin/audit_logs', '/api/admin/audit_logs/<int:audit_log_id>')
 
 
 
