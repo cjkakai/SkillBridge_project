@@ -1,18 +1,18 @@
 import React from "react";
 import "./HomePage.css";
-import Navbar from "../../../src/components/Navbar";
+// import Navbar from "../../../src/components/Navbar";
 
-import heroImg from "../assets/hero-illustration.png";
-import dataIcon from "../assets/data-analytics-icon.png";
-import graphicIcon from "../assets/graphic-design.png";
-import uiuxIcon from "../assets/uiux-design.png";
-import reportIcon from "../assets/report-writing.png";
-import codeIcon from "../assets/code-icon.png";
+// import heroImg from "../assets/hero-illustration.png";
+// import dataIcon from "../assets/data-analytics-icon.png";
+// import graphicIcon from "../assets/graphic-design.png";
+// import uiuxIcon from "../assets/uiux-design.png";
+// import reportIcon from "../assets/report-writing.png";
+// import codeIcon from "../assets/code-icon.png";
 
 const HomePage = () => {
   return (
     <div className="homepage">
-      <Navbar />
+      {/* <Navbar /> */}
 
       <section className="hero-section">
         <div className="hero-content">

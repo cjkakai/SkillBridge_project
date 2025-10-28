@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { fetchPayments, fetchTasks, fetchClients, fetchFreelancers } from "../../../../src/services/api";
+// import { fetchPayments, fetchTasks, fetchClients, fetchFreelancers } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const TransactionManagement = () => {

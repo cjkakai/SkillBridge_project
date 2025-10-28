@@ -2,11 +2,11 @@ import React from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import StatCard from "./StatCard";
-import RevenueChart from "../../components/RevenueChart";
-import UserGrowthChart from "../../components/UserGrowthChart";
-import RecentTransactions from "../../components/RecentTransactions";
-import TopPerformers from "../../components/TopPerformers";
-import PlatformStats from "../../components/PlatformStats";
+// import RevenueChart from "../../components/RevenueChart";
+// import UserGrowthChart from "../../components/UserGrowthChart";
+// import RecentTransactions from "../../components/RecentTransactions";
+// import TopPerformers from "../../components/TopPerformers";
+// import PlatformStats from "../../components/PlatformStats";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {

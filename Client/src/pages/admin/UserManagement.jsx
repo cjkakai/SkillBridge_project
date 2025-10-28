@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import './UserManagement.css'; // Assuming you have a CSS file for styling
+// import { useAuth } from '../../hooks/useAuth';
+import './UserManagement.css'
 
 const UserManagement = () => {
   const { user } = useAuth();

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { fetchClients, fetchFreelancers, fetchTasks, fetchContracts, fetchPayments } from "../../../../src/services/api";
+// import { fetchClients, fetchFreelancers, fetchTasks, fetchContracts, fetchPayments } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const AnalyticsManagement = () => {
