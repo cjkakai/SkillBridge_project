@@ -1,67 +1,81 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
+import { fetchClients, fetchFreelancers } from "../../services/api";
 import "./UserManagement.css";
 
 const UserManagement = () => {
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      role: "Admin",
-      status: "Active",
-      lastActive: "2023-05-15",
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      role: "User",
-      status: "Active",
-      lastActive: "2023-05-18",
-    },
-    {
-      id: 3,
-      name: "Robert Johnson",
-      email: "robert.j@example.com",
-      role: "User",
-      status: "Inactive",
-      lastActive: "2023-04-22",
-    },
-    {
-      id: 4,
-      name: "Emily Davis",
-      email: "emily.davis@example.com",
-      role: "Moderator",
-      status: "Active",
-      lastActive: "2023-05-10",
-    },
-    {
-      id: 5,
-      name: "Michael Wilson",
-      email: "michael.w@example.com",
-      role: "User",
-      status: "Active",
-      lastActive: "2023-05-17",
-    },
-  ]);
-
+  const [users, setUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRole, setSelectedRole] = useState("All");
   const [selectedStatus, setSelectedStatus] = useState("All");
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const [clients, freelancers] = await Promise.all([
+          fetchClients(),
+          fetchFreelancers()
+        ]);
+
+        // Combine clients and freelancers into users array
+        const allUsers = [
+          ...clients.map(client => ({
+            id: client.id,
+            name: client.name,
+            email: client.email,
+            role: "Client",
+            status: "Active", // Assuming all are active for now
+            lastActive: client.created_at ? new Date(client.created_at).toLocaleDateString() : "N/A",
+            type: "client"
+          })),
+          ...freelancers.map(freelancer => ({
+            id: freelancer.id,
+            name: freelancer.name,
+            email: freelancer.email,
+            role: "Freelancer",
+            status: "Active", // Assuming all are active for now
+            lastActive: freelancer.created_at ? new Date(freelancer.created_at).toLocaleDateString() : "N/A",
+            type: "freelancer"
+          }))
+        ];
+
+        setUsers(allUsers);
+      } catch (error) {
+        console.error('Error fetching users:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
   const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                           user.email.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesRole = selectedRole === "All" || user.role === selectedRole;
     const matchesStatus = selectedStatus === "All" || user.status === selectedStatus;
     return matchesSearch && matchesRole && matchesStatus;
   });
 
-  const handleDeleteUser = (userId) => {
+  const handleDeleteUser = async (userId, userType) => {
     if (window.confirm("Are you sure you want to delete this user?")) {
-      setUsers(users.filter(user => user.id !== userId));
+      try {
+        const response = await fetch(`http://localhost:5555/api/${userType}s/${userId}`, {
+          method: 'DELETE',
+        });
+        if (response.ok) {
+          setUsers(users.filter(user => user.id !== userId));
+          alert("User deleted successfully!");
+        } else {
+          alert("Failed to delete user.");
+        }
+      } catch (error) {
+        console.error('Error deleting user:', error);
+        alert("Error deleting user.");
+      }
     }
   };
 
@@ -79,19 +93,33 @@ const UserManagement = () => {
     alert("Add new user functionality would open here");
   };
 
+  if (loading) {
+    return (
+      <div className="admin-container">
+        <Sidebar />
+        <div className="admin-main">
+          <Header />
+          <div className="admin-content">
+            <div style={{ textAlign: 'center', padding: '50px' }}>Loading users...</div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="admin-container">
       <Sidebar />
-      
+
       <div className="admin-main">
         <Header />
-        
+
         <div className="admin-content">
           <div className="user-management-header">
             <h2>User Management</h2>
             <button className="btn-add-user" onClick={handleAddUser}>+ Add New User</button>
           </div>
-          
+
           <div className="user-filters">
             <div className="search-container">
               <input
@@ -102,20 +130,19 @@ const UserManagement = () => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            
+
             <div className="filter-group">
-              <select 
+              <select
                 className="filter-select"
                 value={selectedRole}
                 onChange={(e) => setSelectedRole(e.target.value)}
               >
                 <option value="All">All Roles</option>
-                <option value="Admin">Admin</option>
-                <option value="Moderator">Moderator</option>
-                <option value="User">User</option>
+                <option value="Client">Client</option>
+                <option value="Freelancer">Freelancer</option>
               </select>
-              
-              <select 
+
+              <select
                 className="filter-select"
                 value={selectedStatus}
                 onChange={(e) => setSelectedStatus(e.target.value)}
@@ -126,7 +153,7 @@ const UserManagement = () => {
               </select>
             </div>
           </div>
-          
+
           <div className="users-table-container">
             <table className="users-table">
               <thead>
@@ -162,15 +189,15 @@ const UserManagement = () => {
                     <td>{user.lastActive}</td>
                     <td>
                       <div className="action-buttons">
-                        <button 
+                        <button
                           className="btn-edit"
                           onClick={() => handleEditUser(user.id)}
                         >
                           Edit
                         </button>
-                        <button 
+                        <button
                           className="btn-delete"
-                          onClick={() => handleDeleteUser(user.id)}
+                          onClick={() => handleDeleteUser(user.id, user.type)}
                         >
                           Delete
                         </button>

@@ -30,16 +30,28 @@ const Sidebar = () => {
           >
             <span className="icon">👥</span> Users
           </li>
-          <li>
+          <li
+            className={location.pathname === "/admin/projects" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/projects")}
+          >
             <span className="icon">📁</span> Projects
           </li>
-          <li>
+          <li
+            className={location.pathname === "/admin/transactions" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/transactions")}
+          >
             <span className="icon">💳</span> Transactions
           </li>
-          <li>
+          <li
+            className={location.pathname === "/admin/analytics" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/analytics")}
+          >
             <span className="icon">📊</span> Analytics
           </li>
-          <li>
+          <li
+            className={location.pathname === "/admin/settings" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/settings")}
+          >
             <span className="icon">⚙️</span> Settings
           </li>
         </ul>

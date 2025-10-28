@@ -1,15 +1,15 @@
 import React from "react";
 import "./RecentTransactions.css";
 
-const rows = [
-  ["TXN-001","Sarah Miller","Emma Wilson","Mobile App UI/UX","$3,200"],
-  ["TXN-002","John Davis","James Chen","E-commerce Development","$5,800"],
-  ["TXN-003","Tech Corp","Lisa Anderson","Content Writing","$1,200"],
-  ["TXN-004","StartupHub","Alex Johnson","SEO Optimization","$2,500"],
-  ["TXN-005","Marketing Pro","Mike Roberts","Social Media Campaign","$4,100"]
-];
+const RecentTransactions = ({ data }) => {
+  const rows = data.length > 0 ? data : [
+    ["TXN-001","Sarah Miller","Emma Wilson","Mobile App UI/UX","$3,200"],
+    ["TXN-002","John Davis","James Chen","E-commerce Development","$5,800"],
+    ["TXN-003","Tech Corp","Lisa Anderson","Content Writing","$1,200"],
+    ["TXN-004","StartupHub","Alex Johnson","SEO Optimization","$2,500"],
+    ["TXN-005","Marketing Pro","Mike Roberts","Social Media Campaign","$4,100"]
+  ];
 
-const RecentTransactions = () => {
   return (
     <div className="transactions-card">
       <div className="transactions-header">
@@ -30,11 +30,11 @@ const RecentTransactions = () => {
           <tbody>
             {rows.map((r,i)=>(
               <tr key={i}>
-                <td>{r[0]}</td>
-                <td>{r[1]}</td>
-                <td>{r[2]}</td>
-                <td>{r[3]}</td>
-                <td>{r[4]}</td>
+                <td>{r.id || r[0]}</td>
+                <td>{r.client || r[1]}</td>
+                <td>{r.freelancer || r[2]}</td>
+                <td>{r.project || r[3]}</td>
+                <td>{r.amount || r[4]}</td>
               </tr>
             ))}
           </tbody>

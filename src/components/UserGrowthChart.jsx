@@ -10,22 +10,22 @@ import {
 } from "recharts";
 import "./Charts.css";
 
-const data = [
-  { month: "Jan", users: 1200 },
-  { month: "Feb", users: 1900 },
-  { month: "Mar", users: 2500 },
-  { month: "Apr", users: 3100 },
-  { month: "May", users: 4200 },
-  { month: "Jun", users: 5200 },
-  { month: "Jul", users: 6300 },
-];
+const UserGrowthChart = ({ data }) => {
+  const chartData = data.length > 0 ? data : [
+    { month: "Jan", users: 1200 },
+    { month: "Feb", users: 1900 },
+    { month: "Mar", users: 2500 },
+    { month: "Apr", users: 3100 },
+    { month: "May", users: 4200 },
+    { month: "Jun", users: 5200 },
+    { month: "Jul", users: 6300 },
+  ];
 
-const UserGrowthChart = () => {
   return (
     <div className="chart-card">
       <h4>User Growth</h4>
       <ResponsiveContainer width="100%" height={280}>
-        <AreaChart data={data}>
+        <AreaChart data={chartData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
           <XAxis dataKey="month" />
           <YAxis />
