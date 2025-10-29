@@ -1,10 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User, Camera, Save, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './ClientProfile.css';
 
 const ClientProfile = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const fileInputRef = useRef(null);
   const [client, setClient] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -20,11 +23,13 @@ const ClientProfile = () => {
     confirmPassword: ''
   });
 
-  const clientId = 5; // Hardcoded for now, should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
-    fetchClientProfile();
-  }, []);
+    if (user?.id) {
+      fetchClientProfile();
+    }
+  }, [user?.id]);
 
   const fetchClientProfile = async () => {
     try {
@@ -199,6 +204,7 @@ const ClientProfile = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 
@@ -206,7 +212,6 @@ const ClientProfile = () => {
       <div className="main-content">
         <div className="profile-header">
           <button
-            className="back-btn"
             onClick={() => navigate('/client/dashboard')}
           >
             <ArrowLeft size={20} />

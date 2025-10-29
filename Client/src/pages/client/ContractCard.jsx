@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, User, FileText, Clock, Star, Edit, Trash2, MessageCircle } from 'lucide-react';
+import './ClientDashboard.css'
 
 const ContractCard = ({ contract, onEdit, onDelete }) => {
   const navigate = useNavigate();
@@ -89,13 +90,13 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
         </div>
       </div>
 
-      <div className="contract-actions">
+      <div className="contract-actions" style={{display:'flex', alignItems:"center"}}>
         <button
-          className="action-btn view-btn"
+          className="action-btn message-btn"
           onClick={() => navigate(`/contract-details/${contract.id}`)}
           title="View Details"
         >
-          <FileText size={16} />
+          <FileText size={16} color="white" />
         </button>
         <button
           className="action-btn message-btn"
@@ -119,7 +120,8 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
           <Edit size={16} />
         </button>
         <button
-          className="action-btn delete-btn"
+          style={{backgroundColor: '#dc3545',}}
+          className="action-btn message-btn"
           onClick={() => onDelete(contract.id)}
           title="Delete Contract"
         >

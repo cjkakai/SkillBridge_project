@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Trash2 } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
 const EditContract = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [contract, setContract] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,12 +19,14 @@ const EditContract = () => {
     agreed_amount: '',
     status: '',
   });
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
-    fetchContract();
-    fetchClientData();
-  }, [id]);
+    if (user?.id) {
+      fetchContract();
+      fetchClientData();
+    }
+  }, [id, user?.id]);
 
   const fetchClientData = () => {
     fetch(`/api/clients/${clientId}`)
@@ -116,6 +121,7 @@ const EditContract = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

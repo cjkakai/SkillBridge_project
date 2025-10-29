@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, Clock, MapPin, Tag, Users, Edit, Trash2 } from 'lucide-react';
+import './ClientDashboard.css';
+
 
 const TaskCard = ({ task, onTaskDeleted }) => {
   const navigate = useNavigate();
@@ -140,16 +142,10 @@ const TaskCard = ({ task, onTaskDeleted }) => {
       )}
 
       {(task.status === 'in_progress' || task.status === 'completed') && (
-        <div className="task-progress">
-          <div className="progress-label">
-            <span>Progress</span>
-            <span>{progress}%</span>
-          </div>
-          <div className="progress-bar">
-            <div
-              className="progress-fill"
-              style={{ width: `${progress}%` }}
-            ></div>
+        <div className="task-progress-container">
+          <div className="progress-text-above">{progress}% Complete</div>
+          <div className="task-progress-full">
+            <div className="progress-fill-full" style={{ width: `${progress}%` }}></div>
           </div>
         </div>
       )}

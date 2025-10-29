@@ -7,7 +7,7 @@ const Login = () => {
   const [formData, setFormData] = useState({
     email: '',
     password: '',
-    user_type: ''
+    userType: ''
   });
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,21 +26,21 @@ const Login = () => {
     setError('');
     setLoading(true);
 
-    if (!formData.email || !formData.password || !formData.user_type) {
+    if (!formData.email || !formData.password || !formData.userType) {
       setError('Please fill in all fields');
       setLoading(false);
       return;
     }
 
     try {
-      const result = await login(formData.email, formData.password, formData.user_type);
+      const result = await login(formData.email, formData.password, formData.userType);
       if (result.success) {
         // Redirect based on user type
-        if (formData.user_type === 'client') {
+        if (formData.userType === 'client') {
           navigate('/client/dashboard');
-        } else if (formData.user_type === 'freelancer') {
+        } else if (formData.userType === 'freelancer') {
           navigate('/freelancer/dashboard');
-        } else if (formData.user_type === 'admin') {
+        } else if (formData.userType === 'admin') {
           navigate('/admin/dashboard');
         }
       } else {
@@ -53,7 +53,6 @@ const Login = () => {
     }
   };
 
-
   return (
     <div className="login-container">
       <div className="login-card">
@@ -63,7 +62,7 @@ const Login = () => {
 
         <form className="login-form" onSubmit={handleSubmit}>
           <div className="form-group">
-            <label className="form-label">email</label>
+            <label className="form-label">Email</label>
             <input
               type="email"
               name="email"
@@ -76,7 +75,7 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">password</label>
+            <label className="form-label">Password</label>
             <input
               type="password"
               name="password"
@@ -89,10 +88,10 @@ const Login = () => {
           </div>
 
           <div className="form-group">
-            <label className="form-label">choose a role</label>
+            <label className="form-label">Choose a role</label>
             <select
-              name="user_type"
-              value={formData.user_type}
+              name="userType"
+              value={formData.userType}
               onChange={handleChange}
               className="form-select"
               required
@@ -114,7 +113,7 @@ const Login = () => {
             <Link to="/forgot-password" className="login-link">
               Forgot password?
             </Link>
-            <span style={{margin: '0 20px'}}>|</span>
+            <span style={{ margin: '0 20px' }}>|</span>
             <span>No account? </span>
             <Link to="/role-selection" className="login-link">
               Sign up here

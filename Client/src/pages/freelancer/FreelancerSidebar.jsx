@@ -13,8 +13,11 @@ import {
   ClipboardList,
   DollarSign,
   Folder,
-  X
+  MessageSquare,
+  X,
+  AlertTriangle
 } from 'lucide-react';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './FreelancerSidebar.css';
 
 const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
@@ -43,10 +46,12 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
     { path: '/freelancer/dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { path: '/freelancer/browse-tasks', label: 'Browse Tasks', icon: Search },
     { path: '/freelancer/applications', label: 'My Applications', icon: FileText },
+    { path: '/freelancer/messages', label: 'Messages', icon: MessageSquare },
     { path: '/freelancer/earnings', label: 'Earnings', icon: DollarSign },
     { path: '/freelancer/my-projects', label: 'My Projects', icon: Folder },
     { path: '/freelancer/profile', label: 'Profile', icon: User },
     { path: '/freelancer/reviews', label: 'Reviews', icon: Star },
+    { path: '/freelancer-report', label: 'Report a Client', icon: AlertTriangle },
   ];
 
   return (
@@ -89,6 +94,7 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
                 </li>
               );
             })}
+            <LogoutButton />
           </ul>
         </nav>
         <div className="sidebar-footer">

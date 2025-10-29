@@ -52,8 +52,12 @@ const Applications = () => {
     };
 
     fetchApplications();
+<<<<<<< HEAD
     fetchClients();
   }, [user]);
+=======
+  }, [user?.id]);
+>>>>>>> 2079d090d5b44228e8b865c2534c9f81fcbf6ad3
 
   const getStatusIcon = (status) => {
     switch (status) {

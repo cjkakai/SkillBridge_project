@@ -1,28 +1,58 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Formik, Form, Field, ErrorMessage } from 'formik';
+import * as Yup from 'yup';
 import './Register.css';
 
 const ClientRegister = () => {
-  const [formData, setFormData] = useState({
-    username: '',
-    email: '',
-    profileImage: null,
-    contact: '',
-    password: '',
-    confirmPassword: ''
+  const validationSchema = Yup.object({
+    username: Yup.string()
+      .required('Username is required')
+      .min(2, 'Username must be at least 2 characters'),
+    email: Yup.string()
+      .required('Email is required')
+      .email('Invalid email format'),
+    contact: Yup.string()
+      .required('Contact is required')
+      .matches(/^0\d{9}$/, 'Contact must start with 0 and be exactly 10 digits'),
+    password: Yup.string()
+      .required('Password is required')
+      .min(8, 'Password must be at least 8 characters'),
+    confirmPassword: Yup.string()
+      .required('Please confirm your password')
+      .oneOf([Yup.ref('password'), null], 'Passwords must match')
   });
 
-  const handleChange = (e) => {
-    const { name, value, files } = e.target;
-    setFormData({
-      ...formData,
-      [name]: files ? files[0] : value
-    });
-  };
+  const handleSubmit = async (values, { setSubmitting, resetForm }) => {
+    try {
+      const response = await fetch('/api/clients', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: values.username,
+          email: values.email,
+          contact: values.contact,
+          password: values.password
+        }),
+      });
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Client signup data:', formData);
+      if (response.ok) {
+        const data = await response.json();
+        alert('Registration successful! Please login.');
+        resetForm();
+        // You might want to redirect to login page here
+      } else {
+        const errorData = await response.json();
+        alert(`Registration failed: ${errorData.error || 'Unknown error'}`);
+      }
+    } catch (error) {
+      console.error('Error during registration:', error);
+      alert('Registration failed. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   const styles = {
@@ -103,83 +133,81 @@ const ClientRegister = () => {
     <div style={styles.container}>
       <div style={styles.card}>
         <h2 style={styles.title}>Hey client, signup here</h2>
-        
-        <form onSubmit={handleSubmit}>
-          <div style={styles.formGroup}>
-            <label style={styles.label}>username/organization_name</label>
-            <input
-              type="text"
-              name="username"
-              value={formData.username}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="John Doe"
-            />
-          </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>email</label>
-            <input
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="johndoe@gmail.com"
-            />
-          </div>
+        <Formik
+          initialValues={{
+            username: '',
+            email: '',
+            contact: '',
+            password: '',
+            confirmPassword: ''
+          }}
+          validationSchema={validationSchema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>username/organization_name</label>
+                <Field
+                  type="text"
+                  name="username"
+                  style={styles.input}
+                  placeholder="John Doe"
+                />
+                <ErrorMessage name="username" component="div" style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>profile_image/organization_logo</label>
-            <input
-              type="file"
-              name="profileImage"
-              onChange={handleChange}
-              style={styles.fileInput}
-              accept="image/*"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>email</label>
+                <Field
+                  type="email"
+                  name="email"
+                  style={styles.input}
+                  placeholder="johndoe@gmail.com"
+                />
+                <ErrorMessage name="email" component="div" style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>contact</label>
-            <input
-              type="tel"
-              name="contact"
-              value={formData.contact}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="0711234355"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>contact</label>
+                <Field
+                  type="tel"
+                  name="contact"
+                  style={styles.input}
+                  placeholder="0711234355"
+                />
+                <ErrorMessage name="contact" component="div" style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>password</label>
-            <input
-              type="password"
-              name="password"
-              value={formData.password}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="must have at least 6 characters"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>password</label>
+                <Field
+                  type="password"
+                  name="password"
+                  style={styles.input}
+                  placeholder="must have at least 8 characters"
+                />
+                <ErrorMessage name="password" component="div" style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} />
+              </div>
 
-          <div style={styles.formGroup}>
-            <label style={styles.label}>Confirm password</label>
-            <input
-              type="password"
-              name="confirmPassword"
-              value={formData.confirmPassword}
-              onChange={handleChange}
-              style={styles.input}
-              placeholder="must have at least 6 characters"
-            />
-          </div>
+              <div style={styles.formGroup}>
+                <label style={styles.label}>Confirm password</label>
+                <Field
+                  type="password"
+                  name="confirmPassword"
+                  style={styles.input}
+                  placeholder="must have at least 8 characters"
+                />
+                <ErrorMessage name="confirmPassword" component="div" style={{ color: 'red', fontSize: '14px', marginTop: '5px' }} />
+              </div>
 
-          <button type="submit" style={styles.button}>
-            Sign Up
-          </button>
-        </form>
+              <button type="submit" style={styles.button} disabled={isSubmitting}>
+                {isSubmitting ? 'Signing Up...' : 'Sign Up'}
+              </button>
+            </Form>
+          )}
+        </Formik>
 
         <div style={styles.loginLink}>
           Already signed up? <Link to="/" style={styles.link}>Login here</Link>

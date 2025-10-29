@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, User, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import TaskCard from './TaskCard';
 import FreelancerCard from './FreelancerCard';
 import './ClientDashboard.css';
@@ -21,22 +22,25 @@ const ClientDashboard = () => {
   const clientId = user?.id; // From auth context
 
   useEffect(() => {
-    fetchTasks();
-    fetchFreelancers();
-    fetchTotalSpent();
-    fetchActiveContracts();
-    fetchUnreadMessages();
-
-  }, []);
+    if (user?.id) {
+      fetchTasks();
+      fetchFreelancers();
+      fetchTotalSpent();
+      fetchActiveContracts();
+      fetchUnreadMessages();
+    }
+  }, [user?.id]);
   
   useEffect(()=>{
-    fetch(`/api/clients/${clientId}`).
-    then((response)=>response.json()).
-    then((data)=>{
-      setClientName(data.name)
-      setClientImage(data.image)
-    })
-  }, [])
+    if (user?.id) {
+      fetch(`/api/clients/${clientId}`).
+      then((response)=>response.json()).
+      then((data)=>{
+        setClientName(data.name)
+        setClientImage(data.image)
+      })
+    }
+  }, [user?.id])
 
 
 
@@ -159,6 +163,7 @@ const ClientDashboard = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

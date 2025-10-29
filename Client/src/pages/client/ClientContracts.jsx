@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, User, FileText, AlertTriangle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import ContractCard from './ContractCard';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
 const ClientContracts = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [contracts, setContracts] = useState([]);
   const [filteredContracts, setFilteredContracts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   const handleEditContract = (contractId) => {
     navigate(`/edit-contract/${contractId}`);
@@ -37,9 +40,11 @@ const ClientContracts = () => {
   };
 
   useEffect(() => {
-    fetchContracts();
-    fetchClientData();
-  }, []);
+    if (user?.id) {
+      fetchContracts();
+      fetchClientData();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     const filtered = contracts.filter(contract =>
@@ -108,6 +113,7 @@ const ClientContracts = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

@@ -1,13 +1,16 @@
 import React, { useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, User } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import "./PostTask.css";
 import './ClientDashboard.css';
 
  
 function PostTask() {
   const navigate = useNavigate();
-  const clientId = 5; // Hardcoded for now, should come from auth context
+  const { user } = useAuth();
+  const clientId = user?.id;
 
    // This state holds all the information the user enters in the form
    const [formData, setFormData] = useState({
@@ -178,6 +181,7 @@ function PostTask() {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

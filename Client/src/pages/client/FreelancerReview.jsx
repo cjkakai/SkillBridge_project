@@ -3,24 +3,29 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Star } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
+import LogoutButton from '../../components/auth/LogoutButton';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
 const FreelancerReview = () => {
   const { contractId } = useParams();
   const navigate = useNavigate();
+  const { user } = useAuth();
   const [contract, setContract] = useState(null);
   const [existingReview, setExistingReview] = useState(null);
   const [loading, setLoading] = useState(true);
   const [clientName, setClientName] = useState("");
   const [clientImage, setClientImage] = useState("");
-  const clientId = 5; // Should come from auth context
+  const clientId = user?.id;
 
   useEffect(() => {
-    fetchContract();
-    fetchExistingReview();
-    fetchClientData();
-  }, [contractId]);
+    if (user?.id) {
+      fetchContract();
+      fetchExistingReview();
+      fetchClientData();
+    }
+  }, [contractId, user?.id]);
 
   const fetchClientData = () => {
     fetch(`/api/clients/${clientId}`)
@@ -140,6 +145,7 @@ const FreelancerReview = () => {
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
+          <LogoutButton />
         </nav>
       </div>
 

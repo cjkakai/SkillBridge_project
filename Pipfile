@@ -15,6 +15,7 @@ faker = "*"
 flask-socketio = "*"
 pytz = "*"
 openai = "*"
+python-dotenv = "*"
 
 [dev-packages]
 
