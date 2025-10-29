@@ -237,12 +237,9 @@ const Applications = () => {
                       )}
                     </div>
                     <div style={{ flex: 1 }}>
-                      <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', lineHeight: '1.3' }}>
-                        {application.task?.title || 'Unknown Task'}
-                      </h3>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                         <span style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
-                          {application.task?.client_name || `Client ${application.task?.client_id}`}
+                          Application #{application.id}
                         </span>
                         <span style={{
                           color: application.status === 'accepted' ? '#10b981' : application.status === 'rejected' ? '#ef4444' : '#f59e0b',
@@ -257,43 +254,29 @@ const Applications = () => {
                           {getStatusText(application.status)}
                         </span>
                       </div>
-                      <p style={{ color: '#6b7280', fontSize: '14px', margin: 0, lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                        {application.task?.description || 'No description available'}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '20px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '32px', height: '32px', backgroundColor: '#dbeafe', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <DollarSign size={16} style={{ color: '#1e40af' }} />
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', marginBottom: '8px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <DollarSign size={14} style={{ color: '#6b7280' }} />
+                          <span style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>
+                            {formatCurrency(application.bid_amount)}
+                          </span>
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <Calendar size={14} style={{ color: '#6b7280' }} />
+                          <span style={{ fontSize: '14px', color: '#6b7280' }}>
+                            {application.estimated_days} days
+                          </span>
+                        </div>
                       </div>
-                      <div>
-                        <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>Bid Amount</p>
-                        <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{formatCurrency(application.bid_amount)}</p>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '32px', height: '32px', backgroundColor: '#fef3c7', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <Calendar size={16} style={{ color: '#d97706' }} />
-                      </div>
-                      <div>
-                        <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>Duration</p>
-                        <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{application.estimated_days} days</p>
-                      </div>
-                    </div>
-
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <div style={{ width: '32px', height: '32px', backgroundColor: '#e0e7ff', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <FileText size={16} style={{ color: '#5b21b6' }} />
-                      </div>
-                      <div>
-                        <p style={{ margin: '0 0 2px 0', fontSize: '12px', color: '#6b7280', fontWeight: '500' }}>Applied</p>
-                        <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{formatDate(application.created_at)}</p>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <Clock size={14} style={{ color: '#6b7280' }} />
+                        <span style={{ fontSize: '14px', color: '#6b7280' }}>
+                          Applied {formatDate(application.created_at)}
+                        </span>
                       </div>
                     </div>
                   </div>
+
 
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -371,6 +354,37 @@ const Applications = () => {
                             </div>
                             <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{application.estimated_days} days</p>
                           </div>
+                        </div>
+
+                        <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <FileText size={16} style={{ color: '#6b7280' }} />
+                            <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cover Letter</span>
+                          </div>
+                          <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: '1.5' }}>
+                            {application.cover_letter_file ? (
+                              <a
+                                href={`/uploads/cover_letters/${application.cover_letter_file}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
+                                onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
+                                onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
+                              >
+                                View Cover Letter
+                              </a>
+                            ) : (
+                              'No cover letter attached'
+                            )}
+                          </p>
+                        </div>
+
+                        <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+                            <Clock size={16} style={{ color: '#6b7280' }} />
+                            <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Application Date</span>
+                          </div>
+                          <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{formatDate(application.created_at)}</p>
                         </div>
 
                         <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>

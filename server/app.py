@@ -460,6 +460,38 @@ class FreelancerApplicationsResource(Resource):
             })
 
         return make_response(result, 200)
+
+    def post(self, freelancer_id):
+       try:
+           data = request.get_json()
+
+           # Validate required fields
+           required_fields = ["task_id", "bid_amount", "estimated_days", "cover_letter"]
+           if not all(field in data for field in required_fields):
+               return make_response({'error': 'Missing required fields'}, 400)
+
+           task_id = data["task_id"]
+           bid_amount = data["bid_amount"]
+           estimated_days = data["estimated_days"]
+           cover_letter = data["cover_letter"]
+
+           # Create new Application
+           application = Application(
+               task_id=task_id,
+               freelancer_id=freelancer_id,
+               bid_amount=bid_amount,
+               estimated_days=estimated_days,
+               cover_letter_file=cover_letter  # renamed field but reusing column
+           )
+
+           db.session.add(application)
+           db.session.commit()
+
+           return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+
+       except Exception as e:
+           db.session.rollback()
+           return make_response({'error': str(e)}, 500)
     
 api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
 
