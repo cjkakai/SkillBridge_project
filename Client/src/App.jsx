@@ -35,8 +35,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ProjectManagement from './pages/admin/ProjectManagement';
 import TransactionManagement from './pages/admin/TransactionManagement';
-import AnalyticsManagement from './pages/admin/AnalyticsManagement';
-import SettingsManagement from './pages/admin/SettingsManagement';
 import Complaints from './pages/admin/Complaints';
 
 import './App.css';
@@ -83,8 +81,6 @@ function App() {
           <Route path="/admin/projects" element={<ProjectManagement />} />
           <Route path="/admin/transactions" element={<TransactionManagement />} />
           <Route path="/admin/complaints" element={<Complaints />} />
-          <Route path="/admin/analytics" element={<AnalyticsManagement />} />
-          <Route path="/admin/settings" element={<SettingsManagement />} />
           <Route path="/" element={<Login />} />
         </Routes>
       </div>

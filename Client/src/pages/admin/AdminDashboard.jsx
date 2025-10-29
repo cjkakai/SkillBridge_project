@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import AdminSidebar from "./AdminSidebar";
-import Header from "./Header";
-import StatCard from "./StatCard";
 import { useAuth } from "../../context/AuthContext";
 import "./AdminDashboard.css";
 
