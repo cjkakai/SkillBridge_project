@@ -10,6 +10,7 @@ import RoleSelection from './components/auth/RoleSelection';
 
 import ClientDashboard from './pages/client/ClientDashboard'
 import ClientContracts from './pages/client/ClientContracts'
+import ClientPayment from './pages/client/ClientPayment'
 import EditContract from './pages/client/EditContract'
 import ClientMessages from './pages/client/ClientMessages'
 import ContractDetails from './pages/client/ContractDetails'
@@ -47,6 +48,7 @@ function App() {
           <Routes>
           <Route path="/client/dashboard" element={<ClientDashboard/>} />
           <Route path="/client-contracts" element={<ClientContracts />} />
+          <Route path="/client-payment" element={<ClientPayment />} />
           <Route path="/contract-details/:id" element={<ContractDetails />} />
           <Route path="/edit-contract/:id" element={<EditContract />} />
           <Route path="/client-messages" element={<ClientMessages />} />
@@ -73,6 +75,7 @@ function App() {
           <Route path="/freelancer/payments" element={<FreelancerDashboard />} />
           <Route path="/freelancer/reviews" element={<Reviews />} />
           <Route path="/my-projects" element={<Myprojects />} />
+          <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
           <Route path="/freelancer/my-projects" element={<Myprojects />} />
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />

@@ -2,12 +2,16 @@ from openai import OpenAI
 import os
 import urllib.request
 import json
+import base64
+import requests
 from flask import Flask, request, jsonify, session, make_response, send_file, Blueprint
 from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
 from config import db, bcrypt, api , app
+from datetime import datetime
+import pytz
 
 # Load environment variables from .env file
 load_dotenv()
@@ -16,6 +20,14 @@ from models import (
     Milestone, Payment, Review, Complaint,
     AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
 )
+
+# config (use env vars)
+MPESA_CONSUMER_KEY = os.getenv("MPESA_CONSUMER_KEY")
+MPESA_CONSUMER_SECRET = os.getenv("MPESA_CONSUMER_SECRET")
+MPESA_SHORTCODE = os.getenv("MPESA_SHORTCODE")  # Lipa Na M-Pesa shortcode or paybill
+MPESA_PASSKEY = os.getenv("MPESA_PASSKEY")      # Lipa Na M-Pesa passkey
+MPESA_ENV = os.getenv("MPESA_ENV", "sandbox")  # "sandbox" or "production"
+MPESA_BASE = "https://sandbox.safaricom.co.ke" if MPESA_ENV=="sandbox" else "https://api.safaricom.co.ke"
 
 # Configure upload folder
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'png', 'jpg', 'jpeg'}
@@ -58,6 +70,13 @@ def uploaded_file(filename):
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+def get_mpesa_token():
+    url = f"{MPESA_BASE}/oauth/v1/generate?grant_type=client_credentials"
+    auth = (MPESA_CONSUMER_KEY, MPESA_CONSUMER_SECRET)
+    r = requests.get(url, auth=auth)
+    r.raise_for_status()
+    return r.json()['access_token']
 
 socketio = SocketIO(app, cors_allowed_origins="*")
 
@@ -1433,6 +1452,55 @@ class ClientPaymentsResource(Resource):
 #used by a client to access all his/her payments
 api.add_resource(ClientPaymentsResource, '/api/clients/<int:client_id>/payments')
 
+# STK Push route
+@app.route("/api/payments/mpesa/stkpush", methods=["POST"])
+def mpesa_stkpush():
+    data = request.get_json()
+    amount = int(data["amount"])
+    phone = data["phone"]  # 2547xxxxxxxx
+    contract_id = data.get("contract_id")
+    payer_id = data.get("payer_id")
+    payee_id = data.get("payee_id")
+
+    # create DB Payment record with status pending
+    payment = Payment(contract_id=contract_id, payer_id=payer_id, payee_id=payee_id,
+                      amount=amount, method="mpesa", status="pending",
+                      created_at=datetime.now(pytz.timezone('Africa/Nairobi')))
+    db.session.add(payment)
+    db.session.commit()
+
+    token = get_mpesa_token()
+
+    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+    password = base64.b64encode(f"{MPESA_SHORTCODE}{MPESA_PASSKEY}{timestamp}".encode()).decode()
+
+    payload = {
+        "BusinessShortCode": MPESA_SHORTCODE,
+        "Password": password,
+        "Timestamp": timestamp,
+        "TransactionType": "CustomerPayBillOnline",
+        "Amount": amount,
+        "PartyA": phone,
+        "PartyB": MPESA_SHORTCODE,
+        "PhoneNumber": phone,
+        "CallBackURL": f"https://YOUR_DOMAIN/api/payments/mpesa/callback",
+        "AccountReference": f"contract-{contract_id}",
+        "TransactionDesc": f"Payment for contract {contract_id}"
+    }
+    headers = {"Authorization": f"Bearer {token}"}
+    r = requests.post(f"{MPESA_BASE}/mpesa/stkpush/v1/processrequest", json=payload, headers=headers)
+    if r.status_code != 200:
+        # optionally update payment.status = 'failed' and return error
+        return {"error": "failed to initiate"}, 400
+
+    # store provider_checkout_id/CheckoutRequestID to map callback to payment
+    resp = r.json()
+    checkout_id = resp.get("CheckoutRequestID")
+    payment.provider_ref = checkout_id
+    db.session.commit()
+
+    return {"mpesa_checkout_id": checkout_id, "payment_id": payment.id}, 200
+
 #enable real-time sharing of messages between clients and freelancers
 socketio.on('send_message')
 def handle_send_message(data):
@@ -1503,6 +1571,44 @@ class ClientFreelancerMessagesResource(Resource):
 
 #used by a client to access all the messages from a particular freelancer and to post a message to a freelancer
 api.add_resource(ClientFreelancerMessagesResource, '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages', '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages/mark-read')
+
+# Callback route that Safaricom will call
+@app.route("/api/payments/mpesa/callback", methods=["POST"])
+def mpesa_callback():
+    payload = request.get_json()
+    # Daraja sends the result in a specific JSON structure: look at docs
+    # Extract CheckoutRequestID and result codes
+    try:
+        body = payload.get("Body", {})
+        stk_callback = body.get("stkCallback", {})
+        checkout_id = stk_callback.get("CheckoutRequestID")
+        result_code = stk_callback.get("ResultCode")
+        result_desc = stk_callback.get("ResultDesc")
+    except Exception:
+        return ("", 400)
+
+    payment = Payment.query.filter_by(provider_ref=checkout_id).first()
+    if not payment:
+        # unknown callback; log and return 200
+        return ("", 200)
+
+    if result_code == 0:
+        # success: update payment status and optionally store transaction id
+        callback_metadata = stk_callback.get("CallbackMetadata", {}).get("Item", [])
+        # parse items to find MpesaReceiptNumber and Amount etc
+        mpesa_receipt = None
+        for it in callback_metadata:
+            if it.get("Name") == "MpesaReceiptNumber":
+                mpesa_receipt = it.get("Value")
+            if it.get("Name") == "Amount":
+                payment.amount = it.get("Value")
+        payment.status = "completed"
+        payment.provider_receipt = mpesa_receipt
+    else:
+        payment.status = "failed"
+
+    db.session.commit()
+    return ("", 200)
 
 # Register API routes
 app.register_blueprint(ai_bp)

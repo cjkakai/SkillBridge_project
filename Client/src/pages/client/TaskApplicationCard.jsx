@@ -1,5 +1,6 @@
 import React from 'react';
 import { Star, Calendar, DollarSign, Clock, Download, Eye, X, Award } from 'lucide-react';
+import './TaskApplications.css'
 
 const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwardContract }) => {
   const formatDate = (dateString) => {

@@ -72,7 +72,7 @@ const FreelancerExperience = () => {
             <User size={20} />
             <span>Your Profile</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/client-payment')}>
             <CreditCard size={20} />
             <span>Payments</span>
           </div>

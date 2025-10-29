@@ -1,9 +1,13 @@
 /* Task Applications Styles */
 .applications-section {
   margin-top: 30px;
+  height: fit-content;
 }
 
 .applications-container {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
   background: #f0f8ff;
   border: 2px solid #dee2e6;
   border-radius: 12px;
@@ -23,6 +27,29 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 40px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #6B7A99 #f0f8ff;
+}
+
+.applications-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.applications-grid::-webkit-scrollbar-track {
+  background: #f0f8ff;
+  border-radius: 4px;
+}
+
+.applications-grid::-webkit-scrollbar-thumb {
+  background: #6B7A99;
+  border-radius: 4px;
+}
+
+.applications-grid::-webkit-scrollbar-thumb:hover {
+  background: #5a6b8a;
 }
 
 .back-btn {

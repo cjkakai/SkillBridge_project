@@ -132,7 +132,7 @@ const ClientReport = () => {
             <AlertTriangle size={20} />
             <span>Report a Freelancer</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/client-payment')}>
             <CreditCard size={20} />
             <span>Payments</span>
           </div>

@@ -49,16 +49,25 @@ def seed_database():
             "https://img.freepik.com/free-vector/bird-colorful-gradient-design-vector_343694-2506.jpg",
             "https://media.istockphoto.com/id/1399318216/vector/round-icon-spartan-helmet.jpg?s=612x612&w=0&k=20&c=PWKk1b8Xm7THDlgYS_9qyi3ShUxL3VGtaEVJK0wgGF0="
         ]
-        
+
         clients = []
         for i in range(15):
-            client = Client(
-                name=fake.company(),
-                email=fake.email(),
-                bio=fake.text(max_nb_chars=200),
-                contact=f"07{fake.random_int(min=10000000, max=99999999)}",
-                image=random.choice(client_images)
-            )
+            if i == 0:  # First client with specific details
+                client = Client(
+                    name="Dennis Wanyeki",
+                    email="denniswanyeki2021@gmail.com",
+                    bio=fake.text(max_nb_chars=200),
+                    contact="0711606734",
+                    image=random.choice(client_images)
+                )
+            else:
+                client = Client(
+                    name=fake.company(),
+                    email=fake.email(),
+                    bio=fake.text(max_nb_chars=200),
+                    contact=f"07{fake.random_int(min=10000000, max=99999999)}",
+                    image=random.choice(client_images)
+                )
             client.password_hash = "client"
             clients.append(client)
             db.session.add(client)
@@ -69,20 +78,32 @@ def seed_database():
             "https://cdn.pixabay.com/photo/2022/08/20/11/59/african-man-7398921_960_720.jpg",
             "https://t3.ftcdn.net/jpg/03/91/34/72/360_F_391347204_XaDg0S7PtbzJRoeow3yWO1vK4pnqBVQY.jpg",
             "https://img.freepik.com/free-photo/african-woman-posing-looking-up_23-2148747978.jpg?semt=ais_hybrid&w=740&q=80",
+            "https://img.freepik.com/free-photo/sideways-shot-pleased-relaxed-woman-with-healthy-dark-skin-looks-positively-aside_273609-18172.jpg?semt=ais_hybrid&w=740&q=80",
             "https://img.freepik.com/free-photo/confident-african-businesswoman-smiling-closeup-portrait-jobs-career-campaign_53876-143280.jpg?semt=ais_hybrid&w=740&q=80"
         ]
-        
+
         freelancers = []
         for i in range(30):
-            freelancer = Freelancer(
-                id=1000 + i,
-                name=fake.name(),
-                email=fake.email(),
-                bio=fake.text(max_nb_chars=300),
-                contact=f"07{fake.random_int(min=10000000, max=99999999)}",
-                ratings=round(random.uniform(3.5, 5.0), 1),
-                image=random.choice(freelancer_images)
-            )
+            if i == 0:  # First freelancer with specific details
+                freelancer = Freelancer(
+                    id=1000 + i,
+                    name="Ruth Wambui",
+                    email=fake.email(),
+                    bio=fake.text(max_nb_chars=300),
+                    contact="0797779941",
+                    ratings=round(random.uniform(3.5, 5.0), 1),
+                    image="https://img.freepik.com/free-photo/sideways-shot-pleased-relaxed-woman-with-healthy-dark-skin-looks-positively-aside_273609-18172.jpg?semt=ais_hybrid&w=740&q=80"
+                )
+            else:
+                freelancer = Freelancer(
+                    id=1000 + i,
+                    name=fake.name(),
+                    email=fake.email(),
+                    bio=fake.text(max_nb_chars=300),
+                    contact=f"07{fake.random_int(min=10000000, max=99999999)}",
+                    ratings=round(random.uniform(3.5, 5.0), 1),
+                    image=random.choice(freelancer_images)
+                )
             freelancer.password_hash = "freelancer"
             freelancers.append(freelancer)
             db.session.add(freelancer)
@@ -119,10 +140,13 @@ def seed_database():
                 )
                 db.session.add(experience)
         
-        # Create tasks
+        # Create tasks - ensure Dennis Wanyeki has enough tasks for 2 contracts
         tasks = []
         for client in clients:
-            num_tasks = random.randint(1, 5)
+            if client.name == "Dennis Wanyeki":
+                num_tasks = random.randint(3, 5)  # More tasks for Dennis to ensure he gets contracts
+            else:
+                num_tasks = random.randint(1, 5)
             for _ in range(num_tasks):
                 task = Task(
                     client_id=client.id,
@@ -148,11 +172,19 @@ def seed_database():
                 )
                 db.session.add(task_skill)
         
-        # Create applications
+        # Create applications - ensure Ruth Wambui applies to Dennis's tasks and more tasks
         applications = []
         for task in tasks:
             num_applications = random.randint(1, 6)
             selected_freelancers = random.sample(freelancers, min(num_applications, len(freelancers)))
+
+            # Ensure Ruth Wambui (ID 1000) applies to this task if not already selected
+            ruth = next((f for f in freelancers if f.name == "Ruth Wambui"), None)
+            task_client = Client.query.get(task.client_id)
+            if ruth and ruth not in selected_freelancers and len(selected_freelancers) < len(freelancers):
+                # Especially ensure Ruth applies to Dennis's tasks
+                if task_client.name == "Dennis Wanyeki" or random.random() < 0.7:  # 70% chance for other tasks
+                    selected_freelancers.append(ruth)
 
             for freelancer in selected_freelancers:
                 # Use the existing dummy PDF file
@@ -169,7 +201,7 @@ def seed_database():
                 applications.append(application)
                 db.session.add(application)
         
-        # Create contracts for accepted applications
+        # Create contracts for accepted applications - prioritize Ruth Wambui and Dennis Wanyeki
         contracts = []
         accepted_applications = [app for app in applications if app.status == 'accepted']
 
@@ -180,7 +212,28 @@ def seed_database():
             if task.status != 'open':
                 filtered_applications.append(app)
 
-        for application in filtered_applications[:20]:  # Limit to 20 contracts
+        # Prioritize applications from Ruth Wambui and Dennis Wanyeki's tasks
+        ruth_applications = []
+        dennis_applications = []
+        ruth_dennis_applications = []  # Applications where Ruth applies to Dennis's tasks
+        other_applications = []
+
+        for app in filtered_applications:
+            task = Task.query.get(app.task_id)
+            client = Client.query.get(task.client_id)
+            if app.freelancer_id == 1000 and client.name == "Dennis Wanyeki":  # Ruth applying to Dennis's tasks
+                ruth_dennis_applications.append(app)
+            elif app.freelancer_id == 1000:  # Ruth Wambui other applications
+                ruth_applications.append(app)
+            elif client.name == "Dennis Wanyeki":  # Other freelancers applying to Dennis's tasks
+                dennis_applications.append(app)
+            else:
+                other_applications.append(app)
+
+        # Ensure Ruth has at least one contract with Dennis, plus at least one more contract
+        prioritized_applications = ruth_dennis_applications[:1] + ruth_applications[:1] + dennis_applications[:1] + other_applications
+
+        for application in prioritized_applications[:30]:  # Limit to 30 contracts
             task = Task.query.get(application.task_id)
             if task.status == 'in_progress':
                 status = 'active'

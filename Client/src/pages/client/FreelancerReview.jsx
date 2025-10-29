@@ -141,7 +141,7 @@ const FreelancerReview = () => {
             <Plus size={20} />
             <span>Post a Job</span>
           </div>
-          <div className="nav-item">
+          <div className="nav-item" onClick={() => navigate('/client-payment')}>
             <CreditCard size={20} />
             <span>Payments</span>
           </div>
