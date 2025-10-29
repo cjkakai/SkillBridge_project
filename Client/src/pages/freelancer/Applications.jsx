@@ -14,7 +14,7 @@ const Applications = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const freelancerId = 1001;
+      const freelancerId = user?.id;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");

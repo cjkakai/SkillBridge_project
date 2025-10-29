@@ -16,7 +16,7 @@ const BrowseTasks = () => {
   const [clients, setClients] = useState([]);
   const { showApplicationModal, selectedTask, handleApplyClick, handleCloseModal } = useApplyJob();
 
-  const freelancerId = 1001;
+  const freelancerId = user?.id;
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed);
@@ -370,7 +370,7 @@ const BrowseTasks = () => {
           isOpen={showApplicationModal}
           onClose={handleCloseModal}
           task={selectedTask}
-          freelancerId={user?.freelancerId || freelancerId}
+          freelancerId={user?.id}
         />
       </div>
     </div>

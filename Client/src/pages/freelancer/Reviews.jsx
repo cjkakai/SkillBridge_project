@@ -17,7 +17,7 @@ const Reviews = () => {
   useEffect(() => {
     const fetchReviews = async () => {
       try {
-        const freelancerId = 1017;
+        const freelancerId = user?.id;
         const response = await fetch(`/api/reviews?freelancer_id=${freelancerId}`);
         if (response.ok) {
           const data = await response.json();

@@ -17,7 +17,7 @@ const FreelancerDashboard = () => {
   useEffect(() => {
     const fetchDashboardData = async () => {
 
-      const freelancerId = 1001;
+      const freelancerId = user?.id;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -334,7 +334,7 @@ const FreelancerDashboard = () => {
         isOpen={showApplicationModal}
         onClose={handleCloseModal}
         task={selectedTask}
-        freelancerId={user?.freelancerId || 1001}
+        freelancerId={user?.id}
       />
     </div>
   );

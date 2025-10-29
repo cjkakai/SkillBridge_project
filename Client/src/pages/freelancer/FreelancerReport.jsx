@@ -11,14 +11,14 @@ const FreelancerReport = () => {
   const [admins, setAdmins] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-  const freelancerId = 1017; // Hardcoded for now
+  const freelancerId = user?.id;
 
   useEffect(() => {
     fetchFreelancerData();
     fetchContracts();
     fetchAdmins();
     fetchComplaints();
-  }, []);
+  }, [freelancerId]);
 
   const fetchFreelancerData = async () => {
     try {

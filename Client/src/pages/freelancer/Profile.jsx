@@ -21,7 +21,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchProfile = async () => {
       try {
-        const freelancerId = 1017;
+        const freelancerId = user?.id;
         const response = await fetch(`/api/freelancers/${freelancerId}`);
         if (response.ok) {
           const data = await response.json();

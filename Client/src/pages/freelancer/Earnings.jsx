@@ -7,7 +7,7 @@ const Earnings = () => {
   const { user } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [totalPayments, setTotalPayments] = useState(0);
-  const freelancerId = user?.freelancerId || 1001;
+  const freelancerId = user?.id;
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed);
