@@ -35,7 +35,7 @@ const Earnings = () => {
   return (
     <div className="freelancer-dashboard">
       <FreelancerSidebar isCollapsed={sidebarCollapsed} onToggle={handleSidebarToggle} />
-      <div className={`dashboard-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
+      <div className={`dashboard-content ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
       <div className="earnings-header">
         <div className="header-content">
           <div>

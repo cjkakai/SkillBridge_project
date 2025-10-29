@@ -449,6 +449,9 @@ class FreelancerApplicationsResource(Resource):
                 "task": {
                     "id": task.id if task else None,
                     "title": task.title if task else "Unknown Task",
+                    "description": task.description if task else "No description available",
+                    "client_id": client.id if client else None,
+                    "client_name": client.name if client else "Unknown Client",
                     "client": {
                         "id": client.id if client else None,
                         "name": client.name if client else "Unknown Client"
