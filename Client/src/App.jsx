@@ -72,6 +72,7 @@ function App() {
           <Route path="/my-projects" element={<Myprojects />} />
           <Route path="/freelancer/my-projects" element={<Myprojects />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/projects" element={<ProjectManagement />} />
           <Route path="/admin/transactions" element={<TransactionManagement />} />
