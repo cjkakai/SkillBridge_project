@@ -37,6 +37,7 @@ import ProjectManagement from './pages/admin/ProjectManagement';
 import TransactionManagement from './pages/admin/TransactionManagement';
 import AnalyticsManagement from './pages/admin/AnalyticsManagement';
 import SettingsManagement from './pages/admin/SettingsManagement';
+import Complaints from './pages/admin/Complaints';
 
 import './App.css';
 
@@ -77,10 +78,11 @@ function App() {
           <Route path="/my-projects" element={<Myprojects />} />
           <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
           <Route path="/freelancer/my-projects" element={<Myprojects />} />
-          <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/projects" element={<ProjectManagement />} />
           <Route path="/admin/transactions" element={<TransactionManagement />} />
+          <Route path="/admin/complaints" element={<Complaints />} />
           <Route path="/admin/analytics" element={<AnalyticsManagement />} />
           <Route path="/admin/settings" element={<SettingsManagement />} />
           <Route path="/" element={<Login />} />

@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
+import AdminSidebar from './AdminSidebar';
 import './UserManagement.css'
 
 const UserManagement = () => {
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [clients, setClients] = useState([]);
   const [freelancers, setFreelancers] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -89,7 +91,16 @@ const UserManagement = () => {
 
   return (
     <div className="user-management">
-      <h1>User Management</h1>
+      <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+      <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
+        <div style={{ backgroundColor: 'white', padding: '32px' }}>
+          <div>
+            <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>User Management</h1>
+            <p style={{ color: '#6b7280', margin: 0 }}>Manage platform users and their accounts</p>
+          </div>
+        </div>
+
+        <div style={{ padding: '32px' }}>
 
       <section className="clients-section">
         <h2>Clients</h2>
@@ -145,6 +156,8 @@ const UserManagement = () => {
           <p>No freelancers found.</p>
         )}
       </section>
+        </div>
+      </div>
     </div>
   );
 };

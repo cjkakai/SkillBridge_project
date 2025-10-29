@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import AdminSidebar from "./AdminSidebar";
 import { useAuth } from "../../context/AuthContext";
 // import { fetchPayments, fetchTasks, fetchClients, fetchFreelancers } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const TransactionManagement = () => {
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -117,11 +117,13 @@ const TransactionManagement = () => {
   if (loading) {
     return (
       <div className="admin-container">
-        <Sidebar />
-        <div className="admin-main">
-          <Header />
-          <div className="admin-content">
-            <div style={{ textAlign: 'center', padding: '50px' }}>Loading transactions...</div>
+        <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+        <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
+          <div style={{ backgroundColor: 'white', padding: '32px' }}>
+            <div>
+              <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Transaction Management</h1>
+              <p style={{ color: '#6b7280', margin: 0 }}>Loading transactions...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -130,14 +132,19 @@ const TransactionManagement = () => {
 
   return (
     <div className="admin-container">
-      <Sidebar />
+      <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
 
-      <div className="admin-main">
-        <Header />
+      <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
+        <div style={{ backgroundColor: 'white', padding: '32px' }}>
+          <div>
+            <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Transaction Management</h1>
+            <p style={{ color: '#6b7280', margin: 0 }}>Monitor and manage all platform transactions</p>
+          </div>
+        </div>
 
-        <div className="admin-content">
+        <div style={{ padding: '32px' }}>
           <div className="user-management-header">
-            <h2>Transaction Management</h2>
+            <h2 style={{ display: 'none' }}>Transaction Management</h2>
           </div>
 
           <div className="user-filters">

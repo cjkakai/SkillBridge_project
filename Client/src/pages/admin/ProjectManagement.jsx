@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import Sidebar from "./Sidebar";
-import Header from "./Header";
+import AdminSidebar from "./AdminSidebar";
 import { useAuth } from "../../context/AuthContext";
 // import { fetchTasks, fetchContracts } from "../../../../src/services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const ProjectManagement = () => {
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -91,11 +91,13 @@ const ProjectManagement = () => {
   if (loading) {
     return (
       <div className="admin-container">
-        <Sidebar />
-        <div className="admin-main">
-          <Header />
-          <div className="admin-content">
-            <div style={{ textAlign: 'center', padding: '50px' }}>Loading projects...</div>
+        <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
+        <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
+          <div style={{ backgroundColor: 'white', padding: '32px' }}>
+            <div>
+              <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Project Management</h1>
+              <p style={{ color: '#6b7280', margin: 0 }}>Loading projects...</p>
+            </div>
           </div>
         </div>
       </div>
@@ -104,14 +106,19 @@ const ProjectManagement = () => {
 
   return (
     <div className="admin-container">
-      <Sidebar />
+      <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
 
-      <div className="admin-main">
-        <Header />
+      <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
+        <div style={{ backgroundColor: 'white', padding: '32px' }}>
+          <div>
+            <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>Project Management</h1>
+            <p style={{ color: '#6b7280', margin: 0 }}>Manage platform projects and contracts</p>
+          </div>
+        </div>
 
-        <div className="admin-content">
+        <div style={{ padding: '32px' }}>
           <div className="user-management-header">
-            <h2>Project Management</h2>
+            <h2 style={{ display: 'none' }}>Project Management</h2>
             <button className="btn-add-user" onClick={handleAddProject}>+ Add New Project</button>
           </div>
 

@@ -1,22 +1,19 @@
-import React from "react";
-import Sidebar from "./Sidebar";
+import React, { useState } from "react";
+import AdminSidebar from "./AdminSidebar";
 import Header from "./Header";
 import StatCard from "./StatCard";
 import { useAuth } from "../../context/AuthContext";
-// import RevenueChart from "../../components/RevenueChart";
-// import UserGrowthChart from "../../components/UserGrowthChart";
-// import RecentTransactions from "../../components/RecentTransactions";
-// import TopPerformers from "../../components/TopPerformers";
-// import PlatformStats from "../../components/PlatformStats";
 import "./AdminDashboard.css";
 
 const AdminDashboard = () => {
   const { user } = useAuth();
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
   return (
     <div className="admin-container">
-      <Sidebar />
+      <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
 
-      <div className="admin-main">
+      <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
         <Header />
 
         <div className="admin-content">
