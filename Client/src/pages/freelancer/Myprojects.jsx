@@ -17,10 +17,8 @@ const Myprojects = () => {
   const freelancerId = 1017;
 
   useEffect(() => {
-    if (user?.id) {
-      fetchProjectData();
-    }
-  }, [user?.id]);
+    fetchProjectData();
+  }, []);
 
   const fetchProjectData = async () => {
     try {
@@ -51,21 +49,45 @@ const Myprojects = () => {
             description: 'No description available',
             deadline: null
           };
-          
-          // Create sample milestones
-          const milestones = [
-            { id: 1, title: 'Initial Setup', status: 'completed', amount: 1000 },
-            { id: 2, title: 'Development', status: 'in_progress', amount: 2000 },
-            { id: 3, title: 'Testing', status: 'pending', amount: 1000 }
-          ];
-          
-          const completedCount = milestones.filter(m => m.status === 'completed').length;
-          const progress = Math.round((completedCount / milestones.length) * 100);
-          
+
+          // Fetch client details if not included in contract
+          let clientData = contract.client;
+          if (!clientData && contract.client_id) {
+            try {
+              const clientResponse = await fetch(`/api/clients/${contract.client_id}`);
+              if (clientResponse.ok) {
+                clientData = await clientResponse.json();
+              }
+            } catch (clientError) {
+              console.error('Error fetching client data:', clientError);
+            }
+          }
+
+          // Fetch actual milestones from API
+          let milestones = [];
+          try {
+            const milestonesResponse = await fetch(`/api/contracts/${contract.id}/milestones`);
+            if (milestonesResponse.ok) {
+              milestones = await milestonesResponse.json();
+            }
+          } catch (milestoneError) {
+            console.error('Error fetching milestones:', milestoneError);
+          }
+
+          // Calculate progress based on actual milestones
+          const completedCount = milestones.filter(m => m.completed).length;
+          const progress = milestones.length > 0 ? Math.round((completedCount / milestones.length) * 100) : 0;
+
           processedContracts.push({
             ...contract,
             task: taskData,
-            milestones,
+            client: clientData,
+            milestones: milestones.map(m => ({
+              id: m.id,
+              title: m.title,
+              status: m.completed ? 'completed' : 'pending',
+              amount: m.weight || 0
+            })),
             progress,
             total_amount: parseFloat(contract.agreed_amount || 0)
           });
@@ -256,70 +278,130 @@ const Myprojects = () => {
                 {contracts
                   .filter(contract => activeTab === 'active' ? (contract.status === 'active' || !contract.status) : contract.status === 'completed')
                   .map((contract) => (
-                <div key={contract.id} className="project-card">
-                  <div className="project-header">
-                    <div className="project-info">
-                      <div className="client-avatar">
+                <div key={contract.id} style={{
+                  backgroundColor: 'white',
+                  borderRadius: '12px',
+                  padding: '24px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.1)',
+                  border: '1px solid #f3f4f6',
+                  transition: 'all 0.2s ease-in-out',
+                  cursor: 'pointer'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15), 0 4px 10px rgba(0,0,0,0.1)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.07), 0 1px 3px rgba(0,0,0,0.1)';
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      <div style={{
+                        width: '56px',
+                        height: '56px',
+                        borderRadius: '12px',
+                        overflow: 'hidden',
+                        border: '2px solid #f3f4f6',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        backgroundColor: '#f9fafb'
+                      }}>
                         {contract.client?.image ? (
-                          <img src={contract.client.image} alt={contract.client.name} />
+                          <img
+                            src={contract.client.image}
+                            alt={contract.client.name || 'Client'}
+                            style={{
+                              width: '100%',
+                              height: '100%',
+                              objectFit: 'cover'
+                            }}
+                          />
                         ) : (
-                          <span>{contract.client?.name?.charAt(0) || 'C'}</span>
+                          <div style={{
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: '#3b82f6',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: 'white',
+                            fontWeight: 'bold',
+                            fontSize: '18px'
+                          }}>
+                            {contract.client?.name?.charAt(0) || 'C'}
+                          </div>
                         )}
                       </div>
-                      <div>
-                        <h3 className="project-title">
+                      <div style={{ flex: 1 }}>
+                        <h3 style={{ fontSize: '20px', fontWeight: '700', color: '#111827', margin: '0 0 6px 0', lineHeight: '1.3' }}>
                           {contract.task?.title || 'Project Title'}
                         </h3>
-                        <p className="client-name">Client: {contract.client?.name || 'Unknown Client'}</p>
-                        <p className="project-description">
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+                          <span style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
+                            {contract.client?.name || 'Unknown Client'}
+                          </span>
+                          <span style={{
+                            color: contract.status === 'active' ? '#10b981' : contract.status === 'completed' ? '#059669' : '#6b7280',
+                            fontSize: '12px',
+                            fontWeight: '600',
+                            textTransform: 'uppercase',
+                            letterSpacing: '0.5px',
+                            backgroundColor: contract.status === 'active' ? '#d1fae5' : contract.status === 'completed' ? '#dcfce7' : '#f3f4f6',
+                            padding: '2px 8px',
+                            borderRadius: '12px'
+                          }}>
+                            {contract.status === 'active' ? 'In Progress' : contract.status === 'completed' ? 'Completed' : contract.status}
+                          </span>
+                        </div>
+                        <p style={{ color: '#6b7280', fontSize: '14px', margin: 0, lineHeight: '1.5', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
                           {contract.task?.description || 'No description available'}
                         </p>
                       </div>
                     </div>
-                    <div className="project-actions">
-                      <span className={`status-badge ${contract.status}`}>
-                        {contract.status === 'active' ? 'In Progress' : 'Completed'}
+                  </div>
+
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div style={{ display: 'flex', gap: '24px', alignItems: 'center' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                        <span style={{ fontWeight: '600', color: '#111827' }}>
+                          ${contract.total_amount?.toLocaleString() || '0'}
+                        </span>
+                      </div>
+                      {contract.task?.deadline && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ color: '#6b7280' }}>📅</span>
+                          <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                            {formatDate(contract.task.deadline)}
+                          </span>
+                        </div>
+                      )}
+                      {contract.progress !== undefined && (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <span style={{ color: '#6b7280' }}>📊</span>
+                          <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                            {contract.progress}% Complete
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    <div style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                      <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                        Started {contract.started_at ? formatDate(contract.started_at) : 'N/A'}
                       </span>
-                      <button className="view-details-btn">View Details</button>
-                    </div>
-                  </div>
-
-                  {/* Progress Bar */}
-                  <div className="progress-section">
-                    <div className="progress-header">
-                      <span className="progress-label">Overall Progress</span>
-                      <span className="progress-percentage">{contract.progress || 0}%</span>
-                    </div>
-                    <div className="progress-bar">
-                      <div className="progress-fill" style={{ width: `${contract.progress || 0}%` }}></div>
-                    </div>
-                  </div>
-
-                  {/* Project Details */}
-                  <div className="project-details">
-                    <div className="detail-item">
-                      <p className="detail-label">Budget</p>
-                      <p className="detail-value">
-                        ${contract.total_amount?.toLocaleString() || '0'}
-                      </p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Client Contact</p>
-                      <p className="detail-value">
-                        {contract.client?.contact || 'N/A'}
-                      </p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Deadline</p>
-                      <p className="detail-value">
-                        {contract.task?.deadline ? formatDate(contract.task.deadline) : 'N/A'}
-                      </p>
-                    </div>
-                    <div className="detail-item">
-                      <p className="detail-label">Client Email</p>
-                      <p className="detail-value">
-                        {contract.client?.email || 'N/A'}
-                      </p>
+                      <button
+                        style={{
+                          padding: '8px 24px',
+                          backgroundColor: '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontWeight: '500',
+                          cursor: 'pointer'
+                        }}>
+                        View Details
+                      </button>
                     </div>
                   </div>
 

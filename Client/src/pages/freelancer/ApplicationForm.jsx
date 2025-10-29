@@ -31,7 +31,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
         body: JSON.stringify({
           task_id: task.id,
           freelancer_id: freelancerId,
-          cover_letter: applicationData.cover_letter,
+          cover_letter_file: applicationData.cover_letter,
           bid_amount: parseFloat(applicationData.bid_amount),
           estimated_days: parseInt(applicationData.estimated_days),
           status: 'pending'

@@ -14,7 +14,7 @@ const Applications = () => {
 
   useEffect(() => {
     const fetchApplications = async () => {
-      const freelancerId = user?.freelancerId || 1017;
+      const freelancerId = 1001;
 
       if (!freelancerId) {
         setError("No freelancer ID found. Please log in again.");
@@ -52,12 +52,8 @@ const Applications = () => {
     };
 
     fetchApplications();
-<<<<<<< HEAD
     fetchClients();
   }, [user]);
-=======
-  }, [user?.id]);
->>>>>>> 2079d090d5b44228e8b865c2534c9f81fcbf6ad3
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -358,37 +354,6 @@ const Applications = () => {
                             </div>
                             <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{application.estimated_days} days</p>
                           </div>
-                        </div>
-
-                        <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                            <FileText size={16} style={{ color: '#6b7280' }} />
-                            <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Cover Letter</span>
-                          </div>
-                          <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: '1.5' }}>
-                            {application.cover_letter_file ? (
-                              <a
-                                href={`/uploads/cover_letters/${application.cover_letter_file}`}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
-                                onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
-                                onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
-                              >
-                                View Cover Letter
-                              </a>
-                            ) : (
-                              'No cover letter attached'
-                            )}
-                          </p>
-                        </div>
-
-                        <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-                            <Clock size={16} style={{ color: '#6b7280' }} />
-                            <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Application Date</span>
-                          </div>
-                          <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{formatDate(application.created_at)}</p>
                         </div>
 
                         <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>

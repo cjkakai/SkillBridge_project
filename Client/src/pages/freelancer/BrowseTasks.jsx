@@ -16,7 +16,7 @@ const BrowseTasks = () => {
   const [clients, setClients] = useState([]);
   const { showApplicationModal, selectedTask, handleApplyClick, handleCloseModal } = useApplyJob();
 
-  const freelancerId = user?.freelancerId || 1001;
+  const freelancerId = 1001;
 
   const handleSidebarToggle = () => {
     setSidebarCollapsed(!sidebarCollapsed);

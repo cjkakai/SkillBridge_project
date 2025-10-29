@@ -479,14 +479,14 @@ class FreelancerApplicationsResource(Resource):
            data = request.get_json()
 
            # Validate required fields
-           required_fields = ["task_id", "bid_amount", "estimated_days", "cover_letter"]
+           required_fields = ["task_id", "bid_amount", "estimated_days", "cover_letter_file"]
            if not all(field in data for field in required_fields):
                return make_response({'error': 'Missing required fields'}, 400)
 
            task_id = data["task_id"]
            bid_amount = data["bid_amount"]
            estimated_days = data["estimated_days"]
-           cover_letter = data["cover_letter"]
+           cover_letter = data["cover_letter_file"]
 
            # Create new Application
            application = Application(
@@ -507,13 +507,13 @@ class FreelancerApplicationsResource(Resource):
            return make_response({'error': str(e)}, 500)
     
     # used by a freelancer to apply for a job
-    def post(self, freelancer_id):
-        data = request.get_json()
-        data['freelancer_id'] = freelancer_id
-        application = Application(**data)
-        db.session.add(application)
-        db.session.commit()
-        return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+    # def post(self, freelancer_id):
+    #     data = request.get_json()
+    #     data['freelancer_id'] = freelancer_id
+    #     application = Application(**data)
+    #     db.session.add(application)
+    #     db.session.commit()
+    #     return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
 
 api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
 
@@ -780,6 +780,50 @@ api.add_resource(FreelancerComplaintsResource, '/api/freelancers/<int:freelancer
 api.add_resource(FreelancerContractComplaintsResource, '/api/freelancers/<int:freelancer_id>/contracts/<int:contract_id>/complaints', '/api/freelancers/<int:freelancer_id>/contracts/<int:contract_id>/complaints/<int:complaint_id>')
 api.add_resource(FreelancerClientsResource, '/api/freelancers/<int:freelancer_id>/clients')
 api.add_resource(FreelancerContractsResource, '/api/freelancers/<int:freelancer_id>/contracts')
+
+class FreelancerProfileResource(Resource):
+    def put(self, freelancer_id):
+        freelancer = Freelancer.query.get_or_404(freelancer_id)
+        data = request.get_json()
+        password = data.pop('password', None)
+        for key, value in data.items():
+            setattr(freelancer, key, value)
+        if password:
+            freelancer.password_hash = password
+        db.session.commit()
+        return make_response(freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences',)), 200)
+
+class FreelancerImageUploadResource(Resource):
+    def post(self, freelancer_id):
+        try:
+            if 'image' not in request.files:
+                return make_response({'error': 'No image file provided'}, 400)
+
+            file = request.files['image']
+            if file.filename == '':
+                return make_response({'error': 'No image selected'}, 400)
+
+            if not allowed_file(file.filename):
+                return make_response({'error': 'Select an allowed file type: png,jpg, jpeg'}, 400)
+
+            freelancer = Freelancer.query.get_or_404(freelancer_id)
+
+            filename = secure_filename(f"freelancer_{freelancer_id}_{file.filename}")
+            file_path = os.path.join(app.config['UPLOAD_FOLDER_IMAGES'], filename)
+            file.save(file_path)
+
+            image_url = f"/api/uploads/images/{filename}"
+            freelancer.image = image_url
+            db.session.commit()
+
+            return make_response({'message': 'Image uploaded successfully', 'image_url': image_url}, 200)
+
+        except Exception as e:
+            db.session.rollback()
+            return make_response({'error': str(e)}, 500)
+
+api.add_resource(FreelancerProfileResource, '/api/freelancers/<int:freelancer_id>/profile')
+api.add_resource(FreelancerImageUploadResource, '/api/freelancers/<int:freelancer_id>/upload-image')
 
 class FreelancerSkillResource(Resource):
     def post(self, freelancer_id):
