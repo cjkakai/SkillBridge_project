@@ -337,6 +337,14 @@ class ApplicationResource(Resource):
             db.session.rollback()
             return make_response({'error': str(e)}, 500)
 
+    # used by a freelancer to apply for a job
+    def post(self):
+        data = request.get_json()
+        application = Application(**data)
+        db.session.add(application)
+        db.session.commit()
+        return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+    
     # can be used by a client to reject a bid(changing status to rejected)
     def put(self, application_id):
         application = Application.query.get_or_404(application_id)
@@ -363,6 +371,7 @@ class ApplicationDownloadResource(Resource):
 
 api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
 api.add_resource(ApplicationDownloadResource, '/api/applications/<int:application_id>/download')
+# api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
 
 class ContractResource(Resource):
     #can be used by an admin to get all contracts
@@ -462,6 +471,15 @@ class FreelancerApplicationsResource(Resource):
 
         return make_response(result, 200)
     
+    # used by a freelancer to apply for a job
+    def post(self, freelancer_id):
+        data = request.get_json()
+        data['freelancer_id'] = freelancer_id
+        application = Application(**data)
+        db.session.add(application)
+        db.session.commit()
+        return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+
 api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
 
 class FreelancerProfileResource(Resource):
