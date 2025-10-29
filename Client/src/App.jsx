@@ -26,6 +26,8 @@ import Applications from './pages/freelancer/Applications';
 import BrowseTasks from './pages/freelancer/BrowseTasks';
 import Myprojects from './pages/freelancer/Myprojects';
 import Earnings from './pages/freelancer/Earnings';
+import FreelancerMessages from './pages/freelancer/FreelancerMessages';
+import FreelancerReport from './pages/freelancer/FreelancerReport';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ProjectManagement from './pages/admin/ProjectManagement';
@@ -61,8 +63,10 @@ function App() {
           <Route path="/freelancer/dashboard" element={<FreelancerDashboard />} />
           <Route path="/freelancer/browse-tasks" element={<BrowseTasks />} />
           <Route path="/freelancer/applications" element={<Applications />} />
+          <Route path="/freelancer/messages" element={<FreelancerMessages />} />
           <Route path="/freelancer/profile" element={<FreelancerDashboard />} />
           <Route path="/freelancer/earnings" element={<Earnings />} />
+          <Route path="/freelancer-report" element={<FreelancerReport />} />
           <Route path="/freelancer/payments" element={<FreelancerDashboard />} />
           <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
           <Route path="/my-projects" element={<Myprojects />} />

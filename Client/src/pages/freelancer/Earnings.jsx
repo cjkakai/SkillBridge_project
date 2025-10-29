@@ -14,8 +14,10 @@ const Earnings = () => {
   };
 
   useEffect(() => {
-    fetchEarningsData();
-  }, []);
+    if (user?.id) {
+      fetchEarningsData();
+    }
+  }, [user?.id]);
 
   const fetchEarningsData = async () => {
     try {

@@ -45,7 +45,7 @@ const FreelancerDashboard = () => {
     };
 
     fetchDashboardData();
-  }, []);
+  }, [user?.id]);
 
   if (loading) {
     return (

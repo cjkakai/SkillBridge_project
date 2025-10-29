@@ -38,7 +38,7 @@ const Applications = () => {
     };
 
     fetchApplications();
-  }, []);
+  }, [user?.id]);
 
   const getStatusIcon = (status) => {
     switch (status) {

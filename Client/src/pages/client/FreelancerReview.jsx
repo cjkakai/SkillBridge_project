@@ -20,10 +20,12 @@ const FreelancerReview = () => {
   const clientId = user?.id;
 
   useEffect(() => {
-    fetchContract();
-    fetchExistingReview();
-    fetchClientData();
-  }, [contractId]);
+    if (user?.id) {
+      fetchContract();
+      fetchExistingReview();
+      fetchClientData();
+    }
+  }, [contractId, user?.id]);
 
   const fetchClientData = () => {
     fetch(`/api/clients/${clientId}`)

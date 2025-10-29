@@ -40,9 +40,11 @@ const ClientContracts = () => {
   };
 
   useEffect(() => {
-    fetchContracts();
-    fetchClientData();
-  }, []);
+    if (user?.id) {
+      fetchContracts();
+      fetchClientData();
+    }
+  }, [user?.id]);
 
   useEffect(() => {
     const filtered = contracts.filter(contract =>

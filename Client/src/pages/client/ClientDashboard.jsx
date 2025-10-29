@@ -22,22 +22,25 @@ const ClientDashboard = () => {
   const clientId = user?.id; // From auth context
 
   useEffect(() => {
-    fetchTasks();
-    fetchFreelancers();
-    fetchTotalSpent();
-    fetchActiveContracts();
-    fetchUnreadMessages();
-
-  }, []);
+    if (user?.id) {
+      fetchTasks();
+      fetchFreelancers();
+      fetchTotalSpent();
+      fetchActiveContracts();
+      fetchUnreadMessages();
+    }
+  }, [user?.id]);
   
   useEffect(()=>{
-    fetch(`/api/clients/${clientId}`).
-    then((response)=>response.json()).
-    then((data)=>{
-      setClientName(data.name)
-      setClientImage(data.image)
-    })
-  }, [])
+    if (user?.id) {
+      fetch(`/api/clients/${clientId}`).
+      then((response)=>response.json()).
+      then((data)=>{
+        setClientName(data.name)
+        setClientImage(data.image)
+      })
+    }
+  }, [user?.id])
 
 
 

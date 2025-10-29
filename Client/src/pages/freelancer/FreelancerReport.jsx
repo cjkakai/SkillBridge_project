@@ -3,54 +3,44 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User, AlertTriangle, Send } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
-import './ClientDashboard.css';
+import '../client/ClientDashboard.css';
 
-const ClientReport = () => {
+const FreelancerReport = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
-  const [clientName, setClientName] = useState("");
-  const [clientImage, setClientImage] = useState("");
-  const [freelancers, setFreelancers] = useState([]);
+  const [freelancerName, setFreelancerName] = useState("");
+  const [freelancerImage, setFreelancerImage] = useState("");
   const [contracts, setContracts] = useState([]);
   const [admins, setAdmins] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-  const clientId = user?.id;
+  const freelancerId = user?.id;
 
   useEffect(() => {
     if (user?.id) {
-      fetchClientData();
-      fetchFreelancers();
+      fetchFreelancerData();
       fetchContracts();
       fetchAdmins();
       fetchComplaints();
     }
   }, [user?.id]);
 
-  const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+  const fetchFreelancerData = () => {
+    fetch(`/api/freelancers/${freelancerId}`)
       .then((response) => response.json())
       .then((data) => {
-        setClientName(data.name);
-        setClientImage(data.image);
+        setFreelancerName(data.name);
+        setFreelancerImage(data.image);
       });
   };
 
-  const fetchFreelancers = () => {
-    fetch(`/api/clients/${clientId}/freelancers`)
-      .then((response) => response.json())
-      .then((data) => {
-        setFreelancers(data);
-      })
-      .catch((error) => {
-        console.error('Error fetching freelancers:', error);
-      });
-  };
+ 
 
   const fetchContracts = () => {
-    fetch(`/api/clients/${clientId}/contracts`)
+    fetch(`/api/freelancers/${freelancerId}/contracts`)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data);
         setContracts(data);
       })
       .catch((error) => {
@@ -71,7 +61,7 @@ const ClientReport = () => {
   };
 
   const fetchComplaints = () => {
-    fetch(`/api/clients/${clientId}/complaints`)
+    fetch(`/api/freelancers/${freelancerId}/complaints`)
       .then((response) => response.json())
       .then((data) => {
         setComplaints(data);
@@ -108,33 +98,33 @@ const ClientReport = () => {
           <h2>SkillBridge</h2>
         </div>
         <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
+          <div className="nav-item" onClick={() => navigate('/freelancer/dashboard')}>
             <LayoutDashboard size={20} />
             <span>Dashboard</span>
           </div>
-          <div className="nav-item" onClick={() => navigate('/client-contracts')}>
+          <div className="nav-item" onClick={() => navigate('/browse-tasks')}>
             <Briefcase size={20} />
-            <span>My Contracts</span>
+            <span>Browse Tasks</span>
           </div>
-          <div className="nav-item" onClick={() => navigate('/client-messages')}>
+          <div className="nav-item" onClick={() => navigate('/freelancer-messages')}>
             <MessageSquare size={20} />
             <span>Messages</span>
           </div>
-          <div className="nav-item" onClick={() => navigate('/post-task')}>
+          <div className="nav-item" onClick={() => navigate('/my-projects')}>
             <Plus size={20} />
-            <span>Post a Job</span>
+            <span>My Projects</span>
           </div>
-          <div className="nav-item" onClick={() => navigate('/client-profile')}>
+          <div className="nav-item" onClick={() => navigate('/freelancer-profile')}>
             <User size={20} />
-            <span>Your Profile</span>
+            <span>My Profile</span>
           </div>
-          <div className="nav-item" onClick={() => navigate('/client-report')}>
+          <div className="nav-item" onClick={() => navigate('/freelancer-report')}>
             <AlertTriangle size={20} />
-            <span>Report a Freelancer</span>
+            <span>Report a Client</span>
           </div>
           <div className="nav-item">
             <CreditCard size={20} />
-            <span>Payments</span>
+            <span>Earnings</span>
           </div>
           <LogoutButton />
         </nav>
@@ -145,12 +135,12 @@ const ClientReport = () => {
         <div className="dashboard-header">
           <div className="welcome-section">
             <img
-              src={clientImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
-              alt="Client profile"
+              src={freelancerImage || 'https://www.shutterstock.com/image-vector/user-profile-3d-icon-avatar-600nw-2247726743.jpg'}
+              alt="Freelancer profile"
               className="welcome-profile-image"
             />
             <div className="welcome-content">
-              <h1>Report a Freelancer</h1>
+              <h1>Report a Client</h1>
               <p>Report inappropriate behavior or violations</p>
             </div>
           </div>
@@ -158,7 +148,7 @@ const ClientReport = () => {
 
         <div className="report-form-container">
           <div className="contract-card">
-            <h3>Report a Freelancer</h3>
+            <h3>Report a Client</h3>
             <p>If you've experienced inappropriate behavior or violations of our terms of service, please report it here.</p>
 
             <form className="report-form" onSubmit={async (e) => {
@@ -166,7 +156,7 @@ const ClientReport = () => {
 
               const formData = new FormData(e.target);
               const complaintData = {
-                complainant_id: clientId,
+                complainant_id: freelancerId,
                 respondent_id: parseInt(formData.get('respondent_id')),
                 contract_id: parseInt(formData.get('contract_id')),
                 complainant_type: formData.get('complainant_type'),
@@ -175,7 +165,7 @@ const ClientReport = () => {
               };
 
               try {
-                const response = await fetch(`/api/clients/${clientId}/contracts/${complaintData.contract_id}/complaints`, {
+                const response = await fetch(`/api/freelancers/${freelancerId}/contracts/${complaintData.contract_id}/complaints`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -197,12 +187,12 @@ const ClientReport = () => {
               }
             }}>
               <div className="form-group">
-                <label htmlFor="respondent_id">Select Freelancer (Respondent)</label>
+                <label htmlFor="respondent_id">Select Client (Respondent)</label>
                 <select name="respondent_id" id="respondent_id" required>
-                  <option value="">Choose a freelancer...</option>
-                  {freelancers.map((freelancer) => (
-                    <option key={freelancer.id} value={freelancer.id}>
-                      {freelancer.name}
+                  <option value="">Choose a client...</option>
+                  {contracts.map((contract) => (
+                    <option key={contract.id} value={contract.client.id}>
+                      {contract.client.name}
                     </option>
                   ))}
                 </select>
@@ -214,7 +204,7 @@ const ClientReport = () => {
                   <option value="">Choose a contract...</option>
                   {contracts.map((contract) => (
                     <option key={contract.id} value={contract.id}>
-                      {contract.task?.title || `Contract ${contract.id}`}
+                      {contract.task?.title || `Contract ${contract.contract_code}`}
                     </option>
                   ))}
                 </select>
@@ -253,7 +243,7 @@ const ClientReport = () => {
               </div>
 
               <div className="form-actions">
-                <button type="button" className="cancel-btn" onClick={() => navigate('/client/dashboard')}>Cancel</button>
+                <button type="button" className="cancel-btn" onClick={() => navigate('/freelancer/dashboard')}>Cancel</button>
                 <button type="submit" className="submit-report-btn">
                   <Send size={16} />
                   Submit Complaint
@@ -285,7 +275,7 @@ const ClientReport = () => {
                         onClick={async () => {
                           if (window.confirm('Are you sure you want to delete this complaint?')) {
                             try {
-                              const response = await fetch(`/api/clients/${clientId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
+                              const response = await fetch(`/api/freelancers/${freelancerId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
                                 method: 'DELETE'
                               });
 
@@ -321,4 +311,4 @@ const ClientReport = () => {
   );
 };
 
-export default ClientReport;
+export default FreelancerReport;

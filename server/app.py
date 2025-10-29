@@ -159,7 +159,7 @@ class FreelancerResource(Resource):
     def get(self, freelancer_id=None):
         if freelancer_id:
             freelancer = Freelancer.query.get_or_404(freelancer_id)
-            return make_response(freelancer.to_dict(rules=('-_password_hash', '-application', '-contracts', '-experiences',)), 200)
+            return make_response(freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences',)), 200)
         freelancers = Freelancer.query.all()
         return make_response([freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences',)) for freelancer in freelancers], 200)
     
@@ -172,7 +172,7 @@ class FreelancerResource(Resource):
             freelancer.password_hash = password
         db.session.add(freelancer)
         db.session.commit()
-        return make_response(freelancer.to_dict(rules=('-_password_hash', '-applications.freelancer', '-contracts.freelancer', '-experiences.freelancer',)), 201)
+        return make_response(freelancer.to_dict(rules=('-_password_hash', '-applications', '-contracts', '-experiences',)), 201)
     
     #Used by an admin to delete a freelancer
     def delete(self, freelancer_id):
@@ -590,7 +590,6 @@ class FreelancerContractsResource(Resource):
             result.append(contract_data)
         return make_response(result, 200)
 #used by a freelancer to fetch all his/her contracts
-api.add_resource(FreelancerContractsResource, '/api/freelancers/<int:freelancer_id>/contracts')
 
 class FreelancerPaymentsResource(Resource):
     def get(self, freelancer_id):
@@ -602,13 +601,93 @@ class FreelancerPaymentsResource(Resource):
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
     
 class FreelancerClientMessagesResource(Resource):
+    def get(self, freelancer_id, client_id=None):
+        if client_id:
+            # Get messages between specific freelancer and client
+            contract = Contract.query.filter_by(freelancer_id=freelancer_id, client_id=client_id).first_or_404()
+            messages = Message.query.filter(
+                Message.contract_id == contract.id,
+                ((Message.sender_id == freelancer_id) & (Message.receiver_id == client_id)) |
+                ((Message.sender_id == client_id) & (Message.receiver_id == freelancer_id))
+            ).order_by(Message.created_at).all()
+            return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
+        else:
+            # Get all messages for freelancer
+            contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
+            contract_ids = [c.id for c in contracts]
+            messages = Message.query.filter(Message.contract_id.in_(contract_ids)).all()
+            return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
+
+    def post(self, freelancer_id, client_id):
+        data = request.get_json()
+        contract = Contract.query.filter_by(freelancer_id=freelancer_id, client_id=client_id).first_or_404()
+        message = Message(
+            contract_id=contract.id,
+            sender_id=freelancer_id,
+            receiver_id=client_id,
+            content=data['content']
+        )
+        db.session.add(message)
+        db.session.commit()
+        return make_response(message.to_dict(rules=('-contract',)), 201)
+
+    def put(self, freelancer_id, client_id):
+        """Mark all messages from client to freelancer as read"""
+        contract = Contract.query.filter_by(freelancer_id=freelancer_id, client_id=client_id).first_or_404()
+
+        # Update all unread messages where client is sender and freelancer is receiver
+        Message.query.filter(
+            Message.contract_id == contract.id,
+            Message.sender_id == client_id,
+            Message.receiver_id == freelancer_id,
+            Message.is_read == False
+        ).update({'is_read': True})
+
+        db.session.commit()
+        return make_response({'message': 'Messages marked as read'}, 200)
+
+class FreelancerComplaintsResource(Resource):
+    def get(self, freelancer_id):
+        complaints = Complaint.query.filter_by(complainant_id=freelancer_id).all()
+        return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
+
+class FreelancerContractComplaintsResource(Resource):
+    def post(self, freelancer_id, contract_id):
+        data = request.get_json()
+        complaint = Complaint(
+            complainant_id=freelancer_id,
+            respondent_id=data['respondent_id'],
+            contract_id=contract_id,
+            complainant_type=data['complainant_type'],
+            description=data['description'],
+            admin_id=data['admin_id']
+        )
+        db.session.add(complaint)
+        db.session.commit()
+        return make_response(complaint.to_dict(rules=('-contract', '-admin',)), 201)
+
+    def delete(self, freelancer_id, contract_id, complaint_id):
+        complaint = Complaint.query.filter_by(
+            id=complaint_id,
+            complainant_id=freelancer_id,
+            contract_id=contract_id
+        ).first_or_404()
+        db.session.delete(complaint)
+        db.session.commit()
+        return make_response({'message': 'Complaint deleted'}, 200)
+
+class FreelancerClientsResource(Resource):
     def get(self, freelancer_id):
         contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
-        contract_ids = [c.id for c in contracts]
-        messages = Message.query.filter(Message.contract_id.in_(contract_ids)).all()
-        return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
+        client_ids = list(set([c.client_id for c in contracts]))
+        clients = Client.query.filter(Client.id.in_(client_ids)).all()
+        return make_response([client.to_dict() for client in clients], 200)
 
-api.add_resource(FreelancerClientMessagesResource, '/api/freelancers/<int:freelancer_id>/messages')
+api.add_resource(FreelancerClientMessagesResource, '/api/freelancers/<int:freelancer_id>/messages', '/api/freelancers/<int:freelancer_id>/clients/<int:client_id>/messages', '/api/freelancers/<int:freelancer_id>/clients/<int:client_id>/messages/mark-read')
+api.add_resource(FreelancerComplaintsResource, '/api/freelancers/<int:freelancer_id>/complaints')
+api.add_resource(FreelancerContractComplaintsResource, '/api/freelancers/<int:freelancer_id>/contracts/<int:contract_id>/complaints', '/api/freelancers/<int:freelancer_id>/contracts/<int:contract_id>/complaints/<int:complaint_id>')
+api.add_resource(FreelancerClientsResource, '/api/freelancers/<int:freelancer_id>/clients')
+api.add_resource(FreelancerContractsResource, '/api/freelancers/<int:freelancer_id>/contracts')
 
 class FreelancerSkillResource(Resource):
     def post(self, freelancer_id):
@@ -1257,7 +1336,7 @@ class ClientFreelancerMessagesResource(Resource):
             ((Message.sender_id == freelancer_id) & (Message.receiver_id == client_id))
         ).order_by(Message.created_at).all()
         return make_response([message.to_dict(rules=('-contract',)) for message in messages], 200)
-    
+
     def post(self, client_id, freelancer_id):
         data = request.get_json()
         contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
@@ -1270,8 +1349,24 @@ class ClientFreelancerMessagesResource(Resource):
         db.session.add(message)
         db.session.commit()
         return make_response(message.to_dict(rules=('-contract',)), 201)
+
+    def put(self, client_id, freelancer_id):
+        """Mark all messages from freelancer to client as read"""
+        contract = Contract.query.filter_by(client_id=client_id, freelancer_id=freelancer_id).first_or_404()
+
+        # Update all unread messages where freelancer is sender and client is receiver
+        Message.query.filter(
+            Message.contract_id == contract.id,
+            Message.sender_id == freelancer_id,
+            Message.receiver_id == client_id,
+            Message.is_read == False
+        ).update({'is_read': True})
+
+        db.session.commit()
+        return make_response({'message': 'Messages marked as read'}, 200)
+
 #used by a client to access all the messages from a particular freelancer and to post a message to a freelancer
-api.add_resource(ClientFreelancerMessagesResource, '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages')
+api.add_resource(ClientFreelancerMessagesResource, '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages', '/api/clients/<int:client_id>/freelancers/<int:freelancer_id>/messages/mark-read')
 
 # Register API routes
 app.register_blueprint(ai_bp)

@@ -22,9 +22,11 @@ const EditContract = () => {
   const clientId = user?.id;
 
   useEffect(() => {
-    fetchContract();
-    fetchClientData();
-  }, [id]);
+    if (user?.id) {
+      fetchContract();
+      fetchClientData();
+    }
+  }, [id, user?.id]);
 
   const fetchClientData = () => {
     fetch(`/api/clients/${clientId}`)

@@ -24,8 +24,10 @@ const Myprojects = () => {
 
 
   useEffect(() => {
-    fetchProjectData();
-  }, []);
+    if (user?.id) {
+      fetchProjectData();
+    }
+  }, [user?.id]);
 
   const fetchProjectData = async () => {
     try {

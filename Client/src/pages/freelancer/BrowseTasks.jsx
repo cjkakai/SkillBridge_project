@@ -21,8 +21,10 @@ const BrowseTasks = () => {
 
 
   useEffect(() => {
-    fetchTasks();
-  }, []);
+    if (user?.id) {
+      fetchTasks();
+    }
+  }, [user?.id]);
 
   const fetchTasks = async () => {
     try {

@@ -41,14 +41,16 @@ const TaskApplications = () => {
   }, [applications, maxBudget]);
 
   useEffect(() => {
-    fetch(`/api/clients/${clientId}`).
-    then((response)=>response.json()).
-    then((data)=>{
-      console.log(data)
-      setClientName(data.name)
-      setClientImage(data.image)
-    })
-  }, [])
+    if (user?.id) {
+      fetch(`/api/clients/${clientId}`).
+      then((response)=>response.json()).
+      then((data)=>{
+        console.log(data)
+        setClientName(data.name)
+        setClientImage(data.image)
+      })
+    }
+  }, [user?.id])
 
   const fetchApplications = async () => {
     try {

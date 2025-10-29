@@ -26,8 +26,10 @@ const ClientProfile = () => {
   const clientId = user?.id;
 
   useEffect(() => {
-    fetchClientProfile();
-  }, []);
+    if (user?.id) {
+      fetchClientProfile();
+    }
+  }, [user?.id]);
 
   const fetchClientProfile = async () => {
     try {
@@ -210,7 +212,6 @@ const ClientProfile = () => {
       <div className="main-content">
         <div className="profile-header">
           <button
-            className="back-btn"
             onClick={() => navigate('/client/dashboard')}
           >
             <ArrowLeft size={20} />

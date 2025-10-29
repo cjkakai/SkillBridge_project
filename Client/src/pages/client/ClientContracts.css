@@ -171,7 +171,8 @@
 .contract-actions {
   display: flex;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: center;
+  flex-wrap: wrap;
   margin-top: 16px;
 }
 
@@ -229,12 +230,12 @@
 }
 
 .delete-btn {
-  background: linear-gradient(45deg, #dc3545, #c82333);
+  background: #dc3545;
   color: white;
 }
 
 .delete-btn:hover {
-  background: linear-gradient(45deg, #c82333, #a02622);
+  background: #c82333;
   transform: translateY(-1px);
 }
 
@@ -429,7 +430,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: #007bff;
+  background: #2F80ED;
   color: white;
   padding: 10px 20px;
   border: none;
@@ -441,7 +442,7 @@
 }
 
 .back-btn:hover {
-  background: #5a6268;
+  background: #6B7A99;
   transform: translateY(-1px);
   outline: none;
   border-color: #4169E1;

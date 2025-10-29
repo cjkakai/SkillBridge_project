@@ -21,9 +21,11 @@ const ContractDetails = () => {
   const clientId = user?.id;
 
   useEffect(() => {
-    fetchContract();
-    fetchClientData();
-  }, [id]);
+    if (user?.id) {
+      fetchContract();
+      fetchClientData();
+    }
+  }, [id, user?.id]);
 
   useEffect(() => {
     if (contract) {
@@ -210,7 +212,7 @@ const ContractDetails = () => {
               <p>Code: {contract?.contract_code}</p>
             </div>
           </div>
-          <button className="back-btn" onClick={() => navigate('/client-contracts')}>
+          <button onClick={() => navigate('/client-contracts')}>
             <ArrowLeft size={20} />
             Back to Contracts
           </button>
@@ -364,14 +366,11 @@ const ContractDetails = () => {
 
               {milestones && milestones.length > 0 ? (
                 <>
-                  <div className="progress-section">
-                    <div className="progress-bar">
-                      <div
-                        className="progress-fill"
-                        style={{ width: `${progress || 0 }%` }}
-                      ></div>
+                  <div className="task-progress-container">
+                    <div className="progress-text-above">{progress || 0}% Complete</div>
+                    <div className="task-progress-full">
+                      <div className="progress-fill-full" style={{ width: `${progress || 0}%` }}></div>
                     </div>
-                    <span className="progress-text">{progress || 0}% Complete</span>
                   </div>
 
                   <div className="milestones-section">
