@@ -126,7 +126,7 @@ const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwa
         <h4>Select an action</h4>
         <button
           className="action-btn award-contract-btn"
-          onClick={() => onAwardContract(application.id)}
+          onClick={() => onAwardContract(application.freelancer.id)}
           title="Award Contract"
         >
           <Award size={16} />

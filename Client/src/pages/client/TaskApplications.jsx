@@ -57,6 +57,7 @@ const TaskApplications = () => {
       const response = await fetch(`/api/tasks/${taskId}/applications`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setApplications(data);
       }
     } catch (error) {
@@ -110,12 +111,9 @@ const TaskApplications = () => {
     }
   };
 
-  const handleAwardContract = (applicationId) => {
+  const handleAwardContract = (freelancerId) => {
     // Navigate to award contract form with taskId and freelancerId
-    const application = applications.find(app => app.id === applicationId);
-    if (application) {
-      navigate(`/award-contract/${taskId}/${application.freelancer.id}`);
-    }
+      navigate(`/award-contract/${taskId}/${freelancerId}`);
   };
 
   return (

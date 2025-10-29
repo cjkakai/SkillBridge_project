@@ -267,12 +267,12 @@ const ContractDetails = () => {
             {/* Contract Information */}
             <div className="contract-card">
               <h3>Contract Information</h3>
-              <div className="contract-details">
-                <div className="detail-item">
+              <div className="contract-details"style={{marginTop:'10px'}}>
+                <div style={{display:'flex', alignItems:"center", gap:'5px'}}>
                   <DollarSign size={16} />
-                  <span>Agreed Amount: ${parseFloat(contract.agreed_amount).toFixed(2)}</span>
+                  <span>Agreed Amount: ksh{parseFloat(contract.agreed_amount).toFixed(2)}</span>
                 </div>
-                <div className="detail-item">
+                <div style={{display:'flex', alignItems:"center", gap:'5px'}}>
                   <Calendar size={16} />
                   <span>Started: {formatDate(contract.started_at)}</span>
                 </div>

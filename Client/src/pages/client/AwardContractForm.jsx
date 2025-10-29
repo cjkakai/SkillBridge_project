@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2, AlertTriangle } from 'lucide-react';
 import './AwardContractForm.css';
 
 const AwardContractForm = () => {
   const navigate = useNavigate();
   const { taskId, freelancerId } = useParams();
+  const { user } = useAuth();
   const [task, setTask] = useState(null);
   const [freelancer, setFreelancer] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -25,12 +27,15 @@ const AwardContractForm = () => {
   });
   const [contractId, setContractId] = useState(null);
 
+  const clientId = user?.id;
+
   useEffect(() => {
     if (taskId && freelancerId) {
       fetchTask();
       fetchFreelancer();
     }
-  }, [taskId, freelancerId]);
+  }, [taskId, freelancerId, clientId]);
+ 
 
   const fetchTask = async () => {
     try {
@@ -78,7 +83,7 @@ const AwardContractForm = () => {
     setSaving(true);
 
     try {
-      const response = await fetch(`/api/clients/5/create-contract`, { // Hardcoded client ID for now
+      const response = await fetch(`/api/clients/${clientId}/create-contract`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

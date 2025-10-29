@@ -69,11 +69,11 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
       </div>
 
       <div className="contract-details">
-        <div className="detail-item">
+        <div style={{display:'flex', alignItems:"center", gap:'5px'}}>
           <DollarSign size={16} />
           <span>Agreed Amount: ${parseFloat(contract.agreed_amount).toFixed(2)}</span>
         </div>
-        <div className="detail-item">
+        <div style={{display:'flex', alignItems:"center", gap:'5px'}}>
           <Calendar size={16} />
           <span>Created: {formatDate(contract.started_at)}</span>
         </div>
@@ -113,7 +113,7 @@ const ContractCard = ({ contract, onEdit, onDelete }) => {
           <MessageCircle size={16} />
         </button>
         <button
-          className="action-btn edit-btn"
+          className="action-btn message-btn"
           onClick={() => onEdit(contract.id)}
           title="Edit Contract"
         >
