@@ -7,6 +7,7 @@ export const login = async (email, password, userType) => {
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body: JSON.stringify({
         email,
         password,
@@ -30,6 +31,7 @@ export const logout = async () => {
   try {
     const response = await fetch(`${API_BASE_URL}/logout`, {
       method: 'POST',
+      credentials: 'include',
     });
 
     if (response.ok) {
@@ -44,7 +46,9 @@ export const logout = async () => {
 
 export const getCurrentUser = async () => {
   try {
-    const response = await fetch(`${API_BASE_URL}/current_user`);
+    const response = await fetch(`${API_BASE_URL}/current_user`, {
+      credentials: 'include',
+    });
 
     if (response.ok) {
       return await response.json();

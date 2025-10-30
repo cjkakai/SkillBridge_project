@@ -35,7 +35,8 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
 
       const response = await fetch(`/api/freelancers/${freelancerId}/applications/upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include'
       });
 
       if (response.ok) {

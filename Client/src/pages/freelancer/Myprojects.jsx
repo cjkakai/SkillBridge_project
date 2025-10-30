@@ -169,7 +169,8 @@ const Myprojects = () => {
     try {
       const response = await fetch(`/api/freelancers/${freelancerId}/milestones/${milestoneId}/upload`, {
         method: 'POST',
-        body: formData
+        body: formData,
+        credentials: 'include'
       });
 
       if (response.ok) {

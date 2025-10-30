@@ -33,7 +33,9 @@ const ClientDashboard = () => {
   
   useEffect(()=>{
     if (user?.id) {
-      fetch(`/api/clients/${clientId}`).
+      fetch(`/api/clients/${clientId}`, {
+        credentials: 'include'
+      }).
       then((response)=>response.json()).
       then((data)=>{
         setClientName(data.name)
@@ -46,10 +48,14 @@ const ClientDashboard = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/tasks`);
+      const response = await fetch(`/api/clients/${clientId}/tasks`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const data = await response.json();
         setTasks(data);
+      } else {
+        console.error('Failed to fetch tasks:', response.status, response.statusText);
       }
     } catch (error) {
       console.error('Error fetching tasks:', error);
@@ -60,7 +66,9 @@ const ClientDashboard = () => {
 
   const fetchFreelancers= async () =>{
    try{
-    const response= await fetch(`/api/clients/${clientId}/freelancers`);
+    const response= await fetch(`/api/clients/${clientId}/freelancers`, {
+      credentials: 'include'
+    });
     if(response.ok) {
       const data= await response.json();
       setFreelancers(data);
@@ -74,7 +82,9 @@ const ClientDashboard = () => {
   
   const fetchActiveContracts = async () =>{
    try{
-    const response= await fetch(`/api/clients/${clientId}/contracts`);
+    const response= await fetch(`/api/clients/${clientId}/contracts`, {
+      credentials: 'include'
+    });
     if(response.ok){
       const contracts= await response.json();
       setContractNumber(contracts.length)
@@ -86,7 +96,9 @@ const ClientDashboard = () => {
 
   const fetchTotalSpent = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/payments`);
+      const response = await fetch(`/api/clients/${clientId}/payments`, {
+        credentials: 'include'
+      });
       if (response.ok) {
         const payments = await response.json();
         const total = payments.reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0);
@@ -100,7 +112,9 @@ const ClientDashboard = () => {
   const fetchUnreadMessages = async () => {
     try {
       // First get all contracts for this client
-      const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`);
+      const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`, {
+        credentials: 'include'
+      });
       if (contractsResponse.ok) {
         const contracts = await contractsResponse.json();
 
@@ -109,7 +123,9 @@ const ClientDashboard = () => {
         // For each contract, get messages and filter
         for (const contract of contracts) {
           const freelancerId = contract.freelancer.id;
-          const messagesResponse = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
+          const messagesResponse = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`, {
+            credentials: 'include'
+          });
           if (messagesResponse.ok) {
             const messages = await messagesResponse.json();
             // Filter messages where client is receiver (not sender) and is_read is false

@@ -47,11 +47,6 @@ app.config['UPLOAD_FOLDER_COVER_LETTERS'] = os.path.join(app.config['UPLOAD_FOLD
 if not os.path.exists(app.config['UPLOAD_FOLDER_COVER_LETTERS']):
     os.makedirs(app.config['UPLOAD_FOLDER_COVER_LETTERS'])
 
-# Add folder for milestones
-app.config['UPLOAD_FOLDER_MILESTONES'] = os.path.join(app.config['UPLOAD_FOLDER'], 'milestones')
-if not os.path.exists(app.config['UPLOAD_FOLDER_MILESTONES']):
-    os.makedirs(app.config['UPLOAD_FOLDER_MILESTONES'])
-
 # Serve uploaded files
 from flask import send_from_directory
 @app.route('/api/uploads/<path:filename>')
@@ -72,14 +67,6 @@ def uploaded_file(filename):
             return send_from_directory(app.config['UPLOAD_FOLDER_COVER_LETTERS'], cover_filename)
         else:
             # Return 404 for missing cover letters
-            return ('', 404)
-    elif filename.startswith('milestones/'):
-        milestone_filename = filename[11:]  # Remove 'milestones/' prefix
-        milestone_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], milestone_filename)
-        if os.path.exists(milestone_path):
-            return send_from_directory(app.config['UPLOAD_FOLDER_MILESTONES'], milestone_filename)
-        else:
-            # Return 404 for missing milestone files
             return ('', 404)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
@@ -323,9 +310,11 @@ class TaskResource(Resource):
 
 api.add_resource(TaskResource, '/api/tasks', '/api/tasks/<int:task_id>')
 
-class ApplicationUploadResource(Resource):
-    def post(self, freelancer_id):
+class ApplicationResource(Resource):
+    # POST method for freelancers to submit applications with PDF cover letters
+    def post(self):
         try:
+            # Handle file upload
             if 'cover_letter_file' not in request.files:
                 return make_response({'error': 'No file provided'}, 400)
 
@@ -334,19 +323,23 @@ class ApplicationUploadResource(Resource):
                 return make_response({'error': 'No file selected'}, 400)
 
             if not allowed_file(file.filename):
-                return make_response({'error': 'File type not allowed'}, 400)
+                return make_response({'error': 'Only PDF files are allowed'}, 400)
 
+            # Get other form data
             task_id = request.form.get('task_id')
+            freelancer_id = request.form.get('freelancer_id')
             bid_amount = request.form.get('bid_amount')
             estimated_days = request.form.get('estimated_days')
 
-            if not all([task_id, bid_amount, estimated_days]):
+            if not all([task_id, freelancer_id, bid_amount, estimated_days]):
                 return make_response({'error': 'Missing required fields'}, 400)
 
+            # Save file to cover_letters folder
             filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], filename)
             file.save(file_path)
 
+            # Create application
             application = Application(
                 task_id=task_id,
                 freelancer_id=freelancer_id,
@@ -364,7 +357,6 @@ class ApplicationUploadResource(Resource):
             db.session.rollback()
             return make_response({'error': str(e)}, 500)
 
-class ApplicationResource(Resource):
     # used by a freelancer to apply for a job
     def post(self):
         data = request.get_json()
@@ -398,7 +390,6 @@ class ApplicationDownloadResource(Resource):
         return send_file(file_path, as_attachment=True, download_name=f"cover_letter_{applicant.name}.pdf")
 
 api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
-api.add_resource(ApplicationUploadResource, '/api/freelancers/<int:freelancer_id>/applications/upload')
 api.add_resource(ApplicationDownloadResource, '/api/applications/<int:application_id>/download')
 # api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
 
@@ -504,36 +495,82 @@ class FreelancerApplicationsResource(Resource):
         return make_response(result, 200)
 
     def post(self, freelancer_id):
-       try:
-           data = request.get_json()
+        # Check if this is a file upload request (FormData) or JSON request
+        if request.content_type and 'multipart/form-data' in request.content_type:
+            # Handle file upload
+            try:
+                if 'cover_letter_file' not in request.files:
+                    return make_response({'error': 'No file provided'}, 400)
 
-           # Validate required fields
-           required_fields = ["task_id", "bid_amount", "estimated_days", "cover_letter_file"]
-           if not all(field in data for field in required_fields):
-               return make_response({'error': 'Missing required fields'}, 400)
+                file = request.files['cover_letter_file']
+                if file.filename == '':
+                    return make_response({'error': 'No file selected'}, 400)
 
-           task_id = data["task_id"]
-           bid_amount = data["bid_amount"]
-           estimated_days = data["estimated_days"]
-           cover_letter = data["cover_letter_file"]
+                if not allowed_file(file.filename):
+                    return make_response({'error': 'Select an allowed file type: pdf, docx, png, jpg, jpeg'}, 400)
 
-           # Create new Application
-           application = Application(
-               task_id=task_id,
-               freelancer_id=freelancer_id,
-               bid_amount=bid_amount,
-               estimated_days=estimated_days,
-               cover_letter_file=cover_letter  # renamed field but reusing column
-           )
+                # Get other form data
+                task_id = request.form.get('task_id')
+                bid_amount = request.form.get('bid_amount')
+                estimated_days = request.form.get('estimated_days')
 
-           db.session.add(application)
-           db.session.commit()
+                if not all([task_id, bid_amount, estimated_days]):
+                    return make_response({'error': 'Missing required fields'}, 400)
 
-           return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+                # Save file to cover_letters folder
+                filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
+                file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], filename)
+                file.save(file_path)
 
-       except Exception as e:
-           db.session.rollback()
-           return make_response({'error': str(e)}, 500)
+                # Create application
+                application = Application(
+                    task_id=task_id,
+                    freelancer_id=freelancer_id,
+                    bid_amount=bid_amount,
+                    estimated_days=estimated_days,
+                    cover_letter_file=filename
+                )
+
+                db.session.add(application)
+                db.session.commit()
+
+                return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+
+            except Exception as e:
+                db.session.rollback()
+                return make_response({'error': str(e)}, 500)
+        else:
+            # Handle JSON request
+            try:
+                data = request.get_json()
+
+                # Validate required fields
+                required_fields = ["task_id", "bid_amount", "estimated_days", "cover_letter_file"]
+                if not all(field in data for field in required_fields):
+                    return make_response({'error': 'Missing required fields'}, 400)
+
+                task_id = data["task_id"]
+                bid_amount = data["bid_amount"]
+                estimated_days = data["estimated_days"]
+                cover_letter = data["cover_letter_file"]
+
+                # Create new Application
+                application = Application(
+                    task_id=task_id,
+                    freelancer_id=freelancer_id,
+                    bid_amount=bid_amount,
+                    estimated_days=estimated_days,
+                    cover_letter_file=cover_letter  # renamed field but reusing column
+                )
+
+                db.session.add(application)
+                db.session.commit()
+
+                return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
+
+            except Exception as e:
+                db.session.rollback()
+                return make_response({'error': str(e)}, 500)
     
     # used by a freelancer to apply for a job
     # def post(self, freelancer_id):
@@ -544,7 +581,7 @@ class FreelancerApplicationsResource(Resource):
     #     db.session.commit()
     #     return make_response(application.to_dict(rules=('-task', '-freelancer',)), 201)
 
-api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications')
+api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelancer_id>/applications', '/api/freelancers/<int:freelancer_id>/applications/upload')
 
 class FreelancerDashboard(Resource):
     def get(self, freelancer_id):
@@ -715,42 +752,10 @@ class FreelancerPaymentsResource(Resource):
         contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
         contract_ids = [c.id for c in contracts]
         payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
-
-        result = []
-        for payment in payments:
-            payment_data = payment.to_dict(rules=('-contract',))
-            contract = Contract.query.get(payment.contract_id)
-            if contract:
-                task = Task.query.get(contract.task_id)
-                client = Client.query.get(contract.client_id)
-                payment_data['task'] = task.title if task else 'Unknown Task'
-                payment_data['client_name'] = client.name if client else 'Unknown Client'
-                payment_data['client_image'] = client.image if client else None
-            result.append(payment_data)
-
-        return make_response(result, 200)
+        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
 
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
-
-class FreelancerEarningsStatsResource(Resource):
-    def get(self, freelancer_id):
-        # Total completed payments
-        total_completed = db.session.query(db.func.sum(Payment.amount)).filter(Payment.payee_id == freelancer_id, Payment.status == 'completed').scalar() or 0
-
-        # Total pending payments
-        total_pending = db.session.query(db.func.sum(Payment.amount)).filter(Payment.payee_id == freelancer_id, Payment.status == 'pending').scalar() or 0
-
-        # Total number of payments
-        total_payments_count = Payment.query.filter_by(payee_id=freelancer_id).count()
-
-        return make_response({
-            'total_completed': float(total_completed),
-            'total_pending': float(total_pending),
-            'total_payments_count': total_payments_count
-        }, 200)
-
-api.add_resource(FreelancerEarningsStatsResource, '/api/freelancers/<int:freelancer_id>/earnings-stats')
-
+    
 class FreelancerClientMessagesResource(Resource):
     def get(self, freelancer_id, client_id=None):
         if client_id:
@@ -914,53 +919,73 @@ class FreelancerMilestoneResource(Resource):
         db.session.commit()
         return make_response(milestone.to_dict(rules=('-contract',)), 200)
 
-class FreelancerMilestoneUploadResource(Resource):
     def post(self, freelancer_id, milestone_id):
         try:
+            # Check if milestone belongs to freelancer's contract
             milestone = Milestone.query.get_or_404(milestone_id)
             contract = Contract.query.filter_by(id=milestone.contract_id, freelancer_id=freelancer_id).first_or_404()
-            
+            if not contract:
+                return make_response({'error': 'Unauthorized access to this milestone'}, 403)
+
             if 'file' not in request.files:
                 return make_response({'error': 'No file provided'}, 400)
-            
+
             file = request.files['file']
             if file.filename == '':
                 return make_response({'error': 'No file selected'}, 400)
-            
+
             if not allowed_file(file.filename):
-                return make_response({'error': 'File type not allowed'}, 400)
-            
+                return make_response({'error': 'Select an allowed file type: pdf, docx, png, jpg, jpeg'}, 400)
+
+            # Save file to milestones folder
             filename = secure_filename(f"milestone_{milestone_id}_{file.filename}")
-            file_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], filename)
+            file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
             file.save(file_path)
-            
-            milestone.file_url = f"/api/uploads/milestones/{filename}"
+
+            # Update milestone with file URL and mark as completed
+            milestone.file_url = f"/api/uploads/{filename}"
             milestone.completed = True
             db.session.commit()
-            
-            return make_response({'message': 'File uploaded successfully', 'file_url': milestone.file_url, 'completed': True}, 200)
-        
+
+            # Check if all milestones are completed and update contract status
+            self._check_and_update_contract_status(milestone.contract_id)
+
+            return make_response({'message': 'File uploaded successfully', 'file_url': milestone.file_url}, 200)
+
         except Exception as e:
+            db.session.rollback()
             return make_response({'error': str(e)}, 500)
 
+    def _check_and_update_contract_status(self, contract_id):
+        """Helper method to check if all milestones are completed and update contract status"""
+        milestones = Milestone.query.filter_by(contract_id=contract_id).all()
+
+        if milestones:  # Only check if there are milestones
+            all_completed = all(milestone.completed for milestone in milestones)
+            if all_completed:
+                contract = Contract.query.get(contract_id)
+                if contract and contract.status != 'completed':
+                    contract.status = 'completed'
+                    db.session.commit()
+
+#used by a freelancer to edit file_url of a milestone in their contract
 class MilestoneDownloadResource(Resource):
     def get(self, milestone_id):
         milestone = Milestone.query.get_or_404(milestone_id)
-        
         if not milestone.file_url:
             return make_response({'error': 'No file found for this milestone'}, 404)
-        
-        filename = milestone.file_url.split('/')[-1]
-        file_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], filename)
-        
+
+        # Extract filename from file_url (remove '/api/uploads/' prefix)
+        filename = milestone.file_url.replace('/api/uploads/', '')
+
+        # Check if file exists in uploads folder
+        file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         if not os.path.exists(file_path):
             return make_response({'error': 'File not found'}, 404)
-        
-        return send_file(file_path, as_attachment=True, download_name=f"milestone_{milestone_id}_{filename}")
 
-#used by a freelancer to edit file_url of a milestone in their contract
-api.add_resource(FreelancerMilestoneResource, '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>')
-api.add_resource(FreelancerMilestoneUploadResource, '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>/upload')
+        return send_file(file_path, as_attachment=True, download_name=f"milestone_{milestone_id}_file")
+
+api.add_resource(FreelancerMilestoneResource, '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>', '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>/upload')
 api.add_resource(MilestoneDownloadResource, '/api/milestones/<int:milestone_id>/download')
 
 class FreelancerReviewResource(Resource):
@@ -1914,7 +1939,9 @@ def login():
             user_rules = ('-_password_hash', '-applications', '-contracts', '-experiences',)
         elif user_type == 'admin':
             user_rules = ('-_password_hash', '-complaints', '-audit_logs',)
-        return make_response({'message': 'Login successful', 'user': user.to_dict(rules=user_rules)}, 200)
+        user_data = user.to_dict(rules=user_rules)
+        user_data['user_type'] = user_type
+        return make_response({'message': 'Login successful', 'user': user_data}, 200)
     
     return make_response({'error': 'Invalid credentials'}, 401)
 
@@ -1946,7 +1973,9 @@ def current_user():
             user_rules = ('-_password_hash', '-applications', '-contracts', '-experiences',)
         elif user_type == 'admin':
             user_rules = ('-_password_hash', '-complaints', '-audit_logs',)
-        return make_response(user.to_dict(rules=user_rules), 200)
+        user_data = user.to_dict(rules=user_rules)
+        user_data['user_type'] = user_type
+        return make_response(user_data, 200)
     else:
         return make_response({'error': 'User not found'}, 404)
 

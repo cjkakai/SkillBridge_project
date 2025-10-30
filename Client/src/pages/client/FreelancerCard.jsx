@@ -66,7 +66,7 @@ const FreelancerCard = ({ freelancer, task }) => {
       />
       <div className="freelancer-rating">
         Ratings {renderStars(freelancer.ratings)}
-        <span className="rating-text">({freelancer.ratings.toFixed(1) || 'N/A'})</span>
+        <span className="rating-text">({parseFloat(freelancer.ratings).toFixed(1) || 'N/A'})</span>
       </div>
       <p className="freelancer-contact">Contact: {freelancer.contact || 'N/A'}</p>
       <p className="freelancer-email">Email: {freelancer.email || 'N/A'}</p>
