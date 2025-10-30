@@ -1556,10 +1556,43 @@ class LatestPaymentsResource(Resource):
             result.append(payment_data)
         return make_response(result, 200)
 
+class AdminPaymentsResource(Resource):
+    def get(self):
+        """Fetch all payments for admin with client (payer) and freelancer (payee) names"""
+        payments = (
+            db.session.query(
+                Payment,
+                Client.name.label('client_name'),
+                Freelancer.name.label('freelancer_name')
+            )
+            .outerjoin(Client, Client.id == Payment.payer_id)
+            .outerjoin(Freelancer, Freelancer.id == Payment.payee_id)
+            .all()
+        )
+
+        result = []
+        for payment, client_name, freelancer_name in payments:
+            result.append({
+                'id': payment.id,
+                'contract_id': payment.contract_id,
+                'payer_id': payment.payer_id,
+                'payee_id': payment.payee_id,
+                'amount': float(payment.amount) if payment.amount else 0,
+                'method': payment.method,
+                'status': payment.status,
+                'created_at': payment.created_at.isoformat() if payment.created_at else None,
+                'client_name': client_name or 'Unknown Client',
+                'freelancer_name': freelancer_name or 'Unknown Freelancer'
+            })
+
+        return make_response(result, 200)
+
 api.add_resource(AdminResource, '/api/admins', '/api/admins/<int:admin_id>')
 api.add_resource(AdminOwnComplaintsResource, '/api/admins/<int:admin_id>/complaints')
 api.add_resource(TopClientsResource, '/api/top-clients')
 api.add_resource(LatestPaymentsResource, '/api/latest-payments')
+api.add_resource(AdminPaymentsResource, '/api/admin/payments')
+
 
 class ClientFreelancersResource(Resource):
     def get(self, client_id):
