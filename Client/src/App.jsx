@@ -35,7 +35,8 @@ import FreelancerReport from './pages/freelancer/FreelancerReport';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ProjectManagement from './pages/admin/ProjectManagement';
-// import Complaints from './pages/admin/Complaints';
+import Complaints from './pages/admin/Complaints';
+import HomePage from './pages/HomePage';
 
 import './App.css';
 
@@ -80,7 +81,8 @@ function App() {
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/projects" element={<ProjectManagement />} />
-          {/* <Route path="/admin/complaints" element={<Complaints />} /> */}
+          <Route path="/admin/complaints" element={<Complaints />} />
+          <Route path="/" element={<HomePage />} />
         </Routes>
       </div>
     </Router>

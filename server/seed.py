@@ -88,7 +88,7 @@ def seed_database():
                 freelancer = Freelancer(
                     id=1000 + i,
                     name="Ruth Wambui",
-                    email=fake.email(),
+                    email="ruthwambui@gmail.com",
                     bio=fake.text(max_nb_chars=300),
                     contact="0797779941",
                     ratings=round(random.uniform(3.5, 5.0), 1),
@@ -336,20 +336,30 @@ def seed_database():
         for _ in range(5):
             if contracts:  # Only if we have contracts
                 contract = random.choice(contracts)
+                complainant_type = random.choice(['client', 'freelancer'])
+
+                # Ensure complainant and respondent are correctly assigned based on complainant_type
+                if complainant_type == 'client':
+                    complainant_id = contract.client_id
+                    respondent_id = contract.freelancer_id
+                else:  # complainant_type == 'freelancer'
+                    complainant_id = contract.freelancer_id
+                    respondent_id = contract.client_id
+
                 complaint = Complaint(
                     contract_id=contract.id,
-                    complainant_id=random.choice([contract.client_id, contract.freelancer_id]),
-                    respondent_id=contract.freelancer_id if random.choice([True, False]) else contract.client_id,
-                    complainant_type=random.choice(['client', 'freelancer']),
+                    complainant_id=complainant_id,
+                    respondent_id=respondent_id,
+                    complainant_type=complainant_type,
                     description=fake.text(max_nb_chars=300),
                     status=random.choice(['open', 'resolved', 'closed']),
                     admin_id=random.choice(admins).id
                 )
-                
+
                 if complaint.status == 'resolved':
                     complaint.resolution = fake.text(max_nb_chars=200)
                     complaint.resolved_at = fake.date_time_between(start_date='-1m', end_date='now')
-                
+
                 db.session.add(complaint)
         
         # Create audit logs

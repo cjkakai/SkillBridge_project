@@ -967,12 +967,22 @@ class AdminComplaintResource(Resource):
             'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
             'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
         } for complaint in complaints], 200)
-    
+
     def put(self, complaint_id):
         complaint = Complaint.query.get_or_404(complaint_id)
         data = request.get_json()
+
+        # Handle resolution and status update
+        if 'resolution' in data and data['resolution']:
+            complaint.resolution = data['resolution']
+            complaint.status = 'resolved'
+            complaint.resolved_at = datetime.now(pytz.timezone('Africa/Nairobi'))
+
+        # Handle other updates
         for key, value in data.items():
-            setattr(complaint, key, value)
+            if key not in ['resolution']:  # Already handled above
+                setattr(complaint, key, value)
+
         db.session.commit()
         return make_response({
             'id': complaint.id,
@@ -982,11 +992,78 @@ class AdminComplaintResource(Resource):
             'complainant_type': complaint.complainant_type,
             'description': complaint.description,
             'status': complaint.status,
+            'resolution': complaint.resolution,
             'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
             'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
         }, 200)
 #used by an admin to fetch all complaints and edit a particular complaint
 api.add_resource(AdminComplaintResource, '/api/admin/complaints', '/api/admin/complaints/<int:complaint_id>')
+
+class AdminViewComplaintsResource(Resource):
+    def get(self, admin_id):
+        complaints = Complaint.query.filter_by(admin_id=admin_id).all()
+        result = []
+        for complaint in complaints:
+            complaint_data = {
+                'id': complaint.id,
+                'contract_id': complaint.contract_id,
+                'complainant_type': complaint.complainant_type,
+                'description': complaint.description,
+                'status': complaint.status,
+                'created_at': complaint.created_at.isoformat() if complaint.created_at else None,
+                'resolved_at': complaint.resolved_at.isoformat() if complaint.resolved_at else None
+            }
+
+            # Get complainant details
+            if complaint.complainant_type == 'client':
+                complainant = Client.query.get(complaint.complainant_id)
+            else:
+                complainant = Freelancer.query.get(complaint.complainant_id)
+
+            if complainant:
+                complaint_data['complainant'] = {
+                    'name': complainant.name,
+                    'email': complainant.email,
+                    'image': complainant.image
+                }
+            else:
+                complaint_data['complainant'] = None
+
+            # Get respondent details (opposite of complainant_type)
+            if complaint.complainant_type == 'client':
+                respondent = Freelancer.query.get(complaint.respondent_id)
+            else:
+                respondent = Client.query.get(complaint.respondent_id)
+
+            if respondent:
+                complaint_data['respondent'] = {
+                    'name': respondent.name,
+                    'email': respondent.email,
+                    'image': respondent.image
+                }
+            else:
+                complaint_data['respondent'] = None
+
+            result.append(complaint_data)
+
+        return make_response(result, 200)
+
+class AdminDeleteComplaintResource(Resource):
+    def delete(self, admin_id, complaint_id):
+        # Verify the admin exists
+        admin = Admin.query.get_or_404(admin_id)
+
+        # Get the complaint and verify it belongs to this admin
+        complaint = Complaint.query.filter_by(id=complaint_id, admin_id=admin_id).first_or_404()
+
+        # Delete the complaint
+        db.session.delete(complaint)
+        db.session.commit()
+
+        return make_response({'message': 'Complaint deleted successfully'}, 200)
+
+api.add_resource(AdminViewComplaintsResource, '/api/admins/<int:admin_id>/view-complaints')
+api.add_resource(AdminDeleteComplaintResource, '/api/admins/<int:admin_id>/complaints/<int:complaint_id>')
 
 
 
