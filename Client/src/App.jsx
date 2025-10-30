@@ -22,6 +22,7 @@ import AwardContractForm from './pages/client/AwardContractForm';
 import ClientProfile from './pages/client/ClientProfile';
 import FreelancerReview from './pages/client/FreelancerReview';
 import ClientReport from './pages/client/ClientReport';
+import HomePage from './pages/HomePage';
 import FreelancerDashboard from './pages/freelancer/FreelancerDashboard';
 import Applications from './pages/freelancer/Applications';
 import BrowseTasks from './pages/freelancer/BrowseTasks';
@@ -79,7 +80,6 @@ function App() {
           <Route path="/admin/users" element={<UserManagement />} />
           <Route path="/admin/projects" element={<ProjectManagement />} />
           <Route path="/admin/complaints" element={<Complaints />} />
-          <Route path="/" element={<Login />} />
         </Routes>
       </div>
     </Router>
