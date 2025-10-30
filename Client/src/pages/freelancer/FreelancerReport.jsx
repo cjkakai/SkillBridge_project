@@ -11,7 +11,7 @@ const FreelancerReport = () => {
   const [admins, setAdmins] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-  const freelancerId = 1017; // Hardcoded for now
+  const freelancerId = user?.id
 
   useEffect(() => {
     fetchFreelancerData();
@@ -37,6 +37,7 @@ const FreelancerReport = () => {
       const response = await fetch(`/api/freelancers/${freelancerId}/contracts`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setContracts(data);
       }
     } catch (error) {

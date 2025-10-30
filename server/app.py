@@ -13,6 +13,8 @@ from config import db, bcrypt, api , app
 from datetime import datetime
 import pytz
 
+socketio = SocketIO(app, cors_allowed_origins="*")
+
 # Load environment variables from .env file
 load_dotenv()
 from models import (
@@ -78,7 +80,6 @@ def get_mpesa_token():
     r.raise_for_status()
     return r.json()['access_token']
 
-socketio = SocketIO(app, cors_allowed_origins="*")
 
 #AI functionality (Google Gemini)
 ai_bp = Blueprint('ai', __name__)
@@ -539,24 +540,23 @@ api.add_resource(FreelancerApplicationsResource, '/api/freelancers/<int:freelanc
 class FreelancerDashboard(Resource):
     def get(self, freelancer_id):
         try:
-            # ✅ 1. Check if freelancer exists
+    
             freelancer = Freelancer.query.get(freelancer_id)
             if not freelancer:
                 return {"error": "Freelancer not found"}, 404
 
-            # ✅ 2. Total Earnings (using payee_id)
             total_earnings = (
                 db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0))
                 .filter(Payment.payee_id == freelancer_id)
                 .scalar() or 0
             )
 
-            # ✅ 3. Basic stats
+
             active_contracts = Contract.query.filter_by(
                 freelancer_id=freelancer_id, status="active"
             ).count()
 
-            # ✅ Completed tasks (via Contract → Task)
+        
             completed_tasks = (
                 db.session.query(db.func.count(Task.id))
                 .join(Contract, Contract.task_id == Task.id)
@@ -569,7 +569,7 @@ class FreelancerDashboard(Resource):
 
             reviews = Review.query.filter_by(reviewee_id=freelancer_id).count()
 
-            # ✅ 4. Active Projects (Contract → Task → Client)
+            
             active_projects = (
                 db.session.query(
                     Contract.id,
@@ -597,7 +597,7 @@ class FreelancerDashboard(Resource):
                 for p in active_projects
             ]
 
-            # ✅ 5. Earnings Trend (using payee_id)
+        
             earnings_trend = (
                 db.session.query(
                     db.func.strftime("%Y-%m", Payment.created_at).label("month"),
@@ -615,7 +615,7 @@ class FreelancerDashboard(Resource):
                 for month, amount in earnings_trend
             ]
 
-            # ✅ 6. Recommended Jobs (exclude already contracted or applied)
+            
             recommended_jobs = (
                 db.session.query(
                     Task.id,
@@ -653,7 +653,7 @@ class FreelancerDashboard(Resource):
                 for j in recommended_jobs
             ]
 
-            # ✅ 7. Return structured dashboard JSON
+            
             return jsonify(
                 {
                     "freelancer": {
@@ -679,7 +679,6 @@ class FreelancerDashboard(Resource):
             return {"error": str(e)}, 500
 
 
-# ✅ Register the endpoint
 api.add_resource(FreelancerDashboard, "/api/freelancers/<int:freelancer_id>/dashboard")
 
 
@@ -883,9 +882,24 @@ class FreelancerReviewResource(Resource):
             if not contract:
                 return make_response({'error': 'Unauthorized access to this review'}, 403)
             review = Review.query.filter_by(contract_id=contract_id, reviewee_id=freelancer_id).first_or_404()
-            return make_response(review.to_dict(rules=('-contract',)), 200)
+            review_data = review.to_dict(rules=('-contract',))
+            client = Client.query.get(review.reviewer_id)
+            review_data['client'] = {
+                'name': client.name,
+                'image': client.image
+            } if client else None
+            return make_response(review_data, 200)
         reviews = Review.query.filter_by(reviewee_id=freelancer_id).all()
-        return make_response([review.to_dict(rules=('-contract',)) for review in reviews], 200)
+        result = []
+        for review in reviews:
+            review_data = review.to_dict(rules=('-contract',))
+            client = Client.query.get(review.reviewer_id)
+            review_data['client'] = {
+                'name': client.name,
+                'image': client.image
+            } if client else None
+            result.append(review_data)
+        return make_response(result, 200)
 #used by a freelancer to view all their reviews or a specific review on a contract
 api.add_resource(FreelancerReviewResource, '/api/freelancers/<int:freelancer_id>/reviews', '/api/freelancers/<int:freelancer_id>/contracts/<int:contract_id>/review')
 
