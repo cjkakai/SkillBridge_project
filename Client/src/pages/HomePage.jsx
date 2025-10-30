@@ -1,18 +1,15 @@
 import React from "react";
+import NavBar from "../components/ui/NavBar";
+import AvailableJobs from "../components/ui/AvailableJobs";
+import { useNavigate } from "react-router-dom";
 import "./HomePage.css";
-// import Navbar from "../../../src/components/Navbar";
 
-// import heroImg from "../assets/hero-illustration.png";
-// import dataIcon from "../assets/data-analytics-icon.png";
-// import graphicIcon from "../assets/graphic-design.png";
-// import uiuxIcon from "../assets/uiux-design.png";
-// import reportIcon from "../assets/report-writing.png";
-// import codeIcon from "../assets/code-icon.png";
 
 const HomePage = () => {
+  const navigate = useNavigate()
   return (
     <div className="homepage">
-      {/* <Navbar /> */}
+      <NavBar />
 
       <section className="hero-section">
         <div className="hero-content">
@@ -26,35 +23,15 @@ const HomePage = () => {
             fast. <br />
             As a freelancer, view tasks, make a bid, get it done and get paid.
           </p>
-          <button className="get-started-btn">Get started</button>
+          <button className="get-started-btn" onClick={()=>navigate("/login")}>Get started</button>
         </div>
 
         <div className="hero-image">
           <img src="/image.png" alt="Freelancer working" />
-                  </div>
-      </section>
-
-      <section className="jobs-section">
-        <h2>Available Jobs</h2>
-        <div className="job-grid">
-          <div className="job-card">
-            <img src={graphicIcon} alt="Graphic Design" />
-            <p>Graphic Design</p>
-          </div>
-          <div className="job-card">
-            <img src={uiuxIcon} alt="UI-UX Design" />
-            <p>UI-UX Design</p>
-          </div>
-          <div className="job-card">
-            <img src={reportIcon} alt="Report Writing" />
-            <p>Report Writing</p>
-          </div>
-          <div className="job-card">
-            <img src={codeIcon} alt="Many more" />
-            <p>Many more</p>
-          </div>
         </div>
       </section>
+
+      <AvailableJobs />
     </div>
   );
 };

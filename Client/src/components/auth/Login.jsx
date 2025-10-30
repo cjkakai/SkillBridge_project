@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Login.css';
+import Navbar from '../ui/NavBar';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -55,6 +56,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <Navbar/>
       <div className="login-card">
         <h2 className="login-title">Login here</h2>
 
