@@ -159,6 +159,34 @@ const Myprojects = () => {
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
+  const handleFileUpload = async (event, milestoneId, freelancerId) => {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+      const response = await fetch(`/api/freelancers/${freelancerId}/milestones/${milestoneId}/upload`, {
+        method: 'POST',
+        body: formData
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        alert('File uploaded successfully! Milestone marked as completed.');
+        // Refresh the project data to show updated milestone
+        fetchProjectData();
+      } else {
+        const error = await response.json();
+        alert(`Upload failed: ${error.error}`);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+      alert('Upload failed. Please try again.');
+    }
+  };
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh' }}>
       <FreelancerSidebar
@@ -425,6 +453,43 @@ const Myprojects = () => {
                                 <span className="milestone-status" style={{ backgroundColor: statusStyle.bg, color: statusStyle.color }}>
                                   {milestone.status.charAt(0).toUpperCase() + milestone.status.slice(1).replace('_', ' ')}
                                 </span>
+                              </div>
+                              <div className="milestone-upload" style={{ marginTop: '8px' }}>
+                                {milestone.status !== 'completed' ? (
+                                  <>
+                                    <input
+                                      type="file"
+                                      id={`file-${milestone.id}`}
+                                      style={{ display: 'none' }}
+                                      onChange={(e) => handleFileUpload(e, milestone.id, freelancerId)}
+                                      accept=".pdf,.docx,.png,.jpg,.jpeg"
+                                    />
+                                    <button
+                                      onClick={() => document.getElementById(`file-${milestone.id}`).click()}
+                                      style={{
+                                        padding: '4px 8px',
+                                        fontSize: '12px',
+                                        backgroundColor: '#3b82f6',
+                                        color: 'white',
+                                        border: 'none',
+                                        borderRadius: '4px',
+                                        cursor: 'pointer'
+                                      }}
+                                    >
+                                      Upload File
+                                    </button>
+                                  </>
+                                ) : (
+                                  <span style={{
+                                    padding: '4px 8px',
+                                    fontSize: '12px',
+                                    backgroundColor: '#10b981',
+                                    color: 'white',
+                                    borderRadius: '4px'
+                                  }}>
+                                    ✓ File Uploaded
+                                  </span>
+                                )}
                               </div>
                             </div>
                           );

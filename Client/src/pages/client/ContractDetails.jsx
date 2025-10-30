@@ -138,6 +138,28 @@ const ContractDetails = () => {
     }
   };
 
+  const handleDownloadFile = async (milestoneId) => {
+    try {
+      const response = await fetch(`/api/milestones/${milestoneId}/download`);
+      if (response.ok) {
+        const blob = await response.blob();
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `milestone_${milestoneId}_file`;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      } else {
+        alert('Failed to download file');
+      }
+    } catch (error) {
+      console.error('Download error:', error);
+      alert('Download failed. Please try again.');
+    }
+  };
+
   const renderStars = (rating) => {
     const stars = [];
     const numStars = Math.round(parseFloat(rating)) || 0;
@@ -400,9 +422,18 @@ const ContractDetails = () => {
                           {milestone.file_url && (
                             <button
                               className="download-btn"
-                              onClick={(e) => {
-                                e.preventDefault();
-                                window.open(milestone.file_url, '_blank');
+                              onClick={() => handleDownloadFile(milestone.id)}
+                              style={{
+                                padding: '6px 12px',
+                                backgroundColor: '#10b981',
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '4px',
+                                cursor: 'pointer',
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: '4px',
+                                fontSize: '12px'
                               }}
                             >
                               <Download size={14} />

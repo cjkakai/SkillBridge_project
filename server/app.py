@@ -47,6 +47,11 @@ app.config['UPLOAD_FOLDER_COVER_LETTERS'] = os.path.join(app.config['UPLOAD_FOLD
 if not os.path.exists(app.config['UPLOAD_FOLDER_COVER_LETTERS']):
     os.makedirs(app.config['UPLOAD_FOLDER_COVER_LETTERS'])
 
+# Add folder for milestones
+app.config['UPLOAD_FOLDER_MILESTONES'] = os.path.join(app.config['UPLOAD_FOLDER'], 'milestones')
+if not os.path.exists(app.config['UPLOAD_FOLDER_MILESTONES']):
+    os.makedirs(app.config['UPLOAD_FOLDER_MILESTONES'])
+
 # Serve uploaded files
 from flask import send_from_directory
 @app.route('/api/uploads/<path:filename>')
@@ -67,6 +72,14 @@ def uploaded_file(filename):
             return send_from_directory(app.config['UPLOAD_FOLDER_COVER_LETTERS'], cover_filename)
         else:
             # Return 404 for missing cover letters
+            return ('', 404)
+    elif filename.startswith('milestones/'):
+        milestone_filename = filename[11:]  # Remove 'milestones/' prefix
+        milestone_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], milestone_filename)
+        if os.path.exists(milestone_path):
+            return send_from_directory(app.config['UPLOAD_FOLDER_MILESTONES'], milestone_filename)
+        else:
+            # Return 404 for missing milestone files
             return ('', 404)
     return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
 
@@ -904,8 +917,55 @@ class FreelancerMilestoneResource(Resource):
         milestone.file_url = data['file_url']
         db.session.commit()
         return make_response(milestone.to_dict(rules=('-contract',)), 200)
+
+class FreelancerMilestoneUploadResource(Resource):
+    def post(self, freelancer_id, milestone_id):
+        try:
+            milestone = Milestone.query.get_or_404(milestone_id)
+            contract = Contract.query.filter_by(id=milestone.contract_id, freelancer_id=freelancer_id).first_or_404()
+            
+            if 'file' not in request.files:
+                return make_response({'error': 'No file provided'}, 400)
+            
+            file = request.files['file']
+            if file.filename == '':
+                return make_response({'error': 'No file selected'}, 400)
+            
+            if not allowed_file(file.filename):
+                return make_response({'error': 'File type not allowed'}, 400)
+            
+            filename = secure_filename(f"milestone_{milestone_id}_{file.filename}")
+            file_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], filename)
+            file.save(file_path)
+            
+            milestone.file_url = f"/api/uploads/milestones/{filename}"
+            milestone.completed = True
+            db.session.commit()
+            
+            return make_response({'message': 'File uploaded successfully', 'file_url': milestone.file_url, 'completed': True}, 200)
+        
+        except Exception as e:
+            return make_response({'error': str(e)}, 500)
+
+class MilestoneDownloadResource(Resource):
+    def get(self, milestone_id):
+        milestone = Milestone.query.get_or_404(milestone_id)
+        
+        if not milestone.file_url:
+            return make_response({'error': 'No file found for this milestone'}, 404)
+        
+        filename = milestone.file_url.split('/')[-1]
+        file_path = os.path.join(app.config['UPLOAD_FOLDER_MILESTONES'], filename)
+        
+        if not os.path.exists(file_path):
+            return make_response({'error': 'File not found'}, 404)
+        
+        return send_file(file_path, as_attachment=True, download_name=f"milestone_{milestone_id}_{filename}")
+
 #used by a freelancer to edit file_url of a milestone in their contract
 api.add_resource(FreelancerMilestoneResource, '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>')
+api.add_resource(FreelancerMilestoneUploadResource, '/api/freelancers/<int:freelancer_id>/milestones/<int:milestone_id>/upload')
+api.add_resource(MilestoneDownloadResource, '/api/milestones/<int:milestone_id>/download')
 
 class FreelancerReviewResource(Resource):
     def get(self, freelancer_id, contract_id=None):
