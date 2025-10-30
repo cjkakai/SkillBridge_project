@@ -1,0 +1,84 @@
+.homepage {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HERO SECTION */
+.hero-section {
+  background-color: #0a1f44;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 160px 100px 80px; /* top padding increased to clear fixed navbar */
+  position: relative;
+  min-height: calc(100vh - 80px);
+}
+
+.hero-content {
+  max-width: 45%;
+}
+
+.hero-content h1 {
+  font-size: 42px;
+  line-height: 1.4;
+}
+
+.highlight-orange {
+  color: #ffb703;
+}
+
+.highlight-blue {
+  color: #4ea8de;
+}
+
+.hero-content p {
+  margin: 20px 0;
+  font-size: 16px;
+  color: #e0e0e0;
+}
+
+.get-started-btn {
+  background-color: #1976ff;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 25px;
+  color: white;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.hero-image {
+  position: relative;
+}
+
+.hero-image img {
+  width: 400px;
+}
+
+.floating-box {
+  position: absolute;
+  top: 40px;
+  left: -80px;
+  background-color: white;
+  border-radius: 20px;
+  padding: 15px;
+  text-align: center;
+  width: 130px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+}
+
+.floating-box img {
+  width: 50px;
+  margin-bottom: 8px;
+}
+
+.floating-box p {
+  color: #0a1f44;
+  font-weight: 500;
+  font-size: 14px;
+}
+
+

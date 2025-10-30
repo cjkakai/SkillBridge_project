@@ -1,0 +1,22 @@
+.freelancer-report-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f3f4f6;
+}
+
+.report-content {
+  flex: 1;
+  margin-left: 280px;
+  transition: margin-left 0.3s ease;
+}
+
+@media (max-width: 1024px) {
+  .report-content {
+    margin-left: 0;
+  }
+}
+
+.loading-spinner {
+  color: #6b7280;
+  font-size: 16px;
+}

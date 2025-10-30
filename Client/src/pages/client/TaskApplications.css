@@ -1,0 +1,354 @@
+/* Task Applications Styles */
+.applications-section {
+  margin-top: 30px;
+  height: fit-content;
+}
+
+.applications-container {
+  display: flex;
+  flex-direction: column;
+  height: fit-content;
+  background: #f0f8ff;
+  border: 2px solid #dee2e6;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.applications-header {
+  margin: 0 0 20px 0;
+  color: #0A1F44;
+  font-size: 24px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.applications-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 40px;
+  max-height: calc(100vh - 200px);
+  overflow-y: auto;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: #6B7A99 #f0f8ff;
+}
+
+.applications-grid::-webkit-scrollbar {
+  width: 8px;
+}
+
+.applications-grid::-webkit-scrollbar-track {
+  background: #f0f8ff;
+  border-radius: 4px;
+}
+
+.applications-grid::-webkit-scrollbar-thumb {
+  background: #6B7A99;
+  border-radius: 4px;
+}
+
+.applications-grid::-webkit-scrollbar-thumb:hover {
+  background: #5a6b8a;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #6B7A99;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.back-btn:hover {
+  background-color: #5a6b8a;
+}
+
+/* Application Card Styles */
+.application-card {
+  background-color: white;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.application-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.freelancer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.freelancer-image {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2F80ED;
+}
+
+.freelancer-details h3 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.freelancer-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.rating-text {
+  color: #6B7A99;
+  font-size: 14px;
+  margin-left: 4px;
+}
+
+.application-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  color: white;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.freelancer-bio {
+  margin-bottom: 16px;
+}
+
+.freelancer-bio p {
+  color: #6B7A99;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.freelancer-contact {
+  margin-bottom: 16px;
+}
+
+.contact-item {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-label {
+  font-weight: 500;
+  color: #0A1F44;
+  min-width: 60px;
+}
+
+.application-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  color: #6B7A99;
+  font-size: 14px;
+}
+
+.detail-icon {
+  margin-right: 6px;
+  color: #2F80ED;
+}
+
+.application-cover-letter {
+  border-top: 1px solid #E6F0FF;
+  padding-top: 16px;
+}
+
+.application-cover-letter h4 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.application-cover-letter p {
+  color: #6B7A99;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.cover-letter-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background-color: #2F80ED;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.download-btn:hover {
+  background-color: #2563EB;
+}
+
+/* Application Actions */
+.application-actions {
+  display: flex;
+  width: 400px;
+  height: 50px;
+  align-items: center;
+  gap: 20px;
+  margin-top: 16px;
+  margin-bottom: 30px;
+  margin-left: 0px;
+  padding-top: 16px;
+  border-top: 1px solid #E6F0FF;
+  justify-content: center;
+  background-color: #E6F0FF;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  background-color: #2F80ED;
+  color: white;
+}
+
+.action-btn:hover {
+  background-color: #2563EB;
+}
+
+.award-contract-btn {
+  background-color: #4CAF50;
+}
+
+.award-contract-btn:hover {
+  background-color: #45A049;
+}
+
+.view-experience-btn {
+  background-color: #2F80ED;
+}
+
+.view-experience-btn:hover {
+  background-color: #2563EB;
+}
+
+.reject-bid-btn {
+  background-color: #2F80ED;
+}
+
+.reject-bid-btn:hover {
+  background-color: #2563EB;
+}
+
+.undo-reject-btn {
+  background-color: #F44336;
+}
+
+.undo-reject-btn:hover {
+  background-color: #D32F2F;
+}
+
+/* Search Bar Styles */
+.search-container {
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  color: #6B7A99;
+  z-index: 1;
+}
+
+.budget-search-input {
+  width: 100%;
+  padding: 12px 12px 12px 40px;
+  border: 2px solid #dee2e6;
+  border-radius: 8px;
+  font-size: 16px;
+  background-color: white;
+  transition: border-color 0.3s;
+}
+
+.budget-search-input:focus {
+  outline: none;
+  border-color: #2F80ED;
+}
+
+.clear-search-btn {
+  position: absolute;
+  right: 8px;
+  background: none;
+  border: none;
+  color: #6B7A99;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  transition: background-color 0.3s;
+}
+
+.clear-search-btn:hover {
+  background-color: #f0f0f0;
+}

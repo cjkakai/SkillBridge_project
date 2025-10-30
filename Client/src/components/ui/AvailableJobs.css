@@ -1,0 +1,53 @@
+.available-jobs {
+  background-color: #eaf2ff;
+  padding: 3rem 2rem;
+  text-align: left;
+}
+
+.available-jobs h2 {
+  color: #3a3a3a;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  font-family: "Inter", sans-serif;
+}
+
+.jobs-container {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 2rem;
+}
+
+.job-card {
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
+  width: 160px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.job-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.job-icon {
+  font-size: 2.8rem;
+  margin-bottom: 0.5rem;
+  /* Apple emoji font stack for iOS look */
+  font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+}
+
+.job-card:hover .job-icon {
+  transform: scale(1.15);
+}
+
+.job-card p {
+  font-weight: 500;
+  color: #2c2c2c;
+  font-family: "Inter", sans-serif;
+}

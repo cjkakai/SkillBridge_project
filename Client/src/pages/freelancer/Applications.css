@@ -1,0 +1,259 @@
+.applications-container {
+  display: flex;
+  height: 100vh;
+  background-color: #f8f9fa;
+  overflow: hidden;
+}
+
+.applications-content {
+  flex: 1;
+  padding: 24px;
+  margin-left: 280px;
+  overflow-y: auto;
+  height: 100vh;
+}
+
+.applications-header {
+  margin-bottom: 32px;
+}
+
+.applications-header h1 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 32px;
+  font-weight: 600;
+}
+
+.applications-header p {
+  margin: 0;
+  color: #6B7A99;
+  font-size: 16px;
+}
+
+.applications-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stat-content h3 {
+  margin: 0 0 4px 0;
+  color: #6B7A99;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  color: #0A1F44;
+}
+
+.applications-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.application-card {
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  padding: 24px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.application-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.application-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.application-info h3 {
+  margin: 0 0 4px 0;
+  color: #0A1F44;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.client-name {
+  margin: 0;
+  color: #6B7A99;
+  font-size: 14px;
+}
+
+.application-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-icon.pending {
+  color: #FF9800;
+}
+
+.status-icon.accepted {
+  color: #4CAF50;
+}
+
+.status-icon.rejected {
+  color: #F44336;
+}
+
+.status-text {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 12px;
+}
+
+.status-text.pending {
+  background-color: #FFF4E6;
+  color: #FF9800;
+}
+
+.status-text.accepted {
+  background-color: #E8F5E8;
+  color: #4CAF50;
+}
+
+.status-text.rejected {
+  background-color: #FFEBEE;
+  color: #F44336;
+}
+
+.application-details {
+  margin-bottom: 16px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detail-row .label {
+  color: #6B7A99;
+}
+
+.detail-row .value {
+  color: #0A1F44;
+  font-weight: 500;
+}
+
+.application-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.view-btn {
+  background-color: #2F80ED;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+}
+
+.view-btn:hover {
+  background-color: #2563eb;
+}
+
+.no-applications {
+  text-align: center;
+  padding: 48px 24px;
+  color: #6B7A99;
+}
+
+.no-applications p {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+}
+
+.no-applications p:last-child {
+  font-size: 14px;
+}
+
+@media (max-width: 1024px) {
+  .applications-content {
+    margin-left: 0;
+    padding: 16px;
+  }
+
+  .applications-stats {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .application-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .application-status {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 768px) {
+  .applications-header h1 {
+    font-size: 24px;
+  }
+
+  .stat-card {
+    padding: 16px;
+  }
+
+  .application-card {
+    padding: 16px;
+  }
+
+  .detail-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+}

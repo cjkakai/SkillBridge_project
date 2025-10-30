@@ -1,0 +1,826 @@
+/* Contract Card Styles */
+.contract-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  color: #0A1F44;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border: 1px solid #e9ecef;
+}
+
+.contract-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.contract-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.contract-code {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.status-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-badge.active {
+  background: #28a745;
+  color: white;
+}
+
+.status-badge.completed {
+  background: #007bff;
+  color: white;
+}
+
+.contract-task {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.contract-task h4 {
+  margin: 0 0 12px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.task-info h5 {
+  margin: 0 0 8px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.task-info p {
+  margin: 0 0 12px 0;
+  color: #6B7A99;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+.task-deadline {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #FF6B6B;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.contract-freelancer {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.freelancer-avatar {
+  flex-shrink: 0;
+}
+
+.freelancer-avatar img {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.8);
+  object-fit: cover;
+}
+
+.freelancer-info h3 {
+  margin: 0 0 4px 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.freelancer-info p {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.freelancer-rating {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+}
+
+.contract-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  opacity: 0.9;
+}
+
+.contract-contact {
+  margin-bottom: 20px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.contact-item:last-child {
+  margin-bottom: 0;
+}
+
+.contact-label {
+  font-weight: 600;
+  min-width: 60px;
+}
+
+.contract-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 16px;
+}
+
+.action-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 16px;
+}
+
+.view-btn {
+  background: #2F80ED;
+  color: white;
+}
+
+.view-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
+}
+
+.message-btn {
+  background: #17a2b8;
+  color: white;
+}
+
+.message-btn:hover {
+  background: #138496;
+  transform: translateY(-1px);
+}
+
+.review-btn {
+  background: #6f42c1;
+  color: white;
+}
+
+.review-btn:hover {
+  background: #5a359a;
+  transform: translateY(-1px);
+}
+
+.edit-btn {
+  background: #ffc107;
+  color: #212529;
+}
+
+.edit-btn:hover {
+  background: #e0a800;
+  transform: translateY(-1px);
+}
+
+.delete-btn {
+  background: #dc3545;
+  color: white;
+}
+
+.delete-btn:hover {
+  background: #c82333;
+  transform: translateY(-1px);
+}
+
+/* Freelancer Review Styles */
+.review-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.contract-summary {
+  margin-bottom: 20px;
+}
+
+.contract-summary p {
+  margin: 8px 0;
+  color: #6B7A99;
+}
+
+.existing-review {
+  margin-bottom: 20px;
+}
+
+.rating-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-size: 16px;
+}
+
+.review-comment {
+  margin-top: 12px;
+}
+
+.review-comment p {
+  margin: 8px 0;
+  padding: 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+  color: #6B7A99;
+  line-height: 1.4;
+}
+
+.review-form {
+  max-width: 600px;
+}
+
+.rating-input {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.stars-interactive {
+  display: flex;
+  gap: 4px;
+}
+
+.rating-number-input {
+  width: 60px;
+  padding: 8px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.error-message {
+  color: #dc3545;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+.search-section {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.search-container {
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.search-input:focus 
+/* Edit Contract Form Styles */
+.edit-contract-form {
+  max-width: 600px;
+  margin: 30px auto;
+  background: white;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
+  border: 1px solid #e9ecef;
+}
+
+.edit-contract-form .form-group {
+  margin-bottom: 24px;
+}
+
+.edit-contract-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #0A1F44;
+  font-size: 14px;
+}
+
+.edit-contract-form input,
+.edit-contract-form select,
+.edit-contract-form textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.edit-contract-form input:focus,
+.edit-contract-form select:focus,
+.edit-contract-form textarea:focus {
+  outline: none;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+}
+
+.edit-contract-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.save-btn {
+  background: #2F80ED;
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.save-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
+}
+
+.delete-btn {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  padding: 14px 32px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.delete-btn:hover {
+  background: linear-gradient(45deg, #c82333, #a02622);
+  transform: translateY(-1px);
+}
+
+.form-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #2F80ED;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  background: #6B7A99;
+  transform: translateY(-1px);
+  outline: none;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+}
+
+.contracts-section {
+  margin-top: 30px;
+}
+
+.contracts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 24px;
+}
+
+/* Progress Section Styles */
+.progress-section {
+  margin-bottom: 24px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 12px;
+  background-color: #E6F0FF;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 8px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: #2F80ED;
+  transition: width 0.3s ease;
+}
+
+.progress-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #0A1F44;
+}
+
+/* Milestones Section Styles */
+.milestones-section {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.milestones-section h4 {
+  margin-bottom: 16px;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.milestone-item {
+  width: 800px;
+  background: #e6f1fcff;
+  border: 3px solid #E6F0FF;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+}
+
+.milestone-item::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(135deg, #2F80ED 0%, #56CCF2 100%);
+  border-radius: 12px 0 0 12px;
+}
+
+.milestone-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #2F80ED;
+}
+
+.milestone-header {
+  display: flex;
+  justify-content: space-evenly;
+  gap: 50px;
+  text-align: justify;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.milestone-title {
+  font-weight: 600;
+  color: #0A1F44;
+  font-size: 14px;
+}
+
+.milestone-status {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.milestone-status.completed {
+  background: #28a745;
+  color: white;
+}
+
+.milestone-status.in-progress {
+  background: #2F80ED;
+  color: white;
+}
+
+.milestone-status.pending {
+  background: #dc3545;
+  color: white;
+}
+
+.milestone-description {
+  color: #6B7A99;
+  font-size: 14px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+
+.milestone-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 70px;
+  font-size: 12px;
+  color: #A3B1C6;
+  align-items: center;
+}
+
+.milestone-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.delete-milestone-btn {
+  background: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.delete-milestone-btn:hover {
+  background: #c82333;
+  transform: scale(1.1);
+}
+
+.add-milestone-section {
+  margin-bottom: 24px;
+  padding: 16px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.add-milestone-btn {
+  background: #28a745;
+  color: white;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.add-milestone-btn:hover {
+  background: #218838;
+  transform: translateY(-1px);
+}
+
+.add-milestone-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.add-milestone-form .form-group {
+  margin-bottom: 16px;
+}
+
+.add-milestone-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #0A1F44;
+  font-size: 14px;
+}
+
+.add-milestone-form input,
+.add-milestone-form textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 2px solid #e9ecef;
+  border-radius: 6px;
+  font-size: 14px;
+  background: white;
+  transition: border-color 0.3s ease;
+}
+
+.add-milestone-form input:focus,
+.add-milestone-form textarea:focus {
+  outline: none;
+  border-color: #4169E1;
+  box-shadow: 0 0 0 3px rgba(65, 105, 225, 0.1);
+}
+
+.submit-milestone-btn {
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.submit-milestone-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
+}
+
+.download-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: #2F80ED;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.download-btn:hover {
+  background: #1a6bd1;
+  transform: translateY(-1px);
+}
+
+/* Complaints Section Styles */
+.complaints-section {
+  margin-top: 30px;
+}
+
+.complaints-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.complaint-item {
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+}
+
+.complaint-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  border-color: #2F80ED;
+}
+
+.complaint-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.complaint-info h4 {
+  margin: 0 0 4px 0;
+  color: #0A1F44;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.complaint-status {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.complaint-status.open {
+  background: #ffc107;
+  color: #0A1F44;
+}
+
+.complaint-status.in-progress {
+  background: #2F80ED;
+  color: white;
+}
+
+.complaint-status.resolved {
+  background: #28a745;
+  color: white;
+}
+
+.complaint-details p {
+  margin: 8px 0;
+  color: #6B7A99;
+  font-size: 14px;
+}
+
+.complaint-details p strong {
+  color: #0A1F44;
+}
+
+.delete-complaint-btn {
+  background: linear-gradient(45deg, #dc3545, #c82333);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.delete-complaint-btn:hover {
+  background: linear-gradient(45deg, #c82333, #a02622);
+  transform: translateY(-1px);
+}
+
+/* Submit Complaint Button */
+.submit-report-btn {
+  background: #2F80ED !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.submit-report-btn:hover {
+  background: #1a6bd1 !important;
+  transform: translateY(-1px) !important;
+}
