@@ -4,17 +4,18 @@ import './ApplicationForm.css';
 
 const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
 
-  const [applicationData, setApplicationData] = useState({
-    cover_letter: '',
-    bid_amount: '',
-    estimated_days: ''
-  });
-  const [isSubmitting, setIsSubmitting] = useState(false);
+   const [applicationData, setApplicationData] = useState({
+     cover_letter_file: null,
+     bid_amount: '',
+     estimated_days: ''
+   });
+   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (e) => {
+    const { name, value, type, files } = e.target;
     setApplicationData({
       ...applicationData,
-      [e.target.name]: e.target.value
+      [name]: type === 'file' ? files[0] : value
     });
   };
 
@@ -22,21 +23,21 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
     e.preventDefault();
     try {
       setIsSubmitting(true);
+
+      const formData = new FormData();
+      formData.append('task_id', task.id);
+      formData.append('freelancer_id', freelancerId);
+      formData.append('bid_amount', applicationData.bid_amount);
+      formData.append('estimated_days', applicationData.estimated_days);
+      if (applicationData.cover_letter_file) {
+        formData.append('cover_letter_file', applicationData.cover_letter_file);
+      }
+
       const response = await fetch(`/api/freelancers/${freelancerId}/applications`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          task_id: task.id,
-          freelancer_id: freelancerId,
-          cover_letter_file: applicationData.cover_letter,
-          bid_amount: parseFloat(applicationData.bid_amount),
-          estimated_days: parseInt(applicationData.estimated_days),
-          status: 'pending'
-        })
+        body: formData
       });
-      
+
       if (response.ok) {
         alert('Application submitted successfully!');
         handleClose();
@@ -52,7 +53,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
   };
 
   const handleClose = () => {
-    setApplicationData({ cover_letter: '', bid_amount: '', estimated_days: '' });
+    setApplicationData({ cover_letter_file: null, bid_amount: '', estimated_days: '' });
     onClose();
   };
 
@@ -65,18 +66,18 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
         <h3 className="job-title">{task?.title}</h3>
         
         <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label className="form-label">Cover Letter *</label>
-            <textarea
-              name="cover_letter"
-              value={applicationData.cover_letter}
-              onChange={handleInputChange}
-              required
-              rows={6}
-              placeholder="Explain why you're the best fit for this job..."
-              className="form-textarea"
-            />
-          </div>
+           <div className="form-group">
+             <label className="form-label">Cover Letter (PDF, DOCX) *</label>
+             <input
+               type="file"
+               name="cover_letter_file"
+               onChange={handleInputChange}
+               accept=".pdf,.docx,.png,.jpg,.jpeg"
+               required
+               className="form-file-input"
+             />
+             <small className="form-hint">Upload your cover letter as a PDF or DOCX file</small>
+           </div>
           
           <div className="form-group">
             <label className="form-label">Bid Amount ($) *</label>
