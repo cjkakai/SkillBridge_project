@@ -36,7 +36,6 @@ import AdminDashboard from './pages/admin/AdminDashboard';
 import UserManagement from './pages/admin/UserManagement';
 import ProjectManagement from './pages/admin/ProjectManagement';
 import Complaints from './pages/admin/Complaints';
-import HomePage from './pages/HomePage';
 import TransactionManagement from './pages/admin/TransactionManagement';
 
 
@@ -85,7 +84,6 @@ function App() {
           <Route path="/admin/projects" element={<ProjectManagement />} />
           <Route path="/admin/complaints" element={<Complaints />} />
           <Route path="/admin/transactions" element={<TransactionManagement />} />
-          <Route path="/" element={<HomePage />} />
         </Routes>
       </div>
     </Router>
