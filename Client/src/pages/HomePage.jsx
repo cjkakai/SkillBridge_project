@@ -1,18 +1,12 @@
 import React from "react";
+import Navbar from "../components/Navbar";
+import AvailableJobs from "../components/AvailableJobs";
 import "./HomePage.css";
-// import Navbar from "../../../src/components/Navbar";
-
-// import heroImg from "../assets/hero-illustration.png";
-// import dataIcon from "../assets/data-analytics-icon.png";
-// import graphicIcon from "../assets/graphic-design.png";
-// import uiuxIcon from "../assets/uiux-design.png";
-// import reportIcon from "../assets/report-writing.png";
-// import codeIcon from "../assets/code-icon.png";
 
 const HomePage = () => {
   return (
     <div className="homepage">
-      {/* <Navbar /> */}
+      <Navbar />
 
       <section className="hero-section">
         <div className="hero-content">
@@ -31,30 +25,10 @@ const HomePage = () => {
 
         <div className="hero-image">
           <img src="/image.png" alt="Freelancer working" />
-                  </div>
-      </section>
-
-      <section className="jobs-section">
-        <h2>Available Jobs</h2>
-        <div className="job-grid">
-          <div className="job-card">
-            <img src={graphicIcon} alt="Graphic Design" />
-            <p>Graphic Design</p>
-          </div>
-          <div className="job-card">
-            <img src={uiuxIcon} alt="UI-UX Design" />
-            <p>UI-UX Design</p>
-          </div>
-          <div className="job-card">
-            <img src={reportIcon} alt="Report Writing" />
-            <p>Report Writing</p>
-          </div>
-          <div className="job-card">
-            <img src={codeIcon} alt="Many more" />
-            <p>Many more</p>
-          </div>
         </div>
       </section>
+
+      <AvailableJobs />
     </div>
   );
 };

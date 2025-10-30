@@ -1,13 +1,13 @@
 import React from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "./Sidebar.css";
 
 const Sidebar = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
 
-  const isActive = (path) => {
-    return location.pathname === path;
+  const handleNavigation = (path) => {
+    navigate(path);
   };
 
   return (
@@ -18,22 +18,40 @@ const Sidebar = () => {
 
       <nav className="sb-nav">
         <ul>
-          <li className={isActive("/admin") ? "active" : ""} onClick={() => navigate("/admin")}>
+          <li
+            className={location.pathname === "/admin" ? "active" : ""}
+            onClick={() => handleNavigation("/admin")}
+          >
             <span className="icon">🏠</span> Dashboard
           </li>
-          <li className={isActive("/admin/users") ? "active" : ""} onClick={() => navigate("/admin/users")}>
+          <li
+            className={location.pathname === "/admin/users" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/users")}
+          >
             <span className="icon">👥</span> Users
           </li>
-          <li className={isActive("/admin/projects") ? "active" : ""} onClick={() => navigate("/admin/projects")}>
+          <li
+            className={location.pathname === "/admin/projects" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/projects")}
+          >
             <span className="icon">📁</span> Projects
           </li>
-          <li className={isActive("/admin/transactions") ? "active" : ""} onClick={() => navigate("/admin/transactions")}>
+          <li
+            className={location.pathname === "/admin/transactions" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/transactions")}
+          >
             <span className="icon">💳</span> Transactions
           </li>
-          <li className={isActive("/admin/analytics") ? "active" : ""} onClick={() => navigate("/admin/analytics")}>
+          <li
+            className={location.pathname === "/admin/analytics" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/analytics")}
+          >
             <span className="icon">📊</span> Analytics
           </li>
-          <li className={isActive("/admin/settings") ? "active" : ""} onClick={() => navigate("/admin/settings")}>
+          <li
+            className={location.pathname === "/admin/settings" ? "active" : ""}
+            onClick={() => handleNavigation("/admin/settings")}
+          >
             <span className="icon">⚙️</span> Settings
           </li>
         </ul>

@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { useAuth } from "../../context/AuthContext";
-// import { fetchTasks, fetchContracts } from "../../../../src/services/api";
+import { fetchTasks, fetchContracts } from "../../services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const ProjectManagement = () => {
-  const { user } = useAuth();
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");

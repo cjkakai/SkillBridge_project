@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import { useAuth } from "../../context/AuthContext";
-// import { fetchCurrentUser, logout } from "../../../../src/services/api";
+import { fetchCurrentUser } from "../../services/api";
 import "./UserManagement.css"; // Reuse the same CSS
 
 const SettingsManagement = () => {
-  const { user } = useAuth();
   const [admin, setAdmin] = useState(null);
   const [loading, setLoading] = useState(true);
   const [darkMode, setDarkMode] = useState(false);
@@ -81,13 +79,8 @@ const SettingsManagement = () => {
 
   const handleSignOut = async () => {
     if (window.confirm('Are you sure you want to sign out?')) {
-      try {
-        await logout();
-        window.location.href = '/'; // Redirect to home page
-      } catch (error) {
-        console.error('Error signing out:', error);
-        alert('Error signing out. Please try again.');
-      }
+      // For now, just redirect to home page since logout is not implemented
+      window.location.href = '/'; // Redirect to home page
     }
   };
 

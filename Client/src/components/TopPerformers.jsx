@@ -1,23 +1,30 @@
 import React from "react";
+import "./TopPerformers.css";
 
 const TopPerformers = ({ data }) => {
-  console.log("Top performers data received:", data);
-
-  // Ensure we always have an array
-  const performers = Array.isArray(data) ? data : [];
+  const items = data.length > 0 ? data : [
+    {rank:1, initials:"EW", name:"Emma Wilson", role:"UI/UX Designer", amount:"$124,500", projects:5, rating:4.8},
+    {rank:2, initials:"JC", name:"James Chen", role:"Full Stack", amount:"$156,200", projects:52, rating:4.9},
+    {rank:3, initials:"LA", name:"Lisa Anderson", role:"Content Writer", amount:"$98,400", projects:67, rating:4.9},
+    {rank:4, initials:"AJ", name:"Alex Johnson", role:"SEO Specialist", amount:"$87,300", projects:43, rating:4.8},
+  ];
 
   return (
-    <div className="top-performers-card" style={{ background: "#fff", padding: "1rem", borderRadius: "10px", boxShadow: "0 2px 8px rgba(0,0,0,0.1)" }}>
-      <h3 style={{ marginBottom: "1rem", color: "#333" }}>Top Performers</h3>
-      <ul style={{ listStyle: "none", padding: 0 }}>
-        {performers.length > 0 ? performers.map((p, i) => (
-          <li key={i} style={{ marginBottom: ".8rem", borderBottom: "1px solid #eee", paddingBottom: ".5rem" }}>
-            <strong>{p.name}</strong> — {p.role} <span style={{ float: "right" }}>{p.amount || p.score}$</span>
-          </li>
-        )) : (
-          <li>No top performers data available</li>
-        )}
-      </ul>
+    <div className="top-card">
+      <h4>Top Performers</h4>
+      <div className="top-list">
+        {items.map(i=>(
+          <div className="top-item" key={i.rank}>
+            <div className="rank">{i.rank}</div>
+            <div className="avatar">{i.initials}</div>
+            <div className="info">
+              <div className="name">{i.name}</div>
+              <div className="meta">{i.role} · <span className="amt">{i.amount}</span></div>
+              <div className="small">{i.rating} · {i.projects} projects</div>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 };
