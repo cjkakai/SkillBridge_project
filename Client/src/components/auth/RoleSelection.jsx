@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import NavBar from '../ui/NavBar';
 
 const RoleSelection = () => {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ const RoleSelection = () => {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      backgroundColor: '#f8f9fa',
+      backgroundColor:'#0a1f44',
       padding: '20px'
     },
     card: {
@@ -57,6 +58,7 @@ const RoleSelection = () => {
 
   return (
     <div style={styles.container}>
+      <NavBar/>
       <div style={styles.card}>
         <h2 style={styles.title}>Welcome To Skill<span style={{color: '#ffb366'}}>Bridge</span> Signup, Kindly<br />choose your <span style={{color: '#ffb366'}}>role</span></h2>
         <div style={styles.buttonContainer}>

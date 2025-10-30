@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import './Register.css';
+import Navbar from '../ui/NavBar';
 
 const ClientRegister = () => {
   const validationSchema = Yup.object({
@@ -61,7 +62,9 @@ const ClientRegister = () => {
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: '100vh',
-      padding: '20px'
+      padding: '20px',
+      backgroundColor: '#0a1f44',
+      marginTop: '100px'
     },
     card: {
       backgroundColor: '#f0f8ff',
@@ -131,6 +134,7 @@ const ClientRegister = () => {
 
   return (
     <div style={styles.container}>
+      <Navbar />
       <div style={styles.card}>
         <h2 style={styles.title}>Hey client, signup here</h2>
 
@@ -210,7 +214,7 @@ const ClientRegister = () => {
         </Formik>
 
         <div style={styles.loginLink}>
-          Already signed up? <Link to="/" style={styles.link}>Login here</Link>
+          Already signed up? <Link to="/login" style={styles.link}>Login here</Link>
         </div>
       </div>
     </div>
