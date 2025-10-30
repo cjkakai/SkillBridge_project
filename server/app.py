@@ -1413,17 +1413,62 @@ class ClientComplaintResource(Resource):
 #used by a client to manage complaints related to their contracts
 api.add_resource(ClientComplaintResource, '/api/clients/<int:client_id>/complaints', '/api/clients/<int:client_id>/contracts/<int:contract_id>/complaints', '/api/clients/<int:client_id>/contracts/<int:contract_id>/complaints/<int:complaint_id>')
 
-class GetAdminsResource(Resource):
-    def get(self):
+class AdminResource(Resource):
+    def get(self, admin_id=None):
+        if admin_id:
+            admin = Admin.query.get_or_404(admin_id)
+            return make_response(admin.to_dict(rules=('-_password_hash', '-complaints', '-audit_logs',)), 200)
         admins = Admin.query.all()
-        return make_response([{
-            'id': admin.id,
-            'name': admin.name,
-            'email': admin.email,
-            'created_at': admin.created_at.isoformat() if admin.created_at else None
-        } for admin in admins], 200)
+        return make_response([admin.to_dict(rules=('-_password_hash', '-complaints', '-audit_logs',)) for admin in admins], 200)
 
-api.add_resource(GetAdminsResource, '/api/admins')
+class AdminOwnComplaintsResource(Resource):
+    def get(self, admin_id):
+        complaints = Complaint.query.filter_by(admin_id=admin_id, status='open').all()
+        return make_response([complaint.to_dict(rules=('-contract', '-admin',)) for complaint in complaints], 200)
+
+class TopClientsResource(Resource):
+    def get(self):
+        # Get clients with their contract counts, ordered by contract count descending
+        clients_with_counts = (
+            db.session.query(
+                Client,
+                db.func.count(Contract.id).label('contract_count')
+            )
+            .outerjoin(Contract, Client.id == Contract.client_id)
+            .group_by(Client.id)
+            .order_by(db.desc(db.func.count(Contract.id)))
+            .limit(5)
+            .all()
+        )
+
+        result = []
+        for client, contract_count in clients_with_counts:
+            client_data = client.to_dict(rules=('-_password_hash', '-tasks', '-contracts',))
+            client_data['contract_count'] = contract_count
+            result.append(client_data)
+
+        return make_response(result, 200)
+
+class LatestPaymentsResource(Resource):
+    def get(self):
+        payments = Payment.query.order_by(Payment.created_at.desc()).limit(5).all()
+        result = []
+        for payment in payments:
+            payment_data = payment.to_dict(rules=('-contract',))
+            # Add client and freelancer names
+            contract = Contract.query.get(payment.contract_id)
+            if contract:
+                client = Client.query.get(contract.client_id)
+                freelancer = Freelancer.query.get(contract.freelancer_id)
+                payment_data['client_name'] = client.name if client else 'Unknown Client'
+                payment_data['freelancer_name'] = freelancer.name if freelancer else 'Unknown Freelancer'
+            result.append(payment_data)
+        return make_response(result, 200)
+
+api.add_resource(AdminResource, '/api/admins', '/api/admins/<int:admin_id>')
+api.add_resource(AdminOwnComplaintsResource, '/api/admins/<int:admin_id>/complaints')
+api.add_resource(TopClientsResource, '/api/top-clients')
+api.add_resource(LatestPaymentsResource, '/api/latest-payments')
 
 class ClientFreelancersResource(Resource):
     def get(self, client_id):
