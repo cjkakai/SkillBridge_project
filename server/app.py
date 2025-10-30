@@ -706,10 +706,42 @@ class FreelancerPaymentsResource(Resource):
         contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
         contract_ids = [c.id for c in contracts]
         payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
-        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
+
+        result = []
+        for payment in payments:
+            payment_data = payment.to_dict(rules=('-contract',))
+            contract = Contract.query.get(payment.contract_id)
+            if contract:
+                task = Task.query.get(contract.task_id)
+                client = Client.query.get(contract.client_id)
+                payment_data['task'] = task.title if task else 'Unknown Task'
+                payment_data['client_name'] = client.name if client else 'Unknown Client'
+                payment_data['client_image'] = client.image if client else None
+            result.append(payment_data)
+
+        return make_response(result, 200)
 
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
-    
+
+class FreelancerEarningsStatsResource(Resource):
+    def get(self, freelancer_id):
+        # Total completed payments
+        total_completed = db.session.query(db.func.sum(Payment.amount)).filter(Payment.payee_id == freelancer_id, Payment.status == 'completed').scalar() or 0
+
+        # Total pending payments
+        total_pending = db.session.query(db.func.sum(Payment.amount)).filter(Payment.payee_id == freelancer_id, Payment.status == 'pending').scalar() or 0
+
+        # Total number of payments
+        total_payments_count = Payment.query.filter_by(payee_id=freelancer_id).count()
+
+        return make_response({
+            'total_completed': float(total_completed),
+            'total_pending': float(total_pending),
+            'total_payments_count': total_payments_count
+        }, 200)
+
+api.add_resource(FreelancerEarningsStatsResource, '/api/freelancers/<int:freelancer_id>/earnings-stats')
+
 class FreelancerClientMessagesResource(Resource):
     def get(self, freelancer_id, client_id=None):
         if client_id:
