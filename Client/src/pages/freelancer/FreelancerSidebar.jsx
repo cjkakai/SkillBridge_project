@@ -97,20 +97,9 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
             <LogoutButton />
           </ul>
         </nav>
-        <div className="sidebar-footer">
-          {!isCollapsed && (
-            <div className="user-info">
-              <div className="user-avatar">A</div>
-              <div className="user-details">
-                <p className="user-name">Alex Johnson</p>
-                <p className="user-role">Freelancer</p>
-              </div>
-            </div>
-          )}
-        </div>
       </div>
     </>
-  );
+ );
 };
 
 export default FreelancerSidebar;

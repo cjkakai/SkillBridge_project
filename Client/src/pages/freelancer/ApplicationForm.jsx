@@ -4,7 +4,7 @@ import './ApplicationForm.css';
 
 const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
   const { user } = useAuth();
-  const currentFreelancerId = user?.freelancerId || freelancerId;
+  const currentFreelancerId = 1001;
   const [applicationData, setApplicationData] = useState({
     cover_letter: '',
     bid_amount: '',
@@ -31,7 +31,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
         body: JSON.stringify({
           task_id: task.id,
           freelancer_id: freelancerId,
-          cover_letter: applicationData.cover_letter,
+          cover_letter_file: applicationData.cover_letter,
           bid_amount: parseFloat(applicationData.bid_amount),
           estimated_days: parseInt(applicationData.estimated_days),
           status: 'pending'
