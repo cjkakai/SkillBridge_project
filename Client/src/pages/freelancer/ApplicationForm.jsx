@@ -33,7 +33,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
         formData.append('cover_letter_file', applicationData.cover_letter_file);
       }
 
-      const response = await fetch(`/api/freelancers/${freelancerId}/applications`, {
+      const response = await fetch(`/api/freelancers/${freelancerId}/applications/upload`, {
         method: 'POST',
         body: formData
       });

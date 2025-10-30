@@ -187,13 +187,10 @@ def seed_database():
                     selected_freelancers.append(ruth)
 
             for freelancer in selected_freelancers:
-                # Use the existing dummy PDF file
-                pdf_filename = "DENNIS KARANJA CV-FINAL.pdf"
-
                 application = Application(
                     task_id=task.id,
                     freelancer_id=freelancer.id,
-                    cover_letter_file=pdf_filename,
+                    cover_letter_file="Sample.pdf",
                     bid_amount=random.randint(task.budget_min, task.budget_max),
                     estimated_days=random.randint(5, 30),
                     status=random.choice(['pending', 'accepted', 'rejected'])
@@ -292,7 +289,7 @@ def seed_database():
                     due_date=fake.date_between(start_date='today', end_date='+2m'),
                     completed=completed,
                     weight=weights[i],
-                    file_url=fake.url() if random.choice([True, False]) else None
+                    file_url="sample_milestone.jpeg" if completed else None
                 )
                 db.session.add(milestone)
         

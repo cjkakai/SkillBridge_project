@@ -323,11 +323,9 @@ class TaskResource(Resource):
 
 api.add_resource(TaskResource, '/api/tasks', '/api/tasks/<int:task_id>')
 
-class ApplicationResource(Resource):
-    # POST method for freelancers to submit applications with PDF cover letters
-    def post(self):
+class ApplicationUploadResource(Resource):
+    def post(self, freelancer_id):
         try:
-            # Handle file upload
             if 'cover_letter_file' not in request.files:
                 return make_response({'error': 'No file provided'}, 400)
 
@@ -336,23 +334,19 @@ class ApplicationResource(Resource):
                 return make_response({'error': 'No file selected'}, 400)
 
             if not allowed_file(file.filename):
-                return make_response({'error': 'Only PDF files are allowed'}, 400)
+                return make_response({'error': 'File type not allowed'}, 400)
 
-            # Get other form data
             task_id = request.form.get('task_id')
-            freelancer_id = request.form.get('freelancer_id')
             bid_amount = request.form.get('bid_amount')
             estimated_days = request.form.get('estimated_days')
 
-            if not all([task_id, freelancer_id, bid_amount, estimated_days]):
+            if not all([task_id, bid_amount, estimated_days]):
                 return make_response({'error': 'Missing required fields'}, 400)
 
-            # Save file to cover_letters folder
             filename = secure_filename(f"{freelancer_id}_{task_id}_{file.filename}")
             file_path = os.path.join(app.config['UPLOAD_FOLDER_COVER_LETTERS'], filename)
             file.save(file_path)
 
-            # Create application
             application = Application(
                 task_id=task_id,
                 freelancer_id=freelancer_id,
@@ -370,6 +364,7 @@ class ApplicationResource(Resource):
             db.session.rollback()
             return make_response({'error': str(e)}, 500)
 
+class ApplicationResource(Resource):
     # used by a freelancer to apply for a job
     def post(self):
         data = request.get_json()
@@ -403,6 +398,7 @@ class ApplicationDownloadResource(Resource):
         return send_file(file_path, as_attachment=True, download_name=f"cover_letter_{applicant.name}.pdf")
 
 api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
+api.add_resource(ApplicationUploadResource, '/api/freelancers/<int:freelancer_id>/applications/upload')
 api.add_resource(ApplicationDownloadResource, '/api/applications/<int:application_id>/download')
 # api.add_resource(ApplicationResource, '/api/applications', '/api/applications/<int:application_id>')
 
