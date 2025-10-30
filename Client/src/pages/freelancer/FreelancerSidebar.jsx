@@ -15,7 +15,8 @@ import {
   Folder,
   MessageSquare,
   X,
-  AlertTriangle
+  AlertTriangle,
+  Briefcase
 } from 'lucide-react';
 import LogoutButton from '../../components/auth/LogoutButton';
 import './FreelancerSidebar.css';
@@ -49,6 +50,7 @@ const FreelancerSidebar = ({ isCollapsed, onToggle }) => {
     { path: '/freelancer/messages', label: 'Messages', icon: MessageSquare },
     { path: '/freelancer/earnings', label: 'Earnings', icon: DollarSign },
     { path: '/freelancer/my-projects', label: 'My Projects', icon: Folder },
+    { path: '/freelancer/experience', label: 'Experience', icon: Briefcase },
     { path: '/freelancer/profile', label: 'Profile', icon: User },
     { path: '/freelancer/reviews', label: 'Reviews', icon: Star },
     { path: '/freelancer-report', label: 'Report a Client', icon: AlertTriangle },

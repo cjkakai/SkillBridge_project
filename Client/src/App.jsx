@@ -29,6 +29,7 @@ import BrowseTasks from './pages/freelancer/BrowseTasks';
 import Myprojects from './pages/freelancer/Myprojects';
 import Earnings from './pages/freelancer/Earnings';
 import Profile from './pages/freelancer/Profile';
+import Experience from './pages/freelancer/Experience';
 import Reviews from './pages/freelancer/Reviews';
 import FreelancerMessages from './pages/freelancer/FreelancerMessages';
 import FreelancerReport from './pages/freelancer/FreelancerReport';
@@ -70,6 +71,7 @@ function App() {
           <Route path="/freelancer/browse-tasks" element={<BrowseTasks />} />
           <Route path="/freelancer/applications" element={<Applications />} />
           <Route path="/freelancer/profile" element={<Profile />} />
+          <Route path="/freelancer/experience" element={<Experience />} />
           <Route path="/freelancer/messages" element={<FreelancerMessages />} />
           <Route path="/freelancer/profile" element={<FreelancerDashboard />} />
           <Route path="/freelancer/earnings" element={<Earnings />} />
