@@ -18,9 +18,10 @@ const Reviews = () => {
     const fetchReviews = async () => {
       try {
         const freelancerId = user?.id;
-        const response = await fetch(`/api/reviews?freelancer_id=${freelancerId}`);
+        const response = await fetch(`/api/freelancers/${freelancerId}/reviews`);
         if (response.ok) {
           const data = await response.json();
+          console.log(data)
           setReviews(data);
           calculateStats(data);
         }
@@ -132,7 +133,20 @@ const Reviews = () => {
                 <div className="review-header">
                   <div className="client-info">
                     <div className="client-avatar">
-                      <User size={24} />
+                      {review.client?.image ? (
+                        <img
+                          src={review.client.image}
+                          alt={review.client.name}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '50%',
+                            objectFit: 'cover'
+                          }}
+                        />
+                      ) : (
+                        <User size={24} />
+                      )}
                     </div>
                     <div>
                       <h3>{review.client?.name || 'Anonymous Client'}</h3>

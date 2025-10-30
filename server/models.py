@@ -17,6 +17,7 @@ class Client(db.Model, SerializerMixin):
     image = db.Column(db.Text)
     bio = db.Column(db.Text)
     contact = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, default=lambda: datetime.now(pytz.timezone('Africa/Nairobi')))
 
     tasks = db.relationship('Task', back_populates='client')
     contracts = db.relationship('Contract', back_populates='client')

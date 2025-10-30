@@ -11,14 +11,14 @@ const FreelancerReport = () => {
   const [admins, setAdmins] = useState([]);
   const [complaints, setComplaints] = useState([]);
   const [loading, setLoading] = useState(true);
-  const freelancerId = user?.id;
+  const freelancerId = user?.id
 
   useEffect(() => {
     fetchFreelancerData();
     fetchContracts();
     fetchAdmins();
     fetchComplaints();
-  }, [freelancerId]);
+  }, []);
 
   const fetchFreelancerData = async () => {
     try {
@@ -37,6 +37,7 @@ const FreelancerReport = () => {
       const response = await fetch(`/api/freelancers/${freelancerId}/contracts`);
       if (response.ok) {
         const data = await response.json();
+        console.log(data)
         setContracts(data);
       }
     } catch (error) {
@@ -93,39 +94,6 @@ const FreelancerReport = () => {
             <p style={{ color: '#6b7280', margin: 0 }}>Report inappropriate behavior or violations of our terms</p>
           </div>
         </div>
-        <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/freelancer/dashboard')}>
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/freelancer/browse-tasks')}>
-            <Briefcase size={20} />
-            <span>Browse Tasks</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/freelancer/messages')}>
-            <MessageSquare size={20} />
-            <span>Messages</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/freelancer/my-projects')}>
-            <Plus size={20} />
-            <span>My Projects</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/freelancer/profile')}>
-            <User size={20} />
-            <span>My Profile</span>
-          </div>
-          <div className="nav-item">
-            <AlertTriangle size={20} />
-            <span>Report a Client</span>
-          </div>
-          <div className="nav-item">
-            <CreditCard size={20} />
-            <span>Earnings</span>
-          </div>
-          <LogoutButton />
-        </nav>
-      </div>
-
 
         <div style={{ padding: '32px' }}>
           <div style={{
@@ -438,6 +406,7 @@ const FreelancerReport = () => {
           </div>
         </div>
       </div>
+    </div>
   );
 };
 

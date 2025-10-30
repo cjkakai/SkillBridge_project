@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
-import './UserManagement.css'
+import './UserManagement.css';
 
 const UserManagement = () => {
   const { user } = useAuth();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [clients, setClients] = useState([]);
-  const [freelancers, setFreelancers] = useState([]);
+  const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterType, setFilterType] = useState('all');
 
   useEffect(() => {
     fetchUsers();
@@ -26,9 +27,23 @@ const UserManagement = () => {
       if (clientsResponse.ok && freelancersResponse.ok) {
         const clientsData = await clientsResponse.json();
         const freelancersData = await freelancersResponse.json();
-        setClients(clientsData);
-        setFreelancers(freelancersData);
-        setError(null); // Clear any previous errors
+        const combinedUsers = [
+          ...clientsData.map(client => ({
+            ...client,
+            type: 'client',
+            created_at: client.created_at || client.createdAt || 'N/A',
+            ratings: client.ratings || client.rating || 'N/A'
+          })),
+          ...freelancersData.map(freelancer => ({
+            ...freelancer,
+            type: 'freelancer',
+            created_at: freelancer.created_at || freelancer.createdAt || 'N/A',
+            ratings: freelancer.ratings || freelancer.rating || 'N/A'
+          }))
+        ];
+
+        setAllUsers(combinedUsers);
+        setError(null);
       } else {
         const clientsError = clientsResponse.ok ? null : await clientsResponse.text();
         const freelancersError = freelancersResponse.ok ? null : await freelancersResponse.text();
@@ -41,44 +56,54 @@ const UserManagement = () => {
     }
   };
 
-  const handleDeleteClient = async (clientId) => {
-    if (window.confirm('Are you sure you want to delete this client? This action cannot be undone.')) {
+  const handleDeleteUser = async (userId, type) => {
+    const endpoint = type === 'client' ? `/api/clients/${userId}` : `/api/freelancers/${userId}`;
+    const confirmMessage = `Are you sure you want to delete this ${type}? This action cannot be undone.`;
+    if (window.confirm(confirmMessage)) {
       try {
-        const response = await fetch(`/api/clients/${clientId}`, {
-          method: 'DELETE',
-        });
-
+        const response = await fetch(endpoint, { method: 'DELETE' });
         if (response.ok) {
-          setClients(clients.filter(client => client.id !== clientId));
-          alert('Client deleted successfully');
+          setAllUsers(allUsers.filter(user => user.id !== userId));
+          alert(`${type.charAt(0).toUpperCase() + type.slice(1)} deleted successfully`);
         } else {
           const errorData = await response.json().catch(() => ({}));
-          alert(`Failed to delete client: ${errorData.error || 'Unknown error'}`);
+          alert(`Failed to delete ${type}: ${errorData.error || 'Unknown error'}`);
         }
       } catch (err) {
-        alert('Error deleting client: ' + err.message);
+        alert(`Error deleting ${type}: ` + err.message);
       }
     }
   };
 
-  const handleDeleteFreelancer = async (freelancerId) => {
-    if (window.confirm('Are you sure you want to delete this freelancer? This action cannot be undone.')) {
-      try {
-        const response = await fetch(`/api/freelancers/${freelancerId}`, {
-          method: 'DELETE',
-        });
+  const filteredUsers = allUsers.filter(user => {
+    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                          user.email.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesType = filterType === 'all' || user.type === filterType;
+    return matchesSearch && matchesType;
+  });
 
-        if (response.ok) {
-          setFreelancers(freelancers.filter(freelancer => freelancer.id !== freelancerId));
-          alert('Freelancer deleted successfully');
-        } else {
-          const errorData = await response.json().catch(() => ({}));
-          alert(`Failed to delete freelancer: ${errorData.error || 'Unknown error'}`);
-        }
-      } catch (err) {
-        alert('Error deleting freelancer: ' + err.message);
-      }
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
+  };
+
+  const renderStars = (rating) => {
+    if (!rating || rating === 'N/A') return 'N/A';
+    const stars = [];
+    const fullStars = Math.floor(rating);
+    const hasHalfStar = rating % 1 !== 0;
+
+    for (let i = 0; i < fullStars; i++) {
+      stars.push('★');
     }
+    if (hasHalfStar) {
+      stars.push('☆');
+    }
+    while (stars.length < 5) {
+      stars.push('☆');
+    }
+
+    return stars.join('');
   };
 
   if (loading) {
@@ -93,69 +118,81 @@ const UserManagement = () => {
     <div className="user-management">
       <AdminSidebar isCollapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed(!sidebarCollapsed)} />
       <div className={`admin-main ${sidebarCollapsed ? 'sidebar-collapsed' : ''}`} style={{ marginLeft: sidebarCollapsed ? '80px' : '280px' }}>
-        <div style={{ backgroundColor: 'white', padding: '32px' }}>
-          <div>
-            <h1 style={{ fontSize: '32px', fontWeight: '600', color: '#111827', margin: '0 0 8px 0' }}>User Management</h1>
-            <p style={{ color: '#6b7280', margin: 0 }}>Manage platform users and their accounts</p>
+        <div className="user-management-content">
+          <div className="search-section">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="search-input"
+            />
           </div>
-        </div>
 
-        <div style={{ padding: '32px' }}>
-
-      <section className="clients-section">
-        <h2>Clients</h2>
-        {clients.length > 0 ? (
-          <div className="users-grid">
-            {clients.map(client => (
-              <div key={client.id} className="user-card">
-                <div className="user-info">
-                  <h3>{client.name}</h3>
-                  <p>Email: {client.email}</p>
-                  <p>Contact: {client.contact}</p>
-                </div>
-                <div className="user-actions">
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteClient(client.id)}
-                  >
-                    Delete Client
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="filter-nav">
+            <button
+              className={`filter-btn ${filterType === 'all' ? 'active' : ''}`}
+              onClick={() => setFilterType('all')}
+            >
+              All Users
+            </button>
+            <button
+              className={`filter-btn ${filterType === 'freelancer' ? 'active' : ''}`}
+              onClick={() => setFilterType('freelancer')}
+            >
+              Freelancers
+            </button>
+            <button
+              className={`filter-btn ${filterType === 'client' ? 'active' : ''}`}
+              onClick={() => setFilterType('client')}
+            >
+              Clients
+            </button>
           </div>
-        ) : (
-          <p>No clients found.</p>
-        )}
-      </section>
 
-      <section className="freelancers-section">
-        <h2>Freelancers</h2>
-        {freelancers.length > 0 ? (
-          <div className="users-grid">
-            {freelancers.map(freelancer => (
-              <div key={freelancer.id} className="user-card">
-                <div className="user-info">
-                  <h3>{freelancer.name}</h3>
-                  <p>Email: {freelancer.email}</p>
-                  <p>Contact: {freelancer.contact}</p>
-                  <p>Bio: {freelancer.bio}</p>
-                </div>
-                <div className="user-actions">
-                  <button
-                    className="delete-btn"
-                    onClick={() => handleDeleteFreelancer(freelancer.id)}
-                  >
-                    Delete Freelancer
-                  </button>
-                </div>
-              </div>
-            ))}
+          <div className="users-table-container">
+            <table className="users-table">
+              <thead>
+                <tr>
+                  <th>User</th>
+                  <th>Type</th>
+                  <th>Join Date</th>
+                  <th>Rating</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.length > 0 ? (
+                  filteredUsers.map(user => (
+                    <tr key={user.id}>
+                      <td>
+                        <div className="user-info-cell">
+                          <strong>{user.name}</strong>
+                          <br />
+                          <span>{user.email}</span>
+                        </div>
+                      </td>
+                      <td>{user.type.charAt(0).toUpperCase() + user.type.slice(1)}</td>
+                      <td>{formatDate(user.created_at)}</td>
+                      <td>{user.type === 'freelancer' ? <span className="star-rating">{renderStars(user.ratings)}</span> : '-'}</td>
+                      <td>
+                        <button
+                          className="delete-btn"
+                          onClick={() => handleDeleteUser(user.id, user.type)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="5" className="no-users">No users found.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
-        ) : (
-          <p>No freelancers found.</p>
-        )}
-      </section>
         </div>
       </div>
     </div>

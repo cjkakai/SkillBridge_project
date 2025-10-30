@@ -239,7 +239,7 @@ const Applications = () => {
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                         <span style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
-                          Application #{application.id}
+                          {application.task.client.name}
                         </span>
                         <span style={{
                           color: application.status === 'accepted' ? '#10b981' : application.status === 'rejected' ? '#ef4444' : '#f59e0b',
@@ -258,13 +258,13 @@ const Applications = () => {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <DollarSign size={14} style={{ color: '#6b7280' }} />
                           <span style={{ fontSize: '14px', fontWeight: '600', color: '#111827' }}>
-                            {formatCurrency(application.bid_amount)}
+                            Bid: {formatCurrency(application.bid_amount)}
                           </span>
                         </div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <Calendar size={14} style={{ color: '#6b7280' }} />
                           <span style={{ fontSize: '14px', color: '#6b7280' }}>
-                            {application.estimated_days} days
+                            Duration: {application.estimated_days} days
                           </span>
                         </div>
                       </div>
@@ -350,7 +350,7 @@ const Applications = () => {
                           <div style={{ backgroundColor: 'white', padding: '16px', borderRadius: '8px', border: '1px solid #e5e7eb' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
                               <Calendar size={16} style={{ color: '#6b7280' }} />
-                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Duration</span>
+                              <span style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Estimated Days</span>
                             </div>
                             <p style={{ margin: 0, fontSize: '14px', fontWeight: '600', color: '#111827' }}>{application.estimated_days} days</p>
                           </div>
