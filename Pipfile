@@ -16,6 +16,7 @@ flask-socketio = "*"
 pytz = "*"
 openai = "*"
 python-dotenv = "*"
+requests = "*"
 
 [dev-packages]
 

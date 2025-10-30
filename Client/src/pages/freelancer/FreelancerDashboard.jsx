@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import FreelancerSidebar from './FreelancerSidebar';
 import ApplicationForm from './ApplicationForm';
 import useApplyJob from '../../hooks/useApplyJob';
@@ -180,7 +181,7 @@ const FreelancerDashboard = () => {
             <div className="dashboard-card">
               <div className="card-header">
                 <h2>Active Contracts</h2>
-                <button className="view-all-btn">View All</button>
+                <Link to="/freelancer/my-projects" className="view-all-btn">View All</Link>
               </div>
               <div className="card-content">
                 {dashboardData.active_projects?.length > 0 ? (
