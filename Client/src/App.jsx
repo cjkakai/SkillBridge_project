@@ -3,6 +3,7 @@
 import React from 'react';
 import { AuthProvider } from './context/AuthContext';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import ProtectedRoute from './components/auth/ProtectedRoute';
 import ClientRegister from './components/auth/ClientRegister';
 import FreelancerRegister from './components/auth/FreelancerRegister';
 import Login from './components/auth/Login';
@@ -48,44 +49,47 @@ function App() {
       <Router>
         <div className="App">
           <Routes>
-          <Route path="/" element={<HomePage/>} />
-          <Route path="/client/dashboard" element={<ClientDashboard/>} />
-          <Route path="/client-contracts" element={<ClientContracts />} />
-          <Route path="/client-payment" element={<ClientPayment />} />
-          <Route path="/contract-details/:id" element={<ContractDetails />} />
-          <Route path="/edit-contract/:id" element={<EditContract />} />
-          <Route path="/client-messages" element={<ClientMessages />} />
-          <Route path="/task-applications" element={<TaskApplications />} />
-          <Route path="/task-edit/:taskId" element={<TaskEdit />} />
-          <Route path="/freelancer-experience/:freelancerId" element={<FreelancerExperience />} />
-          <Route path="/award-contract/:taskId/:freelancerId" element={<AwardContractForm />} />
-          <Route path="/client-profile" element={<ClientProfile />} />
-          <Route path="/freelancer-review/:contractId" element={<FreelancerReview />} />
-          <Route path="/client-report" element={<ClientReport />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/post-task" element={<PostTask />} />
-          <Route path="/role-selection" element={<RoleSelection />} />
-          <Route path="/client-register" element={<ClientRegister />} />
-          <Route path="/freelancer-register" element={<FreelancerRegister />} />
-          <Route path="/freelancer/dashboard" element={<FreelancerDashboard />} />
-          <Route path="/freelancer/browse-tasks" element={<BrowseTasks />} />
-          <Route path="/freelancer/applications" element={<Applications />} />
-          <Route path="/freelancer/profile" element={<Profile />} />
-          <Route path="/freelancer/experience" element={<Experience />} />
-          <Route path="/freelancer/messages" element={<FreelancerMessages />} />
-          <Route path="/freelancer/profile" element={<FreelancerDashboard />} />
-          <Route path="/freelancer/earnings" element={<Earnings />} />
-          <Route path="/freelancer-report" element={<FreelancerReport />} />
-          <Route path="/freelancer/payments" element={<FreelancerDashboard />} />
-          <Route path="/freelancer/reviews" element={<Reviews />} />
-          <Route path="/my-projects" element={<Myprojects />} />
-          <Route path="/freelancer/reviews" element={<FreelancerDashboard />} />
-          <Route path="/freelancer/my-projects" element={<Myprojects />} />
-          <Route path="/admin/dashboard" element={<AdminDashboard />} />
-          <Route path="/admin/users" element={<UserManagement />} />
-          <Route path="/admin/projects" element={<ProjectManagement />} />
-          <Route path="/admin/complaints" element={<Complaints />} />
-          <Route path="/admin/transactions" element={<TransactionManagement />} />
+           <Route path="/" element={<HomePage/>} />
+           <Route path="/login" element={<Login />} />
+           <Route path="/post-task" element={<PostTask />} />
+           <Route path="/role-selection" element={<RoleSelection />} />
+           <Route path="/client-register" element={<ClientRegister />} />
+           <Route path="/freelancer-register" element={<FreelancerRegister />} />
+
+           {/* Protected Client Routes */}
+           <Route path="/client/dashboard" element={<ProtectedRoute allowedRoles={['client']}><ClientDashboard/></ProtectedRoute>} />
+           <Route path="/client-contracts" element={<ProtectedRoute allowedRoles={['client']}><ClientContracts /></ProtectedRoute>} />
+           <Route path="/client-payment" element={<ProtectedRoute allowedRoles={['client']}><ClientPayment /></ProtectedRoute>} />
+           <Route path="/contract-details/:id" element={<ProtectedRoute allowedRoles={['client']}><ContractDetails /></ProtectedRoute>} />
+           <Route path="/edit-contract/:id" element={<ProtectedRoute allowedRoles={['client']}><EditContract /></ProtectedRoute>} />
+           <Route path="/client-messages" element={<ProtectedRoute allowedRoles={['client']}><ClientMessages /></ProtectedRoute>} />
+           <Route path="/task-applications" element={<ProtectedRoute allowedRoles={['client']}><TaskApplications /></ProtectedRoute>} />
+           <Route path="/task-edit/:taskId" element={<ProtectedRoute allowedRoles={['client']}><TaskEdit /></ProtectedRoute>} />
+           <Route path="/freelancer-experience/:freelancerId" element={<ProtectedRoute allowedRoles={['client']}><FreelancerExperience /></ProtectedRoute>} />
+           <Route path="/award-contract/:taskId/:freelancerId" element={<ProtectedRoute allowedRoles={['client']}><AwardContractForm /></ProtectedRoute>} />
+           <Route path="/client-profile" element={<ProtectedRoute allowedRoles={['client']}><ClientProfile /></ProtectedRoute>} />
+           <Route path="/freelancer-review/:contractId" element={<ProtectedRoute allowedRoles={['client']}><FreelancerReview /></ProtectedRoute>} />
+           <Route path="/client-report" element={<ProtectedRoute allowedRoles={['client']}><ClientReport /></ProtectedRoute>} />
+
+           {/* Protected Freelancer Routes */}
+           <Route path="/freelancer/dashboard" element={<ProtectedRoute allowedRoles={['freelancer']}><FreelancerDashboard /></ProtectedRoute>} />
+           <Route path="/freelancer/browse-tasks" element={<ProtectedRoute allowedRoles={['freelancer']}><BrowseTasks /></ProtectedRoute>} />
+           <Route path="/freelancer/applications" element={<ProtectedRoute allowedRoles={['freelancer']}><Applications /></ProtectedRoute>} />
+           <Route path="/freelancer/profile" element={<ProtectedRoute allowedRoles={['freelancer']}><Profile /></ProtectedRoute>} />
+           <Route path="/freelancer/experience" element={<ProtectedRoute allowedRoles={['freelancer']}><Experience /></ProtectedRoute>} />
+           <Route path="/freelancer/messages" element={<ProtectedRoute allowedRoles={['freelancer']}><FreelancerMessages /></ProtectedRoute>} />
+           <Route path="/freelancer/earnings" element={<ProtectedRoute allowedRoles={['freelancer']}><Earnings /></ProtectedRoute>} />
+           <Route path="/freelancer-report" element={<ProtectedRoute allowedRoles={['freelancer']}><FreelancerReport /></ProtectedRoute>} />
+           <Route path="/freelancer/reviews" element={<ProtectedRoute allowedRoles={['freelancer']}><Reviews /></ProtectedRoute>} />
+           <Route path="/my-projects" element={<ProtectedRoute allowedRoles={['freelancer']}><Myprojects /></ProtectedRoute>} />
+           <Route path="/freelancer/my-projects" element={<ProtectedRoute allowedRoles={['freelancer']}><Myprojects /></ProtectedRoute>} />
+
+           {/* Protected Admin Routes */}
+           <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><AdminDashboard /></ProtectedRoute>} />
+           <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><UserManagement /></ProtectedRoute>} />
+           <Route path="/admin/projects" element={<ProtectedRoute allowedRoles={['admin']}><ProjectManagement /></ProtectedRoute>} />
+           <Route path="/admin/complaints" element={<ProtectedRoute allowedRoles={['admin']}><Complaints /></ProtectedRoute>} />
+           <Route path="/admin/transactions" element={<ProtectedRoute allowedRoles={['admin']}><TransactionManagement /></ProtectedRoute>} />
         </Routes>
       </div>
     </Router>
