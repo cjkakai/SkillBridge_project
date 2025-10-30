@@ -10,13 +10,18 @@ const ProtectedRoute = ({ children, allowedRoles = [] }) => {
     return <div>Loading...</div>;
   }
 
-  if (!user) {
-    // Redirect to login if not authenticated
+  if (!user || !user.user_type) {
+    // Redirect to login if not authenticated or user data is invalid
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
+  // If no specific roles are required, just check authentication
+  if (allowedRoles.length === 0) {
+    return children;
+  }
+
   // Check if user has the required role
-  if (allowedRoles.length > 0 && !allowedRoles.includes(user.user_type)) {
+  if (!allowedRoles.includes(user.user_type)) {
     // Redirect to appropriate dashboard based on user type
     const dashboardRoutes = {
       freelancer: '/freelancer/dashboard',

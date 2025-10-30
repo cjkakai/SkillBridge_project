@@ -51,12 +51,12 @@ function App() {
           <Routes>
            <Route path="/" element={<HomePage/>} />
            <Route path="/login" element={<Login />} />
-           <Route path="/post-task" element={<PostTask />} />
            <Route path="/role-selection" element={<RoleSelection />} />
            <Route path="/client-register" element={<ClientRegister />} />
            <Route path="/freelancer-register" element={<FreelancerRegister />} />
 
-           {/* Protected Client Routes */}
+           {/* Protected Routes - All routes except the public ones above require authentication */}
+           <Route path="/post-task" element={<ProtectedRoute><PostTask /></ProtectedRoute>} />
            <Route path="/client/dashboard" element={<ProtectedRoute allowedRoles={['client']}><ClientDashboard/></ProtectedRoute>} />
            <Route path="/client-contracts" element={<ProtectedRoute allowedRoles={['client']}><ClientContracts /></ProtectedRoute>} />
            <Route path="/client-payment" element={<ProtectedRoute allowedRoles={['client']}><ClientPayment /></ProtectedRoute>} />
