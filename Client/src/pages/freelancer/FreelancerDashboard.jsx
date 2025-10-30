@@ -299,7 +299,7 @@ const FreelancerDashboard = () => {
             <div className="dashboard-card">
               <div className="card-header">
                 <h2>Recommended Jobs</h2>
-                <button className="view-all-btn">View All</button>
+                <Link to="/freelancer/browse-tasks" className="view-all-btn">View All</Link>
               </div>
               <div className="card-content">
                 {dashboardData.recommended_jobs?.length > 0 ? (
