@@ -9,11 +9,13 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
 from sqlalchemy import MetaData
 from dotenv import load_dotenv
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 UPLOAD_FOLDER = 'server/uploads'
 load_dotenv()
 
 app= Flask(__name__)
+app.wsgi_app = ProxyFix(app.wsgi_app)
 app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URI', 'sqlite:///app.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
@@ -39,7 +41,7 @@ metadata = MetaData(naming_convention={
 })
 db = SQLAlchemy(metadata=metadata)
 
-CORS(app, supports_credentials=True, origins=['http://localhost:5173', 'http://127.0.0.1:5173', 'https://skillbridge-project-1.onrender.com'])
+CORS(app, supports_credentials=True, origins=['http://localhost:5173', 'http://127.0.0.1:5173', 'https://skillbridge-project-1.onrender.com', 'https://skillbridge-platform-9xtd.onrender.com'])
 
 migrate= Migrate(app,db)
 

@@ -14,7 +14,7 @@ from datetime import datetime
 import pytz
 
 
-socketio = SocketIO(app, cors_allowed_origins="*")
+socketio = SocketIO(app, cors_allowed_origins=['http://localhost:5173', 'http://127.0.0.1:5173', 'https://skillbridge-project-1.onrender.com', 'https://skillbridge-platform-9xtd.onrender.com'])
 
 # Load environment variables from .env file
 load_dotenv()
