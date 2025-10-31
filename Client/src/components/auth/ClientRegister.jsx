@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { BASE_URL } from '../../config';
 import './Register.css';
 import Navbar from '../ui/NavBar';
 
@@ -26,7 +27,7 @@ const ClientRegister = () => {
 
   const handleSubmit = async (values, { setSubmitting, resetForm }) => {
     try {
-      const response = await fetch('/api/clients', {
+      const response = await fetch(`${BASE_URL}/api/clients`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

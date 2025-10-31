@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from './AdminSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import './Complaints.css';
 
 const Complaints = () => {
@@ -20,7 +21,7 @@ const Complaints = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await fetch(`/api/admins/${user.id}/view-complaints`);
+      const response = await fetch(`${BASE_URL}/api/admins/${user.id}/view-complaints`);
       if (!response.ok) {
         throw new Error('Failed to fetch complaints');
       }
@@ -45,7 +46,7 @@ const Complaints = () => {
     }
 
     try {
-      const response = await fetch(`/api/admin/complaints/${complaintId}`, {
+      const response = await fetch(`${BASE_URL}/api/admin/complaints/${complaintId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -92,7 +93,7 @@ const Complaints = () => {
     }
 
     try {
-      const response = await fetch(`/api/admin/complaints/${complaintId}`, {
+      const response = await fetch(`${BASE_URL}/api/admin/complaints/${complaintId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -132,7 +133,7 @@ const Complaints = () => {
     }
 
     try {
-      const response = await fetch(`/api/admins/${user.id}/complaints/${complaintId}`, {
+      const response = await fetch(`${BASE_URL}/api/admins/${user.id}/complaints/${complaintId}`, {
         method: 'DELETE',
       });
 

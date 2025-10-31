@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User } from 'lucide-react';
+import { BASE_URL } from '../../config';
 import './TaskEdit.css';
 
 const TaskEdit = () => {
@@ -22,7 +23,7 @@ const TaskEdit = () => {
 
   const fetchTask = async () => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`);
+      const response = await fetch(`${BASE_URL}/api/tasks/${taskId}`);
       if (response.ok) {
         const taskData = await response.json();
         setTask({
@@ -55,7 +56,7 @@ const TaskEdit = () => {
     setSaving(true);
 
     try {
-      const response = await fetch(`/api/tasks/${taskId}`, {
+      const response = await fetch(`${BASE_URL}/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

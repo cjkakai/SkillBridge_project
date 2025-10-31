@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, User } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import "./PostTask.css";
 import './ClientDashboard.css';
 
@@ -66,7 +67,7 @@ function PostTask() {
 
     setIsGenerating(true);
     try {
-      const response = await fetch('/api/ai/describe-task', {
+      const response = await fetch(`${BASE_URL}/api/ai/describe-task`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -108,7 +109,7 @@ function PostTask() {
       };
 
       // Post the task
-      const taskResponse = await fetch('/api/tasks', {
+      const taskResponse = await fetch(`${BASE_URL}/api/tasks`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -125,7 +126,7 @@ function PostTask() {
       // Create skills and link them to the task
       for (const skillName of formData.skills) {
         // First, create or get the skill
-        const skillResponse = await fetch(`/api/clients/${clientId}/skills`, {
+        const skillResponse = await fetch(`${BASE_URL}/api/clients/${clientId}/skills`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

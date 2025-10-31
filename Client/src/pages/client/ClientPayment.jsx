@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, Users, FileText, User, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import './ClientPayment.css';
 
 const ClientPayment = () => {
@@ -32,7 +33,7 @@ const ClientPayment = () => {
 
   const fetchContracts = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts`);
       if (response.ok) {
         const data = await response.json();
         setContracts(data);
@@ -46,7 +47,7 @@ const ClientPayment = () => {
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/payments`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/payments`);
       if (response.ok) {
         const data = await response.json();
         setPayments(data);
@@ -69,7 +70,7 @@ const ClientPayment = () => {
   const fetchFreelancers = async (freelancerIds) => {
     try {
       const freelancerPromises = freelancerIds.map(id =>
-        fetch(`/api/freelancers/${id}`)
+        fetch(`${BASE_URL}/api/freelancers/${id}`)
       );
 
       const responses = await Promise.all(freelancerPromises);
@@ -106,7 +107,7 @@ const ClientPayment = () => {
     console.log(selectedContract)
 
     try {
-      const response = await fetch('/api/payments/mpesa/stkpush', {
+      const response = await fetch(`${BASE_URL}/api/payments/mpesa/stkpush`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

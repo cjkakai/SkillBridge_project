@@ -4,6 +4,7 @@ import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircl
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
 import TaskApplicationCard from './TaskApplicationCard';
+import { BASE_URL } from '../../config';
 import './TaskApplications.css';
 
 const TaskApplications = () => {
@@ -42,7 +43,7 @@ const TaskApplications = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`/api/clients/${clientId}`).
+      fetch(`${BASE_URL}/api/clients/${clientId}`).
       then((response)=>response.json()).
       then((data)=>{
         console.log(data)
@@ -54,7 +55,7 @@ const TaskApplications = () => {
 
   const fetchApplications = async () => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}/applications`);
+      const response = await fetch(`${BASE_URL}/api/tasks/${taskId}/applications`);
       if (response.ok) {
         const data = await response.json();
         console.log(data)
@@ -69,7 +70,7 @@ const TaskApplications = () => {
 
   const fetchTaskDetails = async () => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`);
+      const response = await fetch(`${BASE_URL}/api/tasks/${taskId}`);
       if (response.ok) {
         const task = await response.json();
         setTaskTitle(task.title);
@@ -92,7 +93,7 @@ const TaskApplications = () => {
     const newStatus = application.status === 'rejected' ? 'pending' : 'rejected';
 
     try {
-      const response = await fetch(`/api/applications/${applicationId}`, {
+      const response = await fetch(`${BASE_URL}/api/applications/${applicationId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User } from 'lucide-react';
 import FreelancerExperienceCard from './FreelancerExperienceCard';
+import { BASE_URL } from '../../config';
 import './FreelancerExperience.css';
 
 const FreelancerExperience = () => {
@@ -20,7 +21,7 @@ const FreelancerExperience = () => {
 
   const fetchFreelancer = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}`);
       if (response.ok) {
         const data = await response.json();
         setFreelancer(data);
@@ -32,7 +33,7 @@ const FreelancerExperience = () => {
 
   const fetchExperiences = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/experience`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/experience`);
       if (response.ok) {
         const data = await response.json();
         setExperiences(data);

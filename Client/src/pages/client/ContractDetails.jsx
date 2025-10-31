@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Calendar, DollarSign, User, FileText, Clock, Star, Download, AlertTriangle, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import '../client/ClientDashboard.css';
 import '../client/ClientContracts.css';
 
@@ -34,7 +35,7 @@ const ContractDetails = () => {
   }, [contract]);
 
   const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+    fetch(`${BASE_URL}/api/clients/${clientId}`)
       .then((response) => response.json())
       .then((data) => {
         setClientName(data.name);
@@ -44,13 +45,13 @@ const ContractDetails = () => {
 
   const fetchContract = async () => {
     try {
-      const response = await fetch(`/api/contracts/${id}`);
+      const response = await fetch(`${BASE_URL}/api/contracts/${id}`);
       if (response.ok) {
         const data = await response.json();
         setContract(data);
 
         // Fetch milestones separately
-        const milestonesResponse = await fetch(`/api/contracts/${id}/milestones`);
+        const milestonesResponse = await fetch(`${BASE_URL}/api/contracts/${id}/milestones`);
         if (milestonesResponse.ok) {
           const milestonesData = await milestonesResponse.json();
           console.log(milestonesData)
@@ -83,7 +84,7 @@ const ContractDetails = () => {
   const handleDeleteMilestone = async (milestoneId) => {
     if (window.confirm('Are you sure you want to delete this milestone?')) {
       try {
-        const response = await fetch(`/api/contracts/${id}/milestones/${milestoneId}`, {
+        const response = await fetch(`${BASE_URL}/api/contracts/${id}/milestones/${milestoneId}`, {
           method: 'DELETE'
         });
 
@@ -114,7 +115,7 @@ const ContractDetails = () => {
     };
 
     try {
-      const response = await fetch(`/api/contracts/${id}/milestones`, {
+      const response = await fetch(`${BASE_URL}/api/contracts/${id}/milestones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -140,7 +141,7 @@ const ContractDetails = () => {
 
   const handleDownloadFile = async (milestoneId) => {
     try {
-      const response = await fetch(`/api/milestones/${milestoneId}/download`);
+      const response = await fetch(`${BASE_URL}/api/milestones/${milestoneId}/download`);
       if (response.ok) {
         const blob = await response.blob();
         const url = window.URL.createObjectURL(blob);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
+import { BASE_URL } from '../../config';
 import './UserManagement.css';
 
 const UserManagement = () => {
@@ -20,8 +21,8 @@ const UserManagement = () => {
     try {
       setLoading(true);
       const [clientsResponse, freelancersResponse] = await Promise.all([
-        fetch('/api/clients'),
-        fetch('/api/freelancers')
+        fetch(`${BASE_URL}/api/clients`),
+        fetch(`${BASE_URL}/api/freelancers`)
       ]);
 
       if (clientsResponse.ok && freelancersResponse.ok) {
@@ -57,7 +58,7 @@ const UserManagement = () => {
   };
 
   const handleDeleteUser = async (userId, type) => {
-    const endpoint = type === 'client' ? `/api/clients/${userId}` : `/api/freelancers/${userId}`;
+    const endpoint = type === 'client' ? `${BASE_URL}/api/clients/${userId}` : `${BASE_URL}/api/freelancers/${userId}`;
     const confirmMessage = `Are you sure you want to delete this ${type}? This action cannot be undone.`;
     if (window.confirm(confirmMessage)) {
       try {

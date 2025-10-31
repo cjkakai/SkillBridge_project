@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
 import { Clock, CheckCircle, XCircle, Eye, Loader2, FileText, Calendar, DollarSign, ChevronDown, ChevronUp } from 'lucide-react';
+import { BASE_URL } from '../../config';
 import './Applications.css';
 
 const Applications = () => {
@@ -24,7 +25,7 @@ const Applications = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/applications`);
+        const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/applications`);
         if (!response.ok) {
           throw new Error("Failed to fetch applications.");
         }
@@ -41,7 +42,7 @@ const Applications = () => {
 
     const fetchClients = async () => {
       try {
-        const response = await fetch('/api/clients');
+        const response = await fetch(`${BASE_URL}/api/clients`);
         if (response.ok) {
           const clientsData = await response.json();
           setClients(clientsData);

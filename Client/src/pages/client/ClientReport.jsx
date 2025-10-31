@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User, AlertTriangle, Send } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 
 const ClientReport = () => {
@@ -28,7 +29,7 @@ const ClientReport = () => {
   }, [user?.id]);
 
   const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+    fetch(`${BASE_URL}/api/clients/${clientId}`)
       .then((response) => response.json())
       .then((data) => {
         setClientName(data.name);
@@ -37,7 +38,7 @@ const ClientReport = () => {
   };
 
   const fetchFreelancers = () => {
-    fetch(`/api/clients/${clientId}/freelancers`)
+    fetch(`${BASE_URL}/api/clients/${clientId}/freelancers`)
       .then((response) => response.json())
       .then((data) => {
         setFreelancers(data);
@@ -48,7 +49,7 @@ const ClientReport = () => {
   };
 
   const fetchContracts = () => {
-    fetch(`/api/clients/${clientId}/contracts`)
+    fetch(`${BASE_URL}/api/clients/${clientId}/contracts`)
       .then((response) => response.json())
       .then((data) => {
         setContracts(data);
@@ -59,7 +60,7 @@ const ClientReport = () => {
   };
 
   const fetchAdmins = () => {
-    fetch('/api/admins')
+    fetch(`${BASE_URL}/api/admins`)
       .then((response) => response.json())
       .then((data) => {
         setAdmins(data);
@@ -71,7 +72,7 @@ const ClientReport = () => {
   };
 
   const fetchComplaints = () => {
-    fetch(`/api/clients/${clientId}/complaints`)
+    fetch(`${BASE_URL}/api/clients/${clientId}/complaints`)
       .then((response) => response.json())
       .then((data) => {
         setComplaints(data);
@@ -175,7 +176,7 @@ const ClientReport = () => {
               };
 
               try {
-                const response = await fetch(`/api/clients/${clientId}/contracts/${complaintData.contract_id}/complaints`, {
+                const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts/${complaintData.contract_id}/complaints`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -285,7 +286,7 @@ const ClientReport = () => {
                         onClick={async () => {
                           if (window.confirm('Are you sure you want to delete this complaint?')) {
                             try {
-                              const response = await fetch(`/api/clients/${clientId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
+                              const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
                                 method: 'DELETE'
                               });
 

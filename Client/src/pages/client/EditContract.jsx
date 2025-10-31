@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
@@ -29,7 +30,7 @@ const EditContract = () => {
   }, [id, user?.id]);
 
   const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+    fetch(`${BASE_URL}/api/clients/${clientId}`)
       .then((response) => response.json())
       .then((data) => {
         setClientName(data.name);
@@ -39,7 +40,7 @@ const EditContract = () => {
 
   const fetchContract = async () => {
     try {
-      const response = await fetch(`/api/contracts/${id}`);
+      const response = await fetch(`${BASE_URL}/api/contracts/${id}`);
       if (response.ok) {
         const data = await response.json();
         setContract(data);
@@ -68,7 +69,7 @@ const EditContract = () => {
     e.preventDefault();
     setSaving(true);
     try {
-      const response = await fetch(`/api/contracts/${id}`, {
+      const response = await fetch(`${BASE_URL}/api/contracts/${id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

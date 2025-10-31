@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, User, Camera, Save, AlertTriangle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import './ClientProfile.css';
 
 const ClientProfile = () => {
@@ -33,7 +34,7 @@ const ClientProfile = () => {
 
   const fetchClientProfile = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}`);
       if (response.ok) {
         const data = await response.json();
         setClient(data);
@@ -81,7 +82,7 @@ const ClientProfile = () => {
     formDataUpload.append('image', selectedFile);
 
     try {
-      const response = await fetch(`/api/clients/${clientId}/upload-image`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/upload-image`, {
         method: 'POST',
         body: formDataUpload
       });
@@ -125,7 +126,7 @@ const ClientProfile = () => {
         updateData.password = formData.password;
       }
 
-      const response = await fetch(`/api/clients/${clientId}/profile`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

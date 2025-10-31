@@ -4,6 +4,7 @@ import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircl
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
 import ContractCard from './ContractCard';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
@@ -25,7 +26,7 @@ const ClientContracts = () => {
   const handleDeleteContract = async (contractId) => {
     if (window.confirm('Are you sure you want to delete this contract? This action cannot be undone.')) {
       try {
-        const response = await fetch(`/api/clients/${clientId}/contracts/${contractId}`, {
+        const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts/${contractId}`, {
           method: 'DELETE',
         });
         if (response.ok) {
@@ -55,7 +56,7 @@ const ClientContracts = () => {
   }, [contracts, searchTerm]);
 
   const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+    fetch(`${BASE_URL}/api/clients/${clientId}`)
       .then((response) => response.json())
       .then((data) => {
         setClientName(data.name);
@@ -65,7 +66,7 @@ const ClientContracts = () => {
 
   const fetchContracts = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts`);
       if (response.ok) {
         const data = await response.json();
         setContracts(data);

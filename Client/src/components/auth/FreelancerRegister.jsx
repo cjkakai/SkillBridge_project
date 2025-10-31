@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
+import { BASE_URL } from '../../config';
 import './Register.css';
 import Navbar from '../ui/NavBar';
 
@@ -27,7 +28,7 @@ const FreelancerRegister = () => {
 
   const handleSubmit = async (values, { setSubmitting, setErrors }) => {
     try {
-      const response = await fetch('/api/freelancers', {
+      const response = await fetch(`${BASE_URL}/api/freelancers`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

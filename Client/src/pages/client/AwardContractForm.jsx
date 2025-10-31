@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2, AlertTriangle } from 'lucide-react';
 import './AwardContractForm.css';
 
@@ -39,7 +40,7 @@ const AwardContractForm = () => {
 
   const fetchTask = async () => {
     try {
-      const response = await fetch(`/api/tasks/${taskId}`);
+      const response = await fetch(`${BASE_URL}/api/tasks/${taskId}`);
       if (response.ok) {
         const taskData = await response.json();
         setTask(taskData);
@@ -58,7 +59,7 @@ const AwardContractForm = () => {
 
   const fetchFreelancer = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}`);
       if (response.ok) {
         const freelancerData = await response.json();
         setFreelancer(freelancerData);
@@ -83,7 +84,7 @@ const AwardContractForm = () => {
     setSaving(true);
 
     try {
-      const response = await fetch(`/api/clients/${clientId}/create-contract`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/create-contract`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -130,7 +131,7 @@ const AwardContractForm = () => {
     }
 
     try {
-      const response = await fetch(`/api/contracts/${contractId}/milestones`, {
+      const response = await fetch(`${BASE_URL}/api/contracts/${contractId}/milestones`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,7 +166,7 @@ const AwardContractForm = () => {
 
   const handleDeleteMilestone = async (milestoneId) => {
     try {
-      const response = await fetch(`/api/contracts/${contractId}/milestones`, {
+      const response = await fetch(`${BASE_URL}/api/contracts/${contractId}/milestones`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

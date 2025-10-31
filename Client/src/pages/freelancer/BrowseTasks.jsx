@@ -3,6 +3,7 @@ import FreelancerSidebar from './FreelancerSidebar';
 import ApplicationForm from './ApplicationForm';
 import useApplyJob from '../../hooks/useApplyJob';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 
 const BrowseTasks = () => {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ const BrowseTasks = () => {
   const fetchTasks = async () => {
     try {
       setTasksLoading(true);
-      const response = await fetch('/api/tasks');
+      const response = await fetch(`${BASE_URL}/api/tasks`);
       if (response.ok) {
         const tasksData = await response.json();
         console.log('Tasks data:', tasksData);
@@ -52,7 +53,7 @@ const BrowseTasks = () => {
 
   const fetchClients = async () => {
     try {
-      const response = await fetch('/api/clients');
+      const response = await fetch(`${BASE_URL}/api/clients`);
       if (response.ok) {
         const clientsData = await response.json();
         setClients(clientsData);

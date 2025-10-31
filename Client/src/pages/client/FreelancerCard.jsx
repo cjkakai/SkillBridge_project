@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 
 const FreelancerCard = ({ freelancer, task }) => {
   const navigate = useNavigate();
@@ -16,7 +17,7 @@ const FreelancerCard = ({ freelancer, task }) => {
 
   const fetchContractId = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts`);
       if (response.ok) {
         const contracts = await response.json();
         // Find the contract for this freelancer

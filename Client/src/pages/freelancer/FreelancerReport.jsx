@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { AlertTriangle, Send, FileText, Clock, CheckCircle, XCircle, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import './FreelancerReport.css';
 
 const FreelancerReport = () => {
@@ -22,7 +23,7 @@ const FreelancerReport = () => {
 
   const fetchFreelancerData = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}`);
       if (response.ok) {
         const data = await response.json();
         setFreelancer(data);
@@ -34,7 +35,7 @@ const FreelancerReport = () => {
 
   const fetchContracts = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/contracts`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/contracts`);
       if (response.ok) {
         const data = await response.json();
         console.log(data)
@@ -47,7 +48,7 @@ const FreelancerReport = () => {
 
   const fetchAdmins = async () => {
     try {
-      const response = await fetch('/api/admins');
+      const response = await fetch(`${BASE_URL}/api/admins`);
       if (response.ok) {
         const data = await response.json();
         setAdmins(data);
@@ -59,7 +60,7 @@ const FreelancerReport = () => {
 
   const fetchComplaints = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/complaints`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/complaints`);
       if (response.ok) {
         const data = await response.json();
         setComplaints(data);
@@ -127,7 +128,7 @@ const FreelancerReport = () => {
               };
 
               try {
-                const response = await fetch(`/api/freelancers/${freelancerId}/contracts/${complaintData.contract_id}/complaints`, {
+                const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/contracts/${complaintData.contract_id}/complaints`, {
                   method: 'POST',
                   headers: {
                     'Content-Type': 'application/json',
@@ -350,7 +351,7 @@ const FreelancerReport = () => {
                         onClick={async () => {
                           if (window.confirm('Are you sure you want to delete this complaint?')) {
                             try {
-                              const response = await fetch(`/api/freelancers/${freelancerId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
+                              const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/contracts/${complaint.contract_id}/complaints/${complaint.id}`, {
                                 method: 'DELETE'
                               });
 

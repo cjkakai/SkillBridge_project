@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { DollarSign, Users, Briefcase, AlertTriangle, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import AdminSidebar from './AdminSidebar';
+import { BASE_URL } from '../../config';
 import './AdminDashboard.css';
 
 const AdminDashboard = () => {
@@ -28,7 +29,7 @@ const AdminDashboard = () => {
 
   const fetchAdminData = async () => {
     try {
-      const response = await fetch(`/api/admins/${user.id}`);
+      const response = await fetch(`${BASE_URL}/api/admins/${user.id}`);
       if (response.ok) {
         const data = await response.json();
         setAdminData(data);
@@ -41,13 +42,13 @@ const AdminDashboard = () => {
   const fetchStats = async () => {
     try {
       const [paymentsRes, clientsRes, freelancersRes, contractsRes, complaintsRes, topClientsRes, latestPaymentsRes] = await Promise.all([
-        fetch('/api/payments'),
-        fetch('/api/clients'),
-        fetch('/api/freelancers'),
-        fetch('/api/contracts'),
-        fetch(`/api/admins/${user.id}/complaints`),
-        fetch('/api/top-clients'),
-        fetch('/api/latest-payments')
+        fetch(`${BASE_URL}/api/payments`),
+        fetch(`${BASE_URL}/api/clients`),
+        fetch(`${BASE_URL}/api/freelancers`),
+        fetch(`${BASE_URL}/api/contracts`),
+        fetch(`${BASE_URL}/api/admins/${user.id}/complaints`),
+        fetch(`${BASE_URL}/api/top-clients`),
+        fetch(`${BASE_URL}/api/latest-payments`)
       ]);
 
       const payments = paymentsRes.ok ? await paymentsRes.json() : [];

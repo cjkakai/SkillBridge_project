@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { login as loginApi, getCurrentUser } from '../services/auth';
+import { BASE_URL } from '../config';
 
 const AuthContext = createContext();
 
@@ -47,7 +48,7 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     try {
-      await fetch('/api/logout', {
+      await fetch(`${BASE_URL}/api/logout`, {
         method: 'POST',
         credentials: 'include'
       });

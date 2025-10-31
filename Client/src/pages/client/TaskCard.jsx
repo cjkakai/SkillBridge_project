@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, DollarSign, Clock, MapPin, Tag, Users, Edit, Trash2 } from 'lucide-react';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 
 
@@ -18,13 +19,13 @@ const TaskCard = ({ task, onTaskDeleted }) => {
   const fetchProgress = async () => {
     try {
       // Find the contract for this task
-      const contractsResponse = await fetch(`/api/contracts`);
+      const contractsResponse = await fetch(`${BASE_URL}/api/contracts`);
       if (contractsResponse.ok) {
         const contracts = await contractsResponse.json();
         const contract = contracts.find(c => c.task_id === task.id);
         if (contract) {
           // Fetch milestones for this contract
-          const milestonesResponse = await fetch(`/api/contracts/${contract.id}/milestones`);
+          const milestonesResponse = await fetch(`${BASE_URL}/api/contracts/${contract.id}/milestones`);
           if (milestonesResponse.ok) {
             const milestones = await milestonesResponse.json();
             if (milestones.length > 0) {
@@ -74,7 +75,7 @@ const TaskCard = ({ task, onTaskDeleted }) => {
     if (window.confirm('Are you sure you want to delete this task? This action cannot be undone.')) {
       setIsDeleting(true);
       try {
-        const response = await fetch(`/api/tasks/${task.id}`, {
+        const response = await fetch(`${BASE_URL}/api/tasks/${task.id}`, {
           method: 'DELETE',
         });
 

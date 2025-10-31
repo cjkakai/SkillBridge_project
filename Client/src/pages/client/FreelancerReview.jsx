@@ -5,6 +5,7 @@ import * as Yup from 'yup';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Star } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 import './ClientContracts.css';
 
@@ -28,7 +29,7 @@ const FreelancerReview = () => {
   }, [contractId, user?.id]);
 
   const fetchClientData = () => {
-    fetch(`/api/clients/${clientId}`)
+    fetch(`${BASE_URL}/api/clients/${clientId}`)
       .then((response) => response.json())
       .then((data) => {
         setClientName(data.name);
@@ -38,7 +39,7 @@ const FreelancerReview = () => {
 
   const fetchContract = async () => {
     try {
-      const response = await fetch(`/api/contracts/${contractId}`);
+      const response = await fetch(`${BASE_URL}/api/contracts/${contractId}`);
       if (response.ok) {
         const data = await response.json();
         setContract(data);
@@ -50,7 +51,7 @@ const FreelancerReview = () => {
 
   const fetchExistingReview = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/contracts/${contractId}/review`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts/${contractId}/review`);
       if (response.ok) {
         const review = await response.json();
         setExistingReview(review);
@@ -74,7 +75,7 @@ const FreelancerReview = () => {
   const handleSubmit = async (values, { setSubmitting }) => {
     try {
       const method = existingReview ? 'PUT' : 'POST';
-      const response = await fetch(`/api/clients/${clientId}/contracts/${contractId}/review`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts/${contractId}/review`, {
         method: method,
         headers: {
           'Content-Type': 'application/json',

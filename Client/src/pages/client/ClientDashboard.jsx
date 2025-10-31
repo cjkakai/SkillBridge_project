@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
 import TaskCard from './TaskCard';
 import FreelancerCard from './FreelancerCard';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 
 const ClientDashboard = () => {
@@ -33,7 +34,7 @@ const ClientDashboard = () => {
   
   useEffect(()=>{
     if (user?.id) {
-      fetch(`/api/clients/${clientId}`, {
+      fetch(`${BASE_URL}/api/clients/${clientId}`, {
         credentials: 'include'
       }).
       then((response)=>response.json()).
@@ -48,7 +49,7 @@ const ClientDashboard = () => {
 
   const fetchTasks = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/tasks`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/tasks`, {
         credentials: 'include'
       });
       if (response.ok) {
@@ -65,38 +66,38 @@ const ClientDashboard = () => {
   };
 
   const fetchFreelancers= async () =>{
-   try{
-    const response= await fetch(`/api/clients/${clientId}/freelancers`, {
-      credentials: 'include'
-    });
-    if(response.ok) {
-      const data= await response.json();
-      setFreelancers(data);
-    }
-    } catch(error) {
-     console.error('Error Fetching your freelancers', error);
-    } finally{
-      setFreelancerLoading(false)
-    }
-  }
+    try{
+     const response= await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers`, {
+       credentials: 'include'
+     });
+     if(response.ok) {
+       const data= await response.json();
+       setFreelancers(data);
+     }
+     } catch(error) {
+      console.error('Error Fetching your freelancers', error);
+     } finally{
+       setFreelancerLoading(false)
+     }
+   }
   
   const fetchActiveContracts = async () =>{
-   try{
-    const response= await fetch(`/api/clients/${clientId}/contracts`, {
-      credentials: 'include'
-    });
-    if(response.ok){
-      const contracts= await response.json();
-      setContractNumber(contracts.length)
+    try{
+     const response= await fetch(`${BASE_URL}/api/clients/${clientId}/contracts`, {
+       credentials: 'include'
+     });
+     if(response.ok){
+       const contracts= await response.json();
+       setContractNumber(contracts.length)
+     }
+    }catch(error){
+     console.error('Error Fetching your freelancers', error);
     }
-   }catch(error){
-    console.error('Error Fetching your freelancers', error);
    }
-  }
 
   const fetchTotalSpent = async () => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/payments`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/payments`, {
         credentials: 'include'
       });
       if (response.ok) {
@@ -112,7 +113,7 @@ const ClientDashboard = () => {
   const fetchUnreadMessages = async () => {
     try {
       // First get all contracts for this client
-      const contractsResponse = await fetch(`/api/clients/${clientId}/contracts`, {
+      const contractsResponse = await fetch(`${BASE_URL}/api/clients/${clientId}/contracts`, {
         credentials: 'include'
       });
       if (contractsResponse.ok) {
@@ -123,7 +124,7 @@ const ClientDashboard = () => {
         // For each contract, get messages and filter
         for (const contract of contracts) {
           const freelancerId = contract.freelancer.id;
-          const messagesResponse = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`, {
+          const messagesResponse = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers/${freelancerId}/messages`, {
             credentials: 'include'
           });
           if (messagesResponse.ok) {

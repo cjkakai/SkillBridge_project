@@ -1,4 +1,6 @@
-const API_BASE_URL = "http://localhost:5000/api";
+import { BASE_URL } from '../config';
+
+const API_BASE_URL = `${BASE_URL}/api`;
 
 export const getFreelancerDashboard = async (freelancerId) => {
   const res = await fetch(`${API_BASE_URL}/freelancers/${freelancerId}/dashboard`);

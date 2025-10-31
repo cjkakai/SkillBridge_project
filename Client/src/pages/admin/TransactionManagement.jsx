@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AdminSidebar from './AdminSidebar';
+import { BASE_URL } from '../../config';
 import './TransactionManagement.css';
 
 const TransactionManagement = () => {
@@ -16,7 +17,7 @@ const TransactionManagement = () => {
   const fetchPayments = async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/admin/payments');
+      const response = await fetch(`${BASE_URL}/api/admin/payments`);
       if (!response.ok) {
         throw new Error('Failed to fetch payments');
       }

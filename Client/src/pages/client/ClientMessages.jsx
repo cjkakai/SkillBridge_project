@@ -4,6 +4,7 @@ import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircl
 import { useAuth } from '../../context/AuthContext';
 import LogoutButton from '../../components/auth/LogoutButton';
 import ClientMessageCard from './ClientMessageCard';
+import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 import io from 'socket.io-client';
 
@@ -23,7 +24,7 @@ const ClientMessages = () => {
 
   useEffect(() => {
     if (user?.id) {
-      fetch(`/api/clients/${clientId}`)
+      fetch(`${BASE_URL}/api/clients/${clientId}`)
         .then((response) => response.json())
         .then((data) => {
           setClientName(data.name);
@@ -70,7 +71,7 @@ const ClientMessages = () => {
   const fetchFreelancersWithMessages = async () => {
     try {
       // Get all freelancers the client has contracts with
-      const freelancersResponse = await fetch(`/api/clients/${clientId}/freelancers`);
+      const freelancersResponse = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers`);
       if (freelancersResponse.ok) {
         const freelancers = await freelancersResponse.json();
 
@@ -81,7 +82,7 @@ const ClientMessages = () => {
           const freelancerId = freelancer.id;
 
           // Get messages for this freelancer
-          const messagesResponse = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
+          const messagesResponse = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
           let latestMessage = null;
           let unreadCount = 0;
 
@@ -122,7 +123,7 @@ const ClientMessages = () => {
 
   const fetchMessages = async (freelancerId) => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers/${freelancerId}/messages`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
@@ -140,7 +141,7 @@ const ClientMessages = () => {
 
   const markMessagesAsRead = async (freelancerId) => {
     try {
-      const response = await fetch(`/api/clients/${clientId}/freelancers/${freelancerId}/messages/mark-read`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers/${freelancerId}/messages/mark-read`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -164,7 +165,7 @@ const ClientMessages = () => {
     if (!newMessage.trim() || !selectedFreelancer) return;
 
     try {
-      const response = await fetch(`/api/clients/${clientId}/freelancers/${selectedFreelancer.id}/messages`, {
+      const response = await fetch(`${BASE_URL}/api/clients/${clientId}/freelancers/${selectedFreelancer.id}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

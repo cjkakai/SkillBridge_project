@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import AdminSidebar from "./AdminSidebar";
 import { useAuth } from "../../context/AuthContext";
+import { BASE_URL } from '../../config';
 import "./UserManagement.css";
 
 const ProjectManagement = () => {
@@ -15,8 +16,8 @@ const ProjectManagement = () => {
     const fetchProjects = async () => {
       try {
         // Fetch contracts as primary data source
-        const contractsResponse = await fetch('/api/contracts');
-        const clientsResponse = await fetch('/api/clients');
+        const contractsResponse = await fetch(`${BASE_URL}/api/contracts`);
+        const clientsResponse = await fetch(`${BASE_URL}/api/clients`);
         
         const contracts = contractsResponse.ok ? await contractsResponse.json() : [];
         const clients = clientsResponse.ok ? await clientsResponse.json() : [];
@@ -26,7 +27,7 @@ const ProjectManagement = () => {
         
         // Fetch tasks for each contract
         const taskPromises = contracts.map(contract => 
-          contract.task_id ? fetch(`/api/tasks/${contract.task_id}`).then(res => res.ok ? res.json() : null) : null
+          contract.task_id ? fetch(`${BASE_URL}/api/tasks/${contract.task_id}`).then(res => res.ok ? res.json() : null) : null
         );
         const tasks = await Promise.all(taskPromises);
 
