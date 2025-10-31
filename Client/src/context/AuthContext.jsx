@@ -21,14 +21,19 @@ export const AuthProvider = ({ children }) => {
     const checkSession = async () => {
       try {
         const userData = await getCurrentUser();
-        setUser(userData);
+        if (userData && userData.user_type) {
+          setUser(userData);
+        } else {
+          setUser(null);
+        }
       } catch (error) {
         console.log('No active session');
+        setUser(null);
       } finally {
         setLoading(false);
       }
     };
-    
+
     checkSession();
   }, []);
 
