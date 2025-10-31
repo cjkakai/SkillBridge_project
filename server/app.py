@@ -647,12 +647,12 @@ class FreelancerDashboard(Resource):
         
             earnings_trend = (
                 db.session.query(
-                    db.func.strftime("%Y-%m", Payment.created_at).label("month"),
+                    db.func.to_char(Payment.created_at, 'YYYY-MM').label("month"),
                     db.func.sum(Payment.amount).label("amount"),
                 )
                 .filter(Payment.payee_id == freelancer_id)
-                .group_by(db.func.strftime("%Y-%m", Payment.created_at))
-                .order_by(db.func.strftime("%Y-%m", Payment.created_at).desc())
+                .group_by(db.func.to_char(Payment.created_at, 'YYYY-MM'))
+                .order_by(db.func.to_char(Payment.created_at, 'YYYY-MM').desc())
                 .limit(6)
                 .all()
             )

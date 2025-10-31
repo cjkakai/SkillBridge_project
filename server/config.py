@@ -32,8 +32,9 @@ if not os.path.exists(app.config['UPLOAD_FOLDER_COVER_LETTERS']):
 app.json.compact = False
 app.secret_key = b'\xae\xf2\xe4\x92\xe2\x99\x94\xa6\x81\x1a\xbe\xe4)\xf5\xbd\x93'
 app.config['SESSION_COOKIE_SAMESITE'] = 'None'
-app.config['SESSION_COOKIE_SECURE'] = False
+app.config['SESSION_COOKIE_SECURE'] = True
 app.config['SESSION_COOKIE_HTTPONLY'] = True
+app.config['SESSION_COOKIE_DOMAIN'] = 'skillbridge-platform-9xtd.onrender.com'
 
 
 metadata = MetaData(naming_convention={
