@@ -9,7 +9,7 @@ from flask_restful import Resource
 from flask_socketio import SocketIO, emit, join_room
 from werkzeug.utils import secure_filename
 from dotenv import load_dotenv
-from config import db, bcrypt, api , app
+from server.config import db, bcrypt, api , app
 from datetime import datetime
 import pytz
 
