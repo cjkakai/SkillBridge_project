@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(__file__))
 
-from models import *
+from server.models import *
 from faker import Faker
 import random
 from datetime import datetime, timedelta, date
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta, date
 fake = Faker()
 
 def seed_database():
-    from config import app, db
+    from server.config import app, db
     with app.app_context():
         # Clear existing data
         db.drop_all()
