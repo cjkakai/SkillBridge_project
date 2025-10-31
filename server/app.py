@@ -13,6 +13,7 @@ from config import db, bcrypt, api , app
 from datetime import datetime
 import pytz
 
+
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load environment variables from .env file
