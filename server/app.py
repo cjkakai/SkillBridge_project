@@ -726,7 +726,167 @@ class FreelancerDashboard(Resource):
             return {"error": str(e)}, 500
 
 
+class FreelancerStatsResource(Resource):
+    def get(self, freelancer_id):
+        try:
+            freelancer = Freelancer.query.get(freelancer_id)
+            if not freelancer:
+                return {"error": "Freelancer not found"}, 404
+
+            total_earnings = (
+                db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0))
+                .filter(Payment.payee_id == freelancer_id)
+                .scalar() or 0
+            )
+
+            active_contracts = Contract.query.filter_by(
+                freelancer_id=freelancer_id, status="active"
+            ).count()
+
+            completed_tasks = (
+                db.session.query(db.func.count(Task.id))
+                .join(Contract, Contract.task_id == Task.id)
+                .filter(
+                    Contract.freelancer_id == freelancer_id,
+                    Task.status == "completed"
+                )
+                .scalar()
+            )
+
+            reviews = Review.query.filter_by(reviewee_id=freelancer_id).count()
+
+            return {
+                "freelancer": {
+                    "id": freelancer.id,
+                    "name": freelancer.name,
+                    "email": freelancer.email,
+                    "bio": freelancer.bio,
+                    "image": freelancer.image,
+                    "ratings": freelancer.ratings,
+                },
+                "earnings": float(total_earnings),
+                "active_contracts": active_contracts,
+                "completed_tasks": completed_tasks,
+                "reviews": reviews,
+            }
+
+        except Exception as e:
+            print("Error fetching freelancer stats:", e)
+            return {"error": str(e)}, 500
+
+class FreelancerEarningsTrendResource(Resource):
+    def get(self, freelancer_id):
+        try:
+            earnings_trend = (
+                db.session.query(
+                    db.func.to_char(Payment.created_at, 'YYYY-MM').label("month"),
+                    db.func.sum(Payment.amount).label("amount"),
+                )
+                .filter(Payment.payee_id == freelancer_id)
+                .group_by(db.func.to_char(Payment.created_at, 'YYYY-MM'))
+                .order_by(db.func.to_char(Payment.created_at, 'YYYY-MM').desc())
+                .limit(6)
+                .all()
+            )
+
+            trend_data = [
+                {"month": month, "amount": float(amount or 0)}
+                for month, amount in earnings_trend
+            ]
+
+            return {"earnings_trend": trend_data}
+
+        except Exception as e:
+            print("Error fetching earnings trend:", e)
+            return {"error": str(e)}, 500
+
+class FreelancerActiveProjectsResource(Resource):
+    def get(self, freelancer_id):
+        try:
+            active_projects = (
+                db.session.query(
+                    Contract.id,
+                    Task.title.label("task_title"),
+                    Client.name.label("client_name"),
+                    Contract.agreed_amount,
+                    Task.deadline,
+                )
+                .join(Task, Contract.task_id == Task.id)
+                .join(Client, Contract.client_id == Client.id)
+                .filter(Contract.freelancer_id == freelancer_id, Contract.status == "active")
+                .limit(3)
+                .all()
+            )
+
+            active_projects_data = [
+                {
+                    "id": p.id,
+                    "title": p.task_title or "Unknown Task",
+                    "client": p.client_name or "Unknown Client",
+                    "progress": 75,  # TODO: replace with milestone progress
+                    "due_date": p.deadline.strftime("%b %d, %Y") if p.deadline else "TBD",
+                    "amount": float(p.agreed_amount) if p.agreed_amount else 0,
+                }
+                for p in active_projects
+            ]
+
+            return {"active_projects": active_projects_data}
+
+        except Exception as e:
+            print("Error fetching active projects:", e)
+            return {"error": str(e)}, 500
+
+class FreelancerRecommendedJobsResource(Resource):
+    def get(self, freelancer_id):
+        try:
+            recommended_jobs = (
+                db.session.query(
+                    Task.id,
+                    Task.title,
+                    Client.name.label("client_name"),
+                    Task.budget_min,
+                    Task.budget_max,
+                    Task.created_at,
+                )
+                .join(Client, Task.client_id == Client.id)
+                .filter(
+                    ~Task.id.in_(db.session.query(Contract.task_id)),
+                    ~Task.id.in_(
+                        db.session.query(Application.task_id).filter_by(
+                            freelancer_id=freelancer_id
+                        )
+                    ),
+                )
+                .limit(3)
+                .all()
+            )
+
+            recommended_jobs_data = [
+                {
+                    "id": j.id,
+                    "title": j.title,
+                    "client": j.client_name or "Unknown Client",
+                    "budget": f"${j.budget_min}-{j.budget_max}"
+                    if j.budget_min and j.budget_max
+                    else "TBD",
+                    "posted_date": j.created_at.strftime("%b %d, %Y")
+                    if j.created_at
+                    else "Unknown",
+                }
+                for j in recommended_jobs
+            ]
+
+            return {"recommended_jobs": recommended_jobs_data}
+
+        except Exception as e:
+            print("Error fetching recommended jobs:", e)
+            return {"error": str(e)}, 500
+
 api.add_resource(FreelancerDashboard, "/api/freelancers/<int:freelancer_id>/dashboard")
+api.add_resource(FreelancerStatsResource, "/api/freelancers/<int:freelancer_id>/stats")
+api.add_resource(FreelancerEarningsTrendResource, "/api/freelancers/<int:freelancer_id>/earnings-trend")
+api.add_resource(FreelancerActiveProjectsResource, "/api/freelancers/<int:freelancer_id>/active-projects")
+api.add_resource(FreelancerRecommendedJobsResource, "/api/freelancers/<int:freelancer_id>/recommended-jobs")
 
 
 class FreelancerContractsResource(Resource):

@@ -29,12 +29,35 @@ const FreelancerDashboard = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/dashboard`);
-        if (!response.ok) {
+
+        // Fetch data from separate endpoints
+        const [statsRes, trendRes, projectsRes, jobsRes] = await Promise.all([
+          fetch(`${BASE_URL}/api/freelancers/${freelancerId}/stats`),
+          fetch(`${BASE_URL}/api/freelancers/${freelancerId}/earnings-trend`),
+          fetch(`${BASE_URL}/api/freelancers/${freelancerId}/active-projects`),
+          fetch(`${BASE_URL}/api/freelancers/${freelancerId}/recommended-jobs`)
+        ]);
+
+        if (!statsRes.ok || !trendRes.ok || !projectsRes.ok || !jobsRes.ok) {
           throw new Error("Failed to fetch dashboard data.");
         }
-        const data = await response.json();
-        setDashboardData(data);
+
+        const [statsData, trendData, projectsData, jobsData] = await Promise.all([
+          statsRes.json(),
+          trendRes.json(),
+          projectsRes.json(),
+          jobsRes.json()
+        ]);
+
+        // Combine the data
+        const combinedData = {
+          ...statsData,
+          earnings_trend: trendData.earnings_trend,
+          active_projects: projectsData.active_projects,
+          recommended_jobs: jobsData.recommended_jobs
+        };
+
+        setDashboardData(combinedData);
         setError(null);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
