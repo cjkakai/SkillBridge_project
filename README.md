@@ -266,7 +266,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
       Julius kakai
       Wambui karanja
       Nimrod kipngetich
-      Densel pascal
+      Denzel pascal
 
 ---
 
