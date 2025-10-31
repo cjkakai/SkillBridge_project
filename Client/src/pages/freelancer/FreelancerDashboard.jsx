@@ -4,6 +4,7 @@ import FreelancerSidebar from './FreelancerSidebar';
 import ApplicationForm from './ApplicationForm';
 import useApplyJob from '../../hooks/useApplyJob';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import { DollarSign, TrendingUp, Clock, CheckCircle, ExternalLink, Star, Loader2 } from 'lucide-react';
 import './FreelancerDashboard.css';
 
@@ -28,7 +29,7 @@ const FreelancerDashboard = () => {
 
       try {
         setLoading(true);
-        const response = await fetch(`http://127.0.0.1:5555/api/freelancers/${freelancerId}/dashboard`);
+        const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/dashboard`);
         if (!response.ok) {
           throw new Error("Failed to fetch dashboard data.");
         }

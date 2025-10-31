@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import { Star, User, Calendar } from 'lucide-react';
 import './Reviews.css';
 
@@ -18,7 +19,7 @@ const Reviews = () => {
     const fetchReviews = async () => {
       try {
         const freelancerId = user?.id;
-        const response = await fetch(`/api/freelancers/${freelancerId}/reviews`);
+        const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/reviews`);
         if (response.ok) {
           const data = await response.json();
           console.log(data)

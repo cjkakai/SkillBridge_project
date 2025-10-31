@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import './Earnings.css';
 
 const Earnings = () => {
@@ -27,7 +28,7 @@ const Earnings = () => {
 
   const fetchEarningsStats = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/earnings-stats`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/earnings-stats`);
       if (response.ok) {
         const stats = await response.json();
         setEarningsStats(stats);
@@ -39,7 +40,7 @@ const Earnings = () => {
 
   const fetchPayments = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/payments`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/payments`);
       if (response.ok) {
         const paymentsData = await response.json();
         setPayments(paymentsData);

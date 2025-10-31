@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import './Myprojects.css';
 
 const Myprojects = () => {
@@ -23,7 +24,7 @@ const Myprojects = () => {
       setLoading(true);
       
       // Fetch contracts from API
-      const contractsResponse = await fetch(`/api/freelancers/${freelancerId}/contracts`);
+      const contractsResponse = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/contracts`);
       if (!contractsResponse.ok) {
         throw new Error(`HTTP error! status: ${contractsResponse.status}`);
       }
@@ -41,7 +42,7 @@ const Myprojects = () => {
       for (const contract of contractsData) {
         try {
           // Fetch task details
-          const taskResponse = await fetch(`/api/tasks/${contract.task_id}`);
+          const taskResponse = await fetch(`${BASE_URL}/api/tasks/${contract.task_id}`);
           const taskData = taskResponse.ok ? await taskResponse.json() : {
             title: 'Unknown Task',
             description: 'No description available',
@@ -52,7 +53,7 @@ const Myprojects = () => {
           let clientData = contract.client;
           if (!clientData && contract.client_id) {
             try {
-              const clientResponse = await fetch(`/api/clients/${contract.client_id}`);
+              const clientResponse = await fetch(`${BASE_URL}/api/clients/${contract.client_id}`);
               if (clientResponse.ok) {
                 clientData = await clientResponse.json();
               }
@@ -64,7 +65,7 @@ const Myprojects = () => {
           // Fetch actual milestones from API
           let milestones = [];
           try {
-            const milestonesResponse = await fetch(`/api/contracts/${contract.id}/milestones`);
+            const milestonesResponse = await fetch(`${BASE_URL}/api/contracts/${contract.id}/milestones`);
             if (milestonesResponse.ok) {
               milestones = await milestonesResponse.json();
             }
@@ -99,10 +100,10 @@ const Myprojects = () => {
       
       // Fetch payments
       try {
-        const paymentsResponse = await fetch(`/api/freelancers/${freelancerId}/payments`);
+        const paymentsResponse = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/payments`);
         if (paymentsResponse.ok) {
           const paymentsData = await paymentsResponse.json();
-          const total = Array.isArray(paymentsData) ? 
+          const total = Array.isArray(paymentsData) ?
             paymentsData
               .filter(payment => payment.status === 'completed')
               .reduce((sum, payment) => sum + parseFloat(payment.amount || 0), 0) : 0;
@@ -115,10 +116,10 @@ const Myprojects = () => {
       
       // Fetch messages
       try {
-        const messagesResponse = await fetch(`/api/freelancers/${freelancerId}/messages`);
+        const messagesResponse = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/messages`);
         if (messagesResponse.ok) {
           const messagesData = await messagesResponse.json();
-          const unread = Array.isArray(messagesData) ? 
+          const unread = Array.isArray(messagesData) ?
             messagesData.filter(msg => !msg.is_read).length : 0;
           setUnreadMessages(unread);
         }
@@ -167,7 +168,7 @@ const Myprojects = () => {
     formData.append('file', file);
 
     try {
-      const response = await fetch(`/api/freelancers/${freelancerId}/milestones/${milestoneId}/upload`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/milestones/${milestoneId}/upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include'

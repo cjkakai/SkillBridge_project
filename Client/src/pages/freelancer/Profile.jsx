@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import { User, Mail, Phone, MapPin, Calendar, Star, Edit, Camera } from 'lucide-react';
 import './Profile.css';
 
@@ -22,7 +23,7 @@ const Profile = () => {
     const fetchProfile = async () => {
       try {
         const freelancerId = user?.id;
-        const response = await fetch(`/api/freelancers/${freelancerId}`);
+        const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}`);
         if (response.ok) {
           const data = await response.json();
           setFreelancer(data);
@@ -80,7 +81,7 @@ const Profile = () => {
     formData.append('image', imageFile);
 
     try {
-      const response = await fetch(`/api/freelancers/${freelancer.id}/upload-image`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancer.id}/upload-image`, {
         method: 'POST',
         body: formData,
       });
@@ -107,7 +108,7 @@ const Profile = () => {
 
   const handleSaveProfile = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${freelancer.id}/profile`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancer.id}/profile`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

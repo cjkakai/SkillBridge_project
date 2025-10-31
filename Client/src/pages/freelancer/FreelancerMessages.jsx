@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, CheckCircle, DollarSign, Mail, User, FileText, Search, Send } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import FreelancerSidebar from './FreelancerSidebar';
 import './FreelancerDashboard.css';
 import io from 'socket.io-client';
@@ -26,7 +27,7 @@ const FreelancerMessages = () => {
       fetchClientsWithMessages();
 
       // Initialize socket connection
-      const newSocket = io('/api');
+      const newSocket = io(BASE_URL);
       setSocket(newSocket);
 
       return () => {
@@ -62,7 +63,7 @@ const FreelancerMessages = () => {
 
   const fetchFreelancerData = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}`);
       if (response.ok) {
         const data = await response.json();
         setFreelancerName(data.name);
@@ -76,7 +77,7 @@ const FreelancerMessages = () => {
   const fetchClientsWithMessages = async () => {
     try {
       // Get all clients the freelancer has contracts with
-      const clientsResponse = await fetch(`/api/freelancers/${user?.id}/contracts`);
+      const clientsResponse = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/contracts`);
       if (clientsResponse.ok) {
         const contracts = await clientsResponse.json();
 
@@ -87,7 +88,7 @@ const FreelancerMessages = () => {
           const client = contract.client;
 
           // Get messages for this client
-          const messagesResponse = await fetch(`/api/freelancers/${user?.id}/clients/${client.id}/messages`);
+          const messagesResponse = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/clients/${client.id}/messages`);
           let latestMessage = null;
           let unreadCount = 0;
 
@@ -128,7 +129,7 @@ const FreelancerMessages = () => {
 
   const fetchMessages = async (clientId) => {
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}/clients/${clientId}/messages`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/clients/${clientId}/messages`);
       if (response.ok) {
         const data = await response.json();
         setMessages(data);
@@ -146,7 +147,7 @@ const FreelancerMessages = () => {
 
   const markMessagesAsRead = async (clientId) => {
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}/clients/${clientId}/messages/mark-read`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/clients/${clientId}/messages/mark-read`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +171,7 @@ const FreelancerMessages = () => {
     if (!newMessage.trim() || !selectedClient) return;
 
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}/clients/${selectedClient.id}/messages`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/clients/${selectedClient.id}/messages`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

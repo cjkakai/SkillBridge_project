@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import FreelancerSidebar from './FreelancerSidebar';
 import { useAuth } from '../../context/AuthContext';
+import { BASE_URL } from '../../config';
 import { Briefcase, Plus, Edit, Trash2, Calendar, Building, Link as LinkIcon } from 'lucide-react';
 import './Experience.css';
 
@@ -27,7 +28,7 @@ const Experience = () => {
 
   const fetchExperiences = async () => {
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}/experience`);
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/experience`);
       if (response.ok) {
         const data = await response.json();
         setExperiences(data);
@@ -52,8 +53,8 @@ const Experience = () => {
 
     try {
       const url = editingExperience
-        ? `/api/freelancers/${user?.id}/experience/${editingExperience.experience_id}`
-        : `/api/freelancers/${user?.id}/experience`;
+        ? `${BASE_URL}/api/freelancers/${user?.id}/experience/${editingExperience.experience_id}`
+        : `${BASE_URL}/api/freelancers/${user?.id}/experience`;
 
       const method = editingExperience ? 'PUT' : 'POST';
 
@@ -96,7 +97,7 @@ const Experience = () => {
     if (!window.confirm('Are you sure you want to delete this experience?')) return;
 
     try {
-      const response = await fetch(`/api/freelancers/${user?.id}/experience/${experienceId}`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${user?.id}/experience/${experienceId}`, {
         method: 'DELETE',
       });
 
