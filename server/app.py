@@ -18,7 +18,7 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 
 # Load environment variables from .env file
 load_dotenv()
-from models import (
+from server.models import (
     Client, Freelancer, Admin, Task, Application, Contract,
     Milestone, Payment, Review, Complaint,
     AuditLog, Skill, FreelancerSkill, TaskSkill, FreelancerExperience, Message
