@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, Trash2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import LogoutButton from '../../components/auth/LogoutButton';
+import ClientSidebar from './ClientSidebar';
 import { BASE_URL } from '../../config';
 import './ClientDashboard.css';
 import './ClientContracts.css';
@@ -96,35 +96,7 @@ const EditContract = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h2>SkillBridge</h2>
-        </div>
-        <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
-          </div>
-          <div className="nav-item active">
-            <Briefcase size={20} />
-            <span>My Contracts</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-messages')}>
-            <MessageSquare size={20} />
-            <span>Messages</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/post-task')}>
-            <Plus size={20} />
-            <span>Post a Job</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-payment')}>
-            <CreditCard size={20} />
-            <span>Payments</span>
-          </div>
-          <LogoutButton />
-        </nav>
-      </div>
+      <ClientSidebar />
 
       {/* Main Content */}
       <div className="main-content">

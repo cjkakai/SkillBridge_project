@@ -39,7 +39,7 @@ const Applications = () => {
       }
     };
     fetchApplications();
-  }, []);
+  }, [user]);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -70,7 +70,7 @@ const Applications = () => {
   const formatCurrency = (amount) => {
     return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'USD',
+      currency: 'KES',
     }).format(amount);
   };
 

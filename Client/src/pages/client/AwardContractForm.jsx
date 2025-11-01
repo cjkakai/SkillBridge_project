@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import ClientSidebar from './ClientSidebar';
 import { BASE_URL } from '../../config';
 import { LayoutDashboard, Briefcase, MessageSquare, Plus, CreditCard, ArrowLeft, FileText, User, Trash2, AlertTriangle } from 'lucide-react';
 import './AwardContractForm.css';
@@ -198,11 +199,7 @@ const AwardContractForm = () => {
   if (loading) {
     return (
       <div className="dashboard-container">
-        <div className="sidebar">
-          <div className="sidebar-header">
-            <h2>SkillBridge</h2>
-          </div>
-        </div>
+        <ClientSidebar />
         <div className="main-content">
           <p>Loading contract details...</p>
         </div>
@@ -212,42 +209,7 @@ const AwardContractForm = () => {
 
   return (
     <div className="dashboard-container">
-      {/* Sidebar */}
-      <div className="sidebar">
-        <div className="sidebar-header">
-          <h2>SkillBridge</h2>
-        </div>
-        <nav className="sidebar-nav">
-          <div className="nav-item" onClick={() => navigate('/client/dashboard')}>
-            <LayoutDashboard size={20} />
-            <span>Dashboard</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-contracts')}>
-            <Briefcase size={20} />
-            <span>My Contracts</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-messages')}>
-            <MessageSquare size={20} />
-            <span>Messages</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/post-task')}>
-            <Plus size={20} />
-            <span>Post a Job</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-profile')}>
-            <User size={20} />
-            <span>Your Profile</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-report')}>
-            <AlertTriangle size={20} />
-            <span>Report a Freelancer</span>
-          </div>
-          <div className="nav-item" onClick={() => navigate('/client-payment')}>
-            <CreditCard size={20} />
-            <span>Payments</span>
-          </div>
-        </nav>
-      </div>
+      <ClientSidebar />
 
       {/* Main Content */}
       <div className="main-content">
