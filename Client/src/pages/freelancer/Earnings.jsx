@@ -24,7 +24,7 @@ const Earnings = () => {
       fetchEarningsStats();
       fetchPayments();
     }
-  }, [user?.id]);
+  }, [user]);
 
   const fetchEarningsStats = async () => {
     try {

@@ -34,7 +34,7 @@ const Reviews = () => {
     };
 
     fetchReviews();
-  }, []);
+  }, [user]);
 
   const calculateStats = (reviewsData) => {
     if (reviewsData.length === 0) return;

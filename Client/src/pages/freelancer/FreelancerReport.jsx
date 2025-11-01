@@ -19,7 +19,7 @@ const FreelancerReport = () => {
     fetchContracts();
     fetchAdmins();
     fetchComplaints();
-  }, []);
+  }, [user]);
 
   const fetchFreelancerData = async () => {
     try {

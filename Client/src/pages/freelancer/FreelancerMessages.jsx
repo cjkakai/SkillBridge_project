@@ -36,7 +36,7 @@ const FreelancerMessages = () => {
         }
       };
     }
-  }, [user?.id]);
+  }, [user?.id, user]);
 
   useEffect(() => {
     const filtered = clientsWithMessages.filter(client =>

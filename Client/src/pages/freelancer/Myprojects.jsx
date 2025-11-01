@@ -17,7 +17,7 @@ const Myprojects = () => {
 
   useEffect(() => {
     fetchProjectData();
-  }, []);
+  }, [user]);
 
   const fetchProjectData = async () => {
     try {

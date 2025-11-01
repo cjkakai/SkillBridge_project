@@ -28,7 +28,7 @@ const BrowseTasks = () => {
   useEffect(() => {
     fetchTasks();
     fetchClients();
-  }, []);
+  }, [user]);
 
   useEffect(() => {
     filterTasks();

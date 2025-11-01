@@ -42,7 +42,7 @@ const Profile = () => {
     };
 
     fetchProfile();
-  }, []);
+  }, [user]);
 
   const handleEditClick = () => {
     setIsEditing(true);
