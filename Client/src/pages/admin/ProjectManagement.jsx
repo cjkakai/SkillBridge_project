@@ -18,12 +18,15 @@ const ProjectManagement = () => {
         // Fetch contracts as primary data source
         const contractsResponse = await fetch(`${BASE_URL}/api/contracts`);
         const clientsResponse = await fetch(`${BASE_URL}/api/clients`);
+        const freelancerResponse= await fetch(`${BASE_URL}/api/freelancer`);
         
         const contracts = contractsResponse.ok ? await contractsResponse.json() : [];
         const clients = clientsResponse.ok ? await clientsResponse.json() : [];
+        const freelancers = freelancerResponse.ok ? await freelancerResponse.json() : [];
         
         console.log('Contracts response:', contractsResponse.ok, contracts);
         console.log('Clients response:', clientsResponse.ok, clients);
+        console.log('Freelancer response:', freelancerResponse.ok, freelancer);
         
         // Fetch tasks for each contract
         const taskPromises = contracts.map(contract => 
@@ -56,7 +59,7 @@ const ProjectManagement = () => {
             deadline: contract.completed_at || "N/A",
             status: status,
             client: clients.find(c => c.id === (task?.client_id || contract.client_id))?.name || "Unknown",
-            freelancer: contract.freelancer_name || "Unassigned",
+            freelancer: freelancers.find(f => f.id === contract.freelancer_id)?.name || "Unassigned",
             skills: task?.skills || []
           };
         });
