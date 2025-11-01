@@ -918,7 +918,18 @@ class FreelancerPaymentsResource(Resource):
         contracts = Contract.query.filter_by(freelancer_id=freelancer_id).all()
         contract_ids = [c.id for c in contracts]
         payments = Payment.query.filter(Payment.contract_id.in_(contract_ids)).all()
-        return make_response([payment.to_dict(rules=('-contract',)) for payment in payments], 200)
+        result = []
+        for payment in payments:
+            payment_data = payment.to_dict(rules=('-contract',))
+            contract = Contract.query.get(payment.contract_id)
+            if contract:
+                client = Client.query.get(contract.client_id)
+                task = Task.query.get(contract.task_id)
+                payment_data['client_name'] = client.name if client else 'Unknown Client'
+                payment_data['client_image'] = client.image if client else None
+                payment_data['task'] = task.title if task else 'Unknown Task'
+            result.append(payment_data)
+        return make_response(result, 200)
 
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
     
