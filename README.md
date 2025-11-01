@@ -53,7 +53,7 @@ Through the dash board, a client may view all his tasks at a glance, the freelan
 
 - *Contract Details* In contracts, sesction one can click the details button to view project progress. **Download milestone files** uploaded by a freelancer
 ### Client Pages
-<div style="display: flex; flex-wrap: wrap; gap: 30px;">
+<div style="display: flex; flex-wrap: wrap; gap: 50px;">
   <img src="./Client/src/assets/Post task.png" width="45%">
   <img src="./Client/src/assets/Message.png" width="45%">
   <img src="./Client/src/assets/Contract details.png" width="45%">
@@ -81,7 +81,7 @@ Through the dash board, a freelancer may view all his tasks at a glance,the perc
 - *Freelancer Experiences* Add professional experiences and project links you have worked on before as a freelancer and build your portfolio
 - *Freelancer Applications* View the status of your job bids to know whether they were successful or unsuccesful
 ### Freelancer Pages
-<div style="display: flex; flex-wrap: wrap; gap: 30px;">
+<div style="display: flex; flex-wrap: wrap; gap: 50px;">
   <img src="./Client/src/assets/Browse Task.png" width="45%">
   <img src="./Client/src/assets/FREELANCERmESSAGES.png" width="45%">
   <img src="./Client/src/assets/FreelancerProfile.png" width="45%">
@@ -104,7 +104,7 @@ Through the dashboard, an admin should get stats concerning the SkillBridge plat
 - *Transaction Management* An admin can know the total payments on the platform and can also see the details of all transactions through the platform
 - *Complaint Management* Through the complaints page, an admin can observe complints made and resolve them
 ### Admin pages
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 50px;">
   <img src="./Client/src/assets/AdminUserManger.png" width="45%">
   <img src="./Client/src/assets/AdminContractManager.png" width="45%">
   <img src="./Client/src/assets/AdminTransactionManager.png" width="45%">
