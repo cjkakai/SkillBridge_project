@@ -111,7 +111,14 @@ const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwa
           {application.cover_letter_file && (
             <button
               className="download-btn"
-              onClick={() => window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank')}
+              onClick={() => {
+                try {
+                  window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank');
+                } catch (error) {
+                  console.error('Error downloading CV:', error);
+                  alert('Failed to download CV. Please try again.');
+                }
+              }}
               title="Download Cover Letter PDF"
             >
               <Download size={16} />

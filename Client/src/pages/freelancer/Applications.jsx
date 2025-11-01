@@ -39,7 +39,7 @@ const Applications = () => {
       }
     };
     fetchApplications();
-  }, [user.id]);
+  }, []);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -195,7 +195,7 @@ const Applications = () => {
                       justifyContent: 'center',
                       backgroundColor: '#f9fafb'
                     }}>
-                      {application.task.client_image ? (
+                      {application.task?.client_image ? (
                         <img
                           src={application.task.client_image}
                           alt={application.task.client_name || 'Client'}
@@ -217,15 +217,15 @@ const Applications = () => {
                           fontWeight: 'bold',
                           fontSize: '18px'
                         }}>
-                          {(application.task.client_name?.charAt(0) || 'C').toUpperCase()}
+                          {(application.task?.client_name?.charAt(0) || 'C').toUpperCase()}
                         </div>
                       )}
                     </div>
                     <div style={{ flex: 1 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
                         <span style={{ color: '#374151', fontSize: '14px', fontWeight: '500' }}>
-                          {application.task.client.name}
-                        </span>
+                            {application.task.client_name}
+                          </span>
                         <span style={{
                           color: application.status === 'accepted' ? '#10b981' : application.status === 'rejected' ? '#ef4444' : '#f59e0b',
                           fontSize: '12px',
@@ -349,9 +349,16 @@ const Applications = () => {
                           <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: '1.5' }}>
                             {application.cover_letter_file ? (
                               <p
-                                onClick={()=>window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank')}
+                                onClick={() => {
+                                  try {
+                                    window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank');
+                                  } catch (error) {
+                                    console.error('Error opening cover letter:', error);
+                                    alert('Failed to open cover letter. Please try again.');
+                                  }
+                                }}
                                 target="_blank"
-                                style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
+                                style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500', cursor: 'pointer' }}
                                 onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
                                 onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
                               >

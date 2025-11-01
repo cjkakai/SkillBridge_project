@@ -402,7 +402,14 @@ const ContractDetails = () => {
                           {milestone.file_url && (
                             <button
                               className="download-btn"
-                              onClick={() => window.open(`${BASE_URL}/api/milestones/${milestone.id}/download`, '_blank')}
+                              onClick={() => {
+                                try {
+                                  window.open(`${BASE_URL}/api/milestones/${milestone.id}/download`, '_blank');
+                                } catch (error) {
+                                  console.error('Error downloading milestone file:', error);
+                                  alert('Failed to download file. Please try again.');
+                                }
+                              }}
                               style={{
                                 padding: '6px 12px',
                                 backgroundColor: '#10b981',

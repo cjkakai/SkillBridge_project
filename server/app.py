@@ -816,13 +816,19 @@ class FreelancerActiveProjectsResource(Resource):
                 .limit(3)
                 .all()
             )
-
+            contract=Contract.query.filter_by(freelancer_id=freelancer_id).first()
+            milestones= Milestone.query.filter_by(contract_id=contract.id).all()
+            if not active_projects:
+                return {"active_projects": []}
+            if milestones:
+                completed_milestones_weight = sum(float(milestone.weight) for milestone in milestones if milestone.completed)
+                progress = (completed_milestones_weight / 1) * 100
             active_projects_data = [
                 {
                     "id": p.id,
                     "title": p.task_title or "Unknown Task",
                     "client": p.client_name or "Unknown Client",
-                    "progress": 75,  # TODO: replace with milestone progress
+                    "progress": progress or "Unavailable",  
                     "due_date": p.deadline.strftime("%b %d, %Y") if p.deadline else "TBD",
                     "amount": float(p.agreed_amount) if p.agreed_amount else 0,
                 }
