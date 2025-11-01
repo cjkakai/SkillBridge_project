@@ -931,8 +931,26 @@ class FreelancerPaymentsResource(Resource):
             result.append(payment_data)
         return make_response(result, 200)
 
+class FreelancerEarningsStatsResource(Resource):
+    def get(self, freelancer_id):
+        # Calculate total_completed: sum of completed payments
+        total_completed = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(Payment.payee_id == freelancer_id, Payment.status == 'completed').scalar() or 0
+
+        # Calculate total_pending: sum of pending payments
+        total_pending = db.session.query(db.func.coalesce(db.func.sum(Payment.amount), 0)).filter(Payment.payee_id == freelancer_id, Payment.status == 'pending').scalar() or 0
+
+        # Calculate total_payments_count: count of all payments
+        total_payments_count = Payment.query.filter_by(payee_id=freelancer_id).count()
+
+        return {
+            "total_completed": float(total_completed),
+            "total_pending": float(total_pending),
+            "total_payments_count": total_payments_count
+        }
+
+api.add_resource(FreelancerEarningsStatsResource, '/api/freelancers/<int:freelancer_id>/earnings-stats')
 api.add_resource(FreelancerPaymentsResource, '/api/freelancers/<int:freelancer_id>/payments')
-    
+
 class FreelancerClientMessagesResource(Resource):
     def get(self, freelancer_id, client_id=None):
         if client_id:
