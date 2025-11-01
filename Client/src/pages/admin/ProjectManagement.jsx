@@ -73,7 +73,7 @@ const ProjectManagement = () => {
     };
 
     fetchProjects();
-  }, []);
+  }, [user]);
 
   const filteredProjects = projects.filter(project => {
     const matchesSearch = project.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
