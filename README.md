@@ -81,7 +81,7 @@ Through the dash board, a freelancer may view all his tasks at a glance,the perc
 - *Freelancer Experiences* Add professional experiences and project links you have worked on before as a freelancer and build your portfolio
 - *Freelancer Applications* View the status of your job bids to know whether they were successful or unsuccesful
 ### Freelancer Pages
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+<div style="display: flex; flex-wrap: wrap; gap: 30px;">
   <img src="./Client/src/assets/Browse Task.png" width="45%">
   <img src="./Client/src/assets/FREELANCERmESSAGES.png" width="45%">
   <img src="./Client/src/assets/FreelancerProfile.png" width="45%">
