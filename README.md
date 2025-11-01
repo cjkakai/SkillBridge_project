@@ -26,10 +26,10 @@ Built with modern web technologies, SkillBridge ensures a seamless experience fo
 
 Through the get started and join now buttons on homepage, a user is directed to a login page for secure authentication. There is also an option to sign up as a client or freelancer. Admins are added directly to the system
 
-<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
-  <img src="./Client/src/assets/Login.png" width="20%" height="300px">
-  <img src="./Client/src/assets/Roleselection.png" width="45%" height="300px">
-  <img src="./Client/src/assets/Sign up.png" width="25%" height="300px">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 15px;">
+  <img src="./Client/src/assets/Login.png" width="25%" height="400px">
+  <img src="./Client/src/assets/Roleselection.png" width="45%" height="400px">
+  <img src="./Client/src/assets/Sign up.png" width="25%" height="400px">
 </div>
 
 ### Client role
@@ -53,13 +53,13 @@ Through the dash board, a client may view all his tasks at a glance, the freelan
 
 - *Contract Details* In contracts, sesction one can click the details button to view project progress. **Download milestone files** uploaded by a freelancer
 ### Client Pages
-<div style="display: flex; flex-wrap: wrap; gap: 10px;">
-  <img src="./Client/src/assets/Post task.png" width="30%">
-  <img src="./Client/src/assets/Message.png" width="30%">
-  <img src="./Client/src/assets/Contract details.png" width="30%">
-  <img src="./Client/src/assets/Payment.png" width="30%">
-  <img src="./Client/src/assets/ClientProfile.png" width="30%">
-  <img src="./Client/src/assets/Report.png" width="30%">
+<div style="display: flex; flex-wrap: wrap; gap: 30px;">
+  <img src="./Client/src/assets/Post task.png" width="45%">
+  <img src="./Client/src/assets/Message.png" width="45%">
+  <img src="./Client/src/assets/Contract details.png" width="45%">
+  <img src="./Client/src/assets/Payment.png" width="45%">
+  <img src="./Client/src/assets/ClientProfile.png" width="45%">
+  <img src="./Client/src/assets/Report.png" width="45%">
 </div>
 
 ### Freelancer role
@@ -81,15 +81,15 @@ Through the dash board, a freelancer may view all his tasks at a glance,the perc
 - *Freelancer Experiences* Add professional experiences and project links you have worked on before as a freelancer and build your portfolio
 - *Freelancer Applications* View the status of your job bids to know whether they were successful or unsuccesful
 ### Freelancer Pages
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-  <img src="./Client/src/assets/Browse Task.png" width="30%">
-  <img src="./Client/src/assets/FREELANCERmESSAGES.png" width="30%">
-  <img src="./Client/src/assets/FreelancerProfile.png" width="30%">
-  <img src="./Client/src/assets/My Experience.png" width="30%">
-  <img src="./Client/src/assets/Earnings.png" width="30%">
-  <img src="./Client/src/assets/Applications.png" width="30%">
-  <img src="./Client/src/assets/Freelancer Report.png" width="30%">
-  <img src="./Client/src/assets/Review.png" width="30%">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+  <img src="./Client/src/assets/Browse Task.png" width="45%">
+  <img src="./Client/src/assets/FREELANCERmESSAGES.png" width="45%">
+  <img src="./Client/src/assets/FreelancerProfile.png" width="45%">
+  <img src="./Client/src/assets/My Experience.png" width="45%">
+  <img src="./Client/src/assets/Earnings.png" width="45%">
+  <img src="./Client/src/assets/Applications.png" width="45%">
+  <img src="./Client/src/assets/Freelancer Report.png" width="45%">
+  <img src="./Client/src/assets/Review.png" width="45%">
 </div>
 
 ## Admin role
@@ -104,11 +104,11 @@ Through the dashboard, an admin should get stats concerning the SkillBridge plat
 - *Transaction Management* An admin can know the total payments on the platform and can also see the details of all transactions through the platform
 - *Complaint Management* Through the complaints page, an admin can observe complints made and resolve them
 ### Admin pages
-<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
-  <img src="./Client/src/assets/AdminUserManger.png" width="30%">
-  <img src="./Client/src/assets/AdminContractManager.png" width="30%">
-  <img src="./Client/src/assets/AdminTransactionManager.png" width="30%">
-  <img src="./Client/src/assets/AdminComplaintsManager.png" width="30%">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 30px;">
+  <img src="./Client/src/assets/AdminUserManger.png" width="45%">
+  <img src="./Client/src/assets/AdminContractManager.png" width="45%">
+  <img src="./Client/src/assets/AdminTransactionManager.png" width="45%">
+  <img src="./Client/src/assets/AdminComplaintsManager.png" width="45%">
 </div>
 
 
