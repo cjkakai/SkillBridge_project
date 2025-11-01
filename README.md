@@ -1,21 +1,17 @@
-#  SkillBridge Project:
+#  SkillBridge
+## Description
+A modern web-based marketplace connecting clients with skilled freelancers for quick and efficient project completion.Clients can post jobs, view applications, award contracts, message freelancers and make payments.Freelancer can make bids for freelance jobs, make submissions for contracts, communicate with clients and receive payments for coompleted jobs.
 
-A modern web-based freelance marketplace connecting clients with skilled freelancers for quick and efficient project completion.
+## Contributors
+1. Dennis Karanja
+2. Julius Kakai 
+3. Wambui Karanja
+4. Nimrod Kipngetich
+5. Denzel Pascal
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Features](#features)
-- [Tech Stack](#tech-stack)
-- [Installation & Setup](#installation--setup)
-- [Usage Instructions](#usage-instructions)
-- [API Endpoints](#api-endpoints)
-- [Project Structure](#project-structure)
-- [User Roles and Permissions](#user-roles-and-permissions)
-- [Future Enhancements](#future-enhancements)
-- [Contributing Guidelines](#contributing-guidelines)
-- [License](#license)
-- [Team Members](#team-members)
+## View Live Site
+You can view the project live through this link: 
+[SkillBridge Live](https://skillbridge-project-1.onrender.com)
 
 ## Overview
 
@@ -23,25 +19,90 @@ SkillBridge is a comprehensive freelance marketplace that streamlines the proces
 
 Built with modern web technologies, SkillBridge ensures a seamless experience for all users while maintaining security, transparency, and accountability throughout the project lifecycle.
 
-## Features
+## Screenshots and Features
 
-### Core Functionality
-- *User Authentication*: Secure login, registration, and password reset
-- *Profile Management*: Comprehensive profiles for clients and freelancers
-- *Job Management*: Post jobs, browse opportunities, and submit proposals
-- *Bidding System*: Competitive bidding with negotiation capabilities
-- *Contract Management*: Automated contract creation and milestone tracking
-- *File Management*: Upload and manage project deliverables
-- *Payment System*: Secure payment simulation and transaction history
-- *Review System*: Rating and feedback mechanism for quality assurance
-- *Notifications*: Real-time activity updates and alerts
-- *Complaint System*: Dispute resolution and support tickets
+### HomePage and authentication
+![Homepage](./Client/src/assets/Homepage.png)
 
-### Advanced Features
-- *AI Recommendations*: Intelligent job matching based on skills and history
-- *Admin Dashboard*: Comprehensive platform management and oversight
-- *Real-time Communication*: In-platform messaging system
-- *Progress Tracking*: Visual milestone and project progress indicators
+Through the get started and join now buttons on homepage, a user is directed to a login page for secure authentication. There is also an option to sign up as a client or freelancer. Admins are added directly to the system
+
+<img src="./Client/src/assets/Login.png" width="20%" height="300px" style="display:inline-block; margin-right:10px;">
+<img src="./Client/src/assets/Roleselection.png" width="45%" height="300px" style="display:inline-block;margin-right:10px">
+<img src="./Client/src/assets/Sign up.png" width="25%" height="300px" style="display:inline-block;">
+
+### Client role
+Clients can post jobs, manage applications, and communicate with freelancers. They can also track project milestones and make payments upon completion.
+
+![Client Dashboard](./Client/src/assets/Client%20Dashboard.png)
+
+Through the dash board, a client may view all his tasks at a glance, the freelancers they have contracts with and the percentage progreess of tasks they have assigned. Through the buttons on the task cards, a client can *view applications to award contracts, edit tasks and delete tasks*
+### Client functionalities
+
+
+- *Post Jobs* : Create job listings with descriptions, budgets, and deadlines. Also get **AI generated tasks descriptions(Google gemini API)** to make the preparation of tasks easier. Once a task is posted a user is directed back to dashboard 
+
+- *Message a client* From the messages page a client can select a freelancer to communicate with . The meassage platform **allows for live messaging through Socket IO**   
+
+- *Client Profile* Through the Profile section, a client may change company logo throught **photo uploads**, change contacts or email or company details
+
+- *Client Report* Report a freelancer who goes against code of conduct for the platform through this section. **Report reaches the admins immediately** for response
+
+- *Payment section* A client can view their payment history and can make payments through MPESA or Paypal for a contract. The money is sent to SkillBridge Paybill then to freelancer on withdrawal. **The MPESA and Paypal payments systems are still in development**
+
+- *Contract Details* In contracts, sesction one can click the details button to view project progress. **Download milestone files** uploaded by a freelancer
+### Client Pages
+<img src="./Client/src/assets/Post task.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Message.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Contract details.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Payment.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/ClientProfile.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Report.png" width="30%" style="margin-right:10px;">
+
+### Freelancer role
+Freelancers can browse job listings, submit proposals, and manage contracts. They can also communicate with clients and track their earnings.
+
+![Freelancer Dashboard](./Client/src/assets/Freelancer%20Dashboard.png)
+
+Through the dash board, a freelancer may view all his tasks at a glance,the percentage progreess of tasks they have been assigned. They may also view an overview of their stats: Total payments on platform, active contracts, completed contracts and ratings
+
+### Freelancer functionalities
+- *Browse Jobs*: View available job listings and apply for positions that match their skills. **Search for particular jobs or budgets through the filter jobs window**
+- *Submit Proposals*: Create and submit proposals for jobs, including budget and timeline estimates.Also **upload CV and portfolios** when making applications
+- *Manage Contracts*: View active contracts, track milestones by **uploading milestone files to submit deliverables**.
+- *Communicate with Clients*: Use the in-platform messaging system to discuss project details and negotiate. Allows for **live messaging**
+- *Profile Management*: Update personal information, skills, and portfolio.
+- *Payment Tracking*: View payment history and earnings from completed projects. Make withdrawals through Mpesa from the SkillBridge Paybill for completed projects that cleints have paid for.
+- *Review System*: View ratings and reviews by clients after project completion.
+- *Freelancer Report* Report a Client who goes against code of conduct for the platform through this section. **Report reaches the admins immediately** for response
+- *Freelancer Experiences* Add professional experiences and project links you have worked on before as a freelancer and build your portfolio
+- *Freelancer Applications* View the status of your job bids to know whether they were successful or unsuccesful
+### Freelancer Pages
+<img src="./Client/src/assets/Browse Task.png" width="30%" style="margin-right:10px">
+<img src="./Client/src/assets/FREELANCERmESSAGES.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/FreelancerProfile.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/My Experience.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Earnings.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Applications.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Freelancer Report.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/Review.png" width="30%" style="margin-right:10px;">
+
+## Admin role
+Administrators have full control over the platform, including user management, contract oversight, and dispute resolution. They can monitor platform activity and ensure compliance with policies.
+![Admin Dashboard](./Client/src/assets/AdminDashboard.png)
+
+Through the dashboard, an admin should get stats concerning the SkillBridge platform(amount transacted, number of users and contracts and any unresolved complaints). The admin can also see the top 5 freelancers(per ratings) and the top 5 clients(as per number of contracts). Finally an admin can also see the 5 latest payments and their details.
+
+### Admin functionalities
+- *User management* An admin can view all users on the platform and can remove a client or freelancer from the platform
+- *Project Management* An admin can view all active and completed contracts on the platform
+- *Transaction Management* An admin can know the total payments on the platform and can also see the details of all transactions through the platform
+- *Complaint Management* Through the complaints page, an admin can observe complints made and resolve them
+### Admin pages
+<img src="./Client/src/assets/AdminUserManger.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/AdminContractManager.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/AdminTransactionManager.png" width="30%" style="margin-right:10px;">
+<img src="./Client/src/assets/AdminComplaintsManager.png" width="30%" style="margin-right:10px;">
+
 
 ## Tech Stack
 
@@ -53,8 +114,8 @@ Built with modern web technologies, SkillBridge ensures a seamless experience fo
 ### Backend
 - *Flask* - Python web framework
 - *Flask-RESTful* - REST API development
-- *SQLAlchemy* - Database ORM
-- *Flask-JWT-Extended* - Authentication and authorization
+- *Falsk-SQLAlchemy* - Database ORM
+- *Flask-Bcrypt* - Authentication and authorization
 
 ### Database
 - *PostgreSQL* - Primary database system
@@ -71,167 +132,69 @@ Built with modern web technologies, SkillBridge ensures a seamless experience fo
 - PostgreSQL (v12 or higher)
 - Git
 
-### Backend Setup
+### Project Setup
 
 1. *Clone the repository*
    bash
-   git clone <repository-url>
-   cd SkillBridge_project
-   
+
+       git clone git@github.com:cjkakai/SkillBridge_project.git
+
+       cd SkillBridge_project
 
 2. *Set up Python virtual environment*
    bash
-   python -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
+       
+       On Linux: pipenv shell  
+       On Windows: venv\Scripts\activate
    
-
 3. *Install backend dependencies*
-   bash
-   pip install -r requirements.txt
-   
+   bash(from project root)
 
-4. *Configure database*
-   bash
-   # Create PostgreSQL database
-   createdb skillbridge_db
-   
-   # Set environment variables
-   export DATABASE_URL="postgresql://username:password@localhost/skillbridge_db"
-   export JWT_SECRET_KEY="your-secret-key"
-   
+        pipenv install
+        pip install -r requirements.txt
 
-5. *Initialize database*
-   bash
-   flask db init
-   flask db migrate
-   flask db upgrade
-   
+4. *Install frontend dependencies*
 
-### Frontend Setup
+        cd Client  
+        npm install
 
-1. *Navigate to client directory*
-   bash
-   cd Client
-   
+5. *Run the backend development server
 
-2. *Install frontend dependencies*
-   bash
-   npm install
-   
+       cd server
+       python app.py 
 
-3. *Configure environment variables*
-   bash
-   # Create .env file
-   REACT_APP_API_URL=http://localhost:5000
-   
+6. *Initialize database and seed data*. From the root directory
 
-## Usage Instructions
-
-### Running the Application
-
-1. *Start the backend server*
-   bash
-   # From project root
-   python app.py
-   # Server runs on http://localhost:5555
-   
-
-2. *Start the frontend development server*
-   bash
-   # From Client directory
-   npm start
-   # Application opens at http://localhost:5173
+       cd server
+       flask db init
+       flask db migrate -m "Initial migrations"
+       flask db upgrade
+       python seed.py
+7. *Run the react frontend* From the project root directory
+       
+       cd Client
+       npm run dev
    
 
 ### Testing the Application
 
-1. *Register as a client or freelancer*
+1. *Register as a client or freelancer* or use the following seeded data for demo:
+   - **Client** email: denniswanyeki2021@gmail.com   password: client
+   - **Freelancer** email: ruthwambui@gmail.com   password: freelancer
+   - **Frelancer** email: admin1@skillbridge.com or admin2@skillbridge.com   password: admin
 2. *Create a job posting (client) or browse jobs (freelancer)*
 3. *Submit proposals and negotiate contracts*
 4. *Track project progress and milestones*
 5. *Complete payments and leave reviews*
 
-## API Endpoints
-
-### Authentication
-- POST /api/auth/register - User registration
-- POST /api/auth/login - User login
-- POST /api/auth/logout - User logout
-
-### Jobs & Tasks
-- GET /api/tasks - Retrieve all tasks
-- POST /api/tasks - Create new task
-- GET /api/tasks/:id - Get specific task
-- PUT /api/tasks/:id - Update task
-
-### Contracts
-- GET /api/contracts - Retrieve contracts
-- POST /api/contracts - Create contract
-- PUT /api/contracts/:id - Update contract status
-
-### Users
-- GET /api/users - Get user profiles
-- PUT /api/users/:id - Update user profile
-
-For complete API documentation, refer to the backend documentation.
-
-## Project Structure
-
-
-SkillBridge_project/
-├── Client/                     # React frontend
-│   ├── public/
-│   ├── src/
-│   │   ├── components/         # Reusable components
-│   │   ├── pages/             # Page components
-│   │   ├── context/           # React context providers
-│   │   └── services/          # API service functions
-│   └── package.json
-├── backend/                    # Flask backend
-│   ├── models/                # Database models
-│   ├── routes/                # API route handlers
-│   ├── services/              # Business logic
-│   └── app.py                 # Main application file
-├── database/                   # Database scripts
-├── requirements.txt           # Python dependencies
-└── README.md
-
-
-## User Roles and Permissions
-
-### Freelancers
-- Browse and search available jobs
-- Submit proposals and bids
-- Manage active contracts and milestones
-- Upload deliverables and track payments
-- Communicate with clients
-- Submit complaints and disputes
-
-### Clients
-- Post job listings with budgets and deadlines
-- Review and manage proposals
-- Award contracts to freelancers
-- Track project progress and milestones
-- Process payments and leave reviews
-- Submit complaints and feedback
-
-### Administrators
-- Full CRUD operations on all platform data
-- User management and account oversight
-- Contract monitoring and dispute resolution
-- Platform analytics and reporting
-- Review and complaint management
 
 ## Future Enhancements
 
 - *AI-Powered Matching*: Enhanced recommendation algorithms
-- *Real-time Chat*: WebSocket-based messaging system
 - *Mobile Application*: React Native mobile app
 - *Advanced Analytics*: Comprehensive reporting dashboard
-- *Payment Integration*: Real payment gateway integration
-- *Video Conferencing*: Built-in video call functionality
+- *Payment Integration*: Real payment gateway integration for both Mpesa, Paypal and Credit cards
 - *Multi-language Support*: Internationalization features
-- *Advanced Search*: Elasticsearch integration
 
 ## Contributing Guidelines
 
@@ -259,15 +222,8 @@ SkillBridge_project/
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Team members
-      Dennis karanja
-      Julius kakai
-      Wambui karanja
-      Nimrod kipngetich
-      Denzel pascal
+This project is licensed under the MIT License - see the [License file](./LICENSE) for details.
 
 ---
 
-For questions, issues, or contributions, please contact the development team or create an issue in the repository.
+For questions, issues, or contributions, please contact the development team through: denniswanyeki2021@gmail.com
