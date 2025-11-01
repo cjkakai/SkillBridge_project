@@ -26,9 +26,11 @@ Built with modern web technologies, SkillBridge ensures a seamless experience fo
 
 Through the get started and join now buttons on homepage, a user is directed to a login page for secure authentication. There is also an option to sign up as a client or freelancer. Admins are added directly to the system
 
-<img src="./Client/src/assets/Login.png" width="20%" height="300px" style="display:inline-block; margin-right:10px;">
-<img src="./Client/src/assets/Roleselection.png" width="45%" height="300px" style="display:inline-block;margin-right:10px">
-<img src="./Client/src/assets/Sign up.png" width="25%" height="300px" style="display:inline-block;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px;">
+  <img src="./Client/src/assets/Login.png" width="20%" height="300px">
+  <img src="./Client/src/assets/Roleselection.png" width="45%" height="300px">
+  <img src="./Client/src/assets/Sign up.png" width="25%" height="300px">
+</div>
 
 ### Client role
 Clients can post jobs, manage applications, and communicate with freelancers. They can also track project milestones and make payments upon completion.
@@ -51,12 +53,14 @@ Through the dash board, a client may view all his tasks at a glance, the freelan
 
 - *Contract Details* In contracts, sesction one can click the details button to view project progress. **Download milestone files** uploaded by a freelancer
 ### Client Pages
-<img src="./Client/src/assets/Post task.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Message.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Contract details.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Payment.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/ClientProfile.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Report.png" width="30%" style="margin-right:10px;">
+<div style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <img src="./Client/src/assets/Post task.png" width="30%">
+  <img src="./Client/src/assets/Message.png" width="30%">
+  <img src="./Client/src/assets/Contract details.png" width="30%">
+  <img src="./Client/src/assets/Payment.png" width="30%">
+  <img src="./Client/src/assets/ClientProfile.png" width="30%">
+  <img src="./Client/src/assets/Report.png" width="30%">
+</div>
 
 ### Freelancer role
 Freelancers can browse job listings, submit proposals, and manage contracts. They can also communicate with clients and track their earnings.
@@ -77,14 +81,16 @@ Through the dash board, a freelancer may view all his tasks at a glance,the perc
 - *Freelancer Experiences* Add professional experiences and project links you have worked on before as a freelancer and build your portfolio
 - *Freelancer Applications* View the status of your job bids to know whether they were successful or unsuccesful
 ### Freelancer Pages
-<img src="./Client/src/assets/Browse Task.png" width="30%" style="margin-right:10px">
-<img src="./Client/src/assets/FREELANCERmESSAGES.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/FreelancerProfile.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/My Experience.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Earnings.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Applications.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Freelancer Report.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/Review.png" width="30%" style="margin-right:10px;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+  <img src="./Client/src/assets/Browse Task.png" width="30%">
+  <img src="./Client/src/assets/FREELANCERmESSAGES.png" width="30%">
+  <img src="./Client/src/assets/FreelancerProfile.png" width="30%">
+  <img src="./Client/src/assets/My Experience.png" width="30%">
+  <img src="./Client/src/assets/Earnings.png" width="30%">
+  <img src="./Client/src/assets/Applications.png" width="30%">
+  <img src="./Client/src/assets/Freelancer Report.png" width="30%">
+  <img src="./Client/src/assets/Review.png" width="30%">
+</div>
 
 ## Admin role
 Administrators have full control over the platform, including user management, contract oversight, and dispute resolution. They can monitor platform activity and ensure compliance with policies.
@@ -98,10 +104,12 @@ Through the dashboard, an admin should get stats concerning the SkillBridge plat
 - *Transaction Management* An admin can know the total payments on the platform and can also see the details of all transactions through the platform
 - *Complaint Management* Through the complaints page, an admin can observe complints made and resolve them
 ### Admin pages
-<img src="./Client/src/assets/AdminUserManger.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/AdminContractManager.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/AdminTransactionManager.png" width="30%" style="margin-right:10px;">
-<img src="./Client/src/assets/AdminComplaintsManager.png" width="30%" style="margin-right:10px;">
+<div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px;">
+  <img src="./Client/src/assets/AdminUserManger.png" width="30%">
+  <img src="./Client/src/assets/AdminContractManager.png" width="30%">
+  <img src="./Client/src/assets/AdminTransactionManager.png" width="30%">
+  <img src="./Client/src/assets/AdminComplaintsManager.png" width="30%">
+</div>
 
 
 ## Tech Stack
