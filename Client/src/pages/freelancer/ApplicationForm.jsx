@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import './ApplicationForm.css';
+import { BASE_URL } from '../../config';
+
 
 const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
 
@@ -33,7 +35,7 @@ const ApplicationForm = ({ isOpen, onClose, task, freelancerId }) => {
         formData.append('cover_letter_file', applicationData.cover_letter_file);
       }
 
-      const response = await fetch(`/api/freelancers/${freelancerId}/applications/upload`, {
+      const response = await fetch(`${BASE_URL}/api/freelancers/${freelancerId}/applications/upload`, {
         method: 'POST',
         body: formData,
         credentials: 'include'

@@ -34,7 +34,7 @@ const ClientMessages = () => {
       fetchFreelancersWithMessages();
 
       // Initialize socket connection
-      const newSocket = io('/api');
+      const newSocket = io(BASE_URL);
       setSocket(newSocket);
 
       return () => {

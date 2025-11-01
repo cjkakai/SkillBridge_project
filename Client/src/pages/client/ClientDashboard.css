@@ -1,6 +1,7 @@
 /* Dashboard Styles */
 .dashboard-container {
   display: flex;
+  gap: 0px;
   min-height: 100vh;
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
 }

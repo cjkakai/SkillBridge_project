@@ -139,27 +139,6 @@ const ContractDetails = () => {
     }
   };
 
-  const handleDownloadFile = async (milestoneId) => {
-    try {
-      const response = await fetch(`${BASE_URL}/api/milestones/${milestoneId}/download`);
-      if (response.ok) {
-        const blob = await response.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `milestone_${milestoneId}_file`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        document.body.removeChild(a);
-      } else {
-        alert('Failed to download file');
-      }
-    } catch (error) {
-      console.error('Download error:', error);
-      alert('Download failed. Please try again.');
-    }
-  };
 
   const renderStars = (rating) => {
     const stars = [];
@@ -423,7 +402,7 @@ const ContractDetails = () => {
                           {milestone.file_url && (
                             <button
                               className="download-btn"
-                              onClick={() => handleDownloadFile(milestone.id)}
+                              onClick={() => window.open(`${BASE_URL}/api/milestones/${milestone.id}/download`, '_blank')}
                               style={{
                                 padding: '6px 12px',
                                 backgroundColor: '#10b981',

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Star, Calendar, DollarSign, Clock, Download, Eye, X, Award } from 'lucide-react';
 import './TaskApplications.css'
+import { BASE_URL } from '../../config';
 
 const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwardContract }) => {
   const formatDate = (dateString) => {
@@ -110,7 +111,7 @@ const TaskApplicationCard = ({ application, onViewExperience, onRejectBid, onAwa
           {application.cover_letter_file && (
             <button
               className="download-btn"
-              onClick={() => window.open(`/api/applications/${application.id}/download`, '_blank')}
+              onClick={() => window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank')}
               title="Download Cover Letter PDF"
             >
               <Download size={16} />

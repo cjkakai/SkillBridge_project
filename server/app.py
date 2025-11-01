@@ -470,8 +470,10 @@ class FreelancerApplicationsResource(Resource):
 
         result = []
         for app in applications:
-            task = app.task
-            client = task.client if task else None
+            task_id= app.task_id
+            task = Task.query.filter_by(id=task_id).first() if task_id else None
+            client_id= task.client_id if task else None
+            client = Client.query.filter_by(id=client_id).first() if client_id else None
 
             result.append({
                 "id": app.id,
@@ -486,10 +488,7 @@ class FreelancerApplicationsResource(Resource):
                     "description": task.description if task else "No description available",
                     "client_id": client.id if client else None,
                     "client_name": client.name if client else "Unknown Client",
-                    "client": {
-                        "id": client.id if client else None,
-                        "name": client.name if client else "Unknown Client"
-                    } if client else None
+                    "client_image": client.image if client else None,
                 } if task else None
             })
 

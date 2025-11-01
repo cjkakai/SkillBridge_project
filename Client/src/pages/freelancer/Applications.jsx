@@ -10,7 +10,6 @@ const Applications = () => {
   const [applications, setApplications] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [clients, setClients] = useState([]);
   const [expandedCard, setExpandedCard] = useState(null);
 
   useEffect(() => {
@@ -39,22 +38,8 @@ const Applications = () => {
         setLoading(false);
       }
     };
-
-    const fetchClients = async () => {
-      try {
-        const response = await fetch(`${BASE_URL}/api/clients`);
-        if (response.ok) {
-          const clientsData = await response.json();
-          setClients(clientsData);
-        }
-      } catch (error) {
-        console.error('Error fetching clients:', error);
-      }
-    };
-
     fetchApplications();
-    fetchClients();
-  }, [user]);
+  }, [user.id]);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -180,7 +165,6 @@ const Applications = () => {
         <div className="applications-list">
           {applications.length > 0 ? (
             applications.map((application) => {
-              const client = clients.find(c => c.id === application.task?.client_id);
               return (
                 <div key={application.id} className="application-card" style={{
                   backgroundColor: 'white',
@@ -211,10 +195,10 @@ const Applications = () => {
                       justifyContent: 'center',
                       backgroundColor: '#f9fafb'
                     }}>
-                      {client?.image ? (
+                      {application.task.client_image ? (
                         <img
-                          src={client.image}
-                          alt={client.name || 'Client'}
+                          src={application.task.client_image}
+                          alt={application.task.client_name || 'Client'}
                           style={{
                             width: '100%',
                             height: '100%',
@@ -233,7 +217,7 @@ const Applications = () => {
                           fontWeight: 'bold',
                           fontSize: '18px'
                         }}>
-                          {(client?.name?.charAt(0) || 'C').toUpperCase()}
+                          {(application.task.client_name?.charAt(0) || 'C').toUpperCase()}
                         </div>
                       )}
                     </div>
@@ -364,16 +348,15 @@ const Applications = () => {
                           </div>
                           <p style={{ margin: 0, fontSize: '14px', color: '#374151', lineHeight: '1.5' }}>
                             {application.cover_letter_file ? (
-                              <a
-                                href={`/uploads/cover_letters/${application.cover_letter_file}`}
+                              <p
+                                onClick={()=>window.open(`${BASE_URL}/api/applications/${application.id}/download`, '_blank')}
                                 target="_blank"
-                                rel="noopener noreferrer"
                                 style={{ color: '#3b82f6', textDecoration: 'none', fontWeight: '500' }}
                                 onMouseEnter={(e) => e.target.style.textDecoration = 'underline'}
                                 onMouseLeave={(e) => e.target.style.textDecoration = 'none'}
                               >
                                 View Cover Letter
-                              </a>
+                              </p>
                             ) : (
                               'No cover letter attached'
                             )}
