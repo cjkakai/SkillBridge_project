@@ -228,6 +228,8 @@ Through the dashboard, an admin should get stats concerning the SkillBridge plat
 - Include comments for complex logic
 - Test your changes before submitting
 
+- Deployed Link - https://skillbridge-project-1.onrender.com/
+
 ## License
 
 This project is licensed under the MIT License - see the [License file](./LICENSE) for details.
